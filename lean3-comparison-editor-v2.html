@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMS → Lean3 マニュアル変更点分析（編集可能版）</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+      color: white;
+      padding: 30px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header-left p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .header-button {
+      padding: 10px 20px;
+      background: white;
+      color: #2d2d2d;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .header-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .header-button.save {
+      background: #4caf50;
+      color: white;
+    }
+
+    .header-button.export {
+      background: #2196f3;
+      color: white;
+    }
+
+    .legend {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .add { background: #c8e6c9; }
+    .modify { background: #fff9c4; }
+    .delete { background: #ffcdd2; }
+    .verify { background: #b3e5fc; }
+    .reuse { background: #e1bee7; }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      padding: 20px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .summary-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .summary-card.add { border-color: #4caf50; }
+    .summary-card.modify { border-color: #ffeb3b; }
+    .summary-card.delete { border-color: #f44336; }
+    .summary-card.verify { border-color: #03a9f4; }
+    .summary-card.reuse { border-color: #9c27b0; }
+    .summary-card.unconfirmed { border-color: #9e9e9e; }
+    .summary-card.confirmed { border-color: #4caf50; }
+    .summary-card.customer { border-color: #ff9800; }
+
+    .summary-number {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .toolbar {
+      padding: 15px 30px;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .toolbar-button {
+      padding: 8px 16px;
+      background: #4a4a4a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .toolbar-button:hover {
+      background: #2d2d2d;
+    }
+
+    .toolbar-button.add { background: #4caf50; }
+    .toolbar-button.add:hover { background: #388e3c; }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: #fafafa;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header:hover {
+      background: #f0f0f0;
+    }
+
+    .section-number {
+      font-weight: bold;
+      color: #666;
+      min-width: 30px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .section-title input {
+      width: 100%;
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .section-button {
+      padding: 6px 12px;
+      background: #4a4a4a;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .section-button:hover {
+      background: #2d2d2d;
+    }
+
+    .section-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-high { background: #ffcdd2; color: #c62828; }
+    .badge-medium { background: #fff9c4; color: #f57f17; }
+    .badge-low { background: #c8e6c9; color: #2e7d32; }
+
+    .section-body {
+      padding: 20px;
+    }
+
+    .change-item {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border-left: 4px solid;
+      position: relative;
+    }
+
+    .change-item.add {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .change-item.modify {
+      background: #fffde7;
+      border-color: #ffeb3b;
+    }
+
+    .change-item.delete {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+
+    .change-item.verify {
+      background: #e1f5fe;
+      border-color: #03a9f4;
+    }
+
+    .change-item.reuse {
+      background: #f3e5f5;
+      border-color: #9c27b0;
+    }
+
+    .change-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .change-type {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .type-add { background: #4caf50; color: white; }
+    .type-modify { background: #ffeb3b; color: #333; }
+    .type-delete { background: #f44336; color: white; }
+    .type-verify { background: #03a9f4; color: white; }
+    .type-reuse { background: #9c27b0; color: white; }
+
+    .change-title {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .change-title input {
+      width: 100%;
+      padding: 4px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .change-status {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .status-unconfirmed {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .status-confirmed {
+      background: #4caf50;
+      color: white;
+    }
+
+    .status-customer {
+      background: #ff9800;
+      color: white;
+    }
+
+    .change-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-button {
+      width: 28px;
+      height: 28px;
+      background: rgba(0,0,0,0.1);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .icon-button:hover {
+      background: rgba(0,0,0,0.2);
+    }
+
+    .icon-button.delete:hover {
+      background: #f44336;
+      color: white;
+    }
+
+    .change-content {
+      margin-left: 0;
+    }
+
+    .change-content textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    .change-detail {
+      margin-top: 8px;
+      padding: 10px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .toggle-icon {
+      transition: transform 0.3s;
+    }
+
+    .section.collapsed .section-body {
+      display: none;
+    }
+
+    .section.collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #388e3c;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #bdbdbd;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #323232;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .add-section-button {
+      margin: 20px 30px;
+      padding: 12px 24px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .add-section-button:hover {
+      background: #388e3c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <h1>COMS → Lean3 マニュアル変更点分析（編集可能版）</h1>
+        <p>変更点を編集・追加・削除し、確認ステータスを管理できます</p>
+      </div>
+      <div class="header-actions">
+        <button class="header-button save" onclick="saveData()">💾 保存</button>
+        <button class="header-button export" onclick="exportJSON()">📥 JSONエクスポート</button>
+        <button class="header-button export" onclick="exportHTML()">📄 HTMLエクスポート</button>
+      </div>
+    </div>
+
+    <div class="summary" id="summary">
+      <!-- 動的に生成 -->
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color add"></div>
+        <span>追加（新規コンテンツ）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color modify"></div>
+        <span>書き換え（既存を修正）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color delete"></div>
+        <span>削除（不要なコンテンツ）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color reuse"></div>
+        <span>流用（そのまま使用可能）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color verify"></div>
+        <span>要確認（情報不足）</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button class="toolbar-button add" onclick="showAddSectionModal()">➕ セクション追加</button>
+      <button class="toolbar-button" onclick="expandAll()">📖 全て展開</button>
+      <button class="toolbar-button" onclick="collapseAll()">📕 全て折りたたむ</button>
+      <button class="toolbar-button" onclick="filterByStatus('all')">全て表示</button>
+      <button class="toolbar-button" onclick="filterByStatus('unconfirmed')">未確認のみ</button>
+      <button class="toolbar-button" onclick="filterByStatus('customer')">顧客確認のみ</button>
+    </div>
+
+    <div class="content" id="content">
+      <!-- 動的に生成 -->
+    </div>
+  </div>
+
+  <!-- 項目追加/編集モーダル -->
+  <div class="modal" id="itemModal">
+    <div class="modal-content">
+      <div class="modal-header">変更項目の追加/編集</div>
+      
+      <div class="form-group">
+        <label class="form-label">変更タイプ</label>
+        <select class="form-select" id="itemType">
+          <option value="add">追加（新規コンテンツ）</option>
+          <option value="modify">書き換え（既存を修正）</option>
+          <option value="delete">削除（不要なコンテンツ）</option>
+          <option value="reuse">流用（そのまま使用可能）</option>
+          <option value="verify">要確認（情報不足）</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">タイトル</label>
+        <input type="text" class="form-input" id="itemTitle" placeholder="例: Active Lean Technology の注意事項">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">内容</label>
+        <textarea class="form-textarea" id="itemContent" placeholder="詳細な説明を入力してください..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">確認ステータス</label>
+        <select class="form-select" id="itemStatus">
+          <option value="unconfirmed">未確認</option>
+          <option value="confirmed">確認済み</option>
+          <option value="customer">顧客確認</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="closeItemModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="saveItem()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- セクション追加モーダル -->
+  <div class="modal" id="sectionModal">
+    <div class="modal-content">
+      <div class="modal-header">新規セクションの追加</div>
+      
+      <div class="form-group">
+        <label class="form-label">セクション番号</label>
+        <input type="text" class="form-input" id="sectionNumber" placeholder="例: 1">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">セクションタイトル</label>
+        <input type="text" class="form-input" id="sectionTitle" placeholder="例: 必ず読みましょう">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">重要度</label>
+        <select class="form-select" id="sectionPriority">
+          <option value="high">高</option>
+          <option value="medium">中</option>
+          <option value="low">低</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="closeSectionModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="saveSection()">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- トースト通知 -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // データ構造（完全版）
+    let data = {
+      sections: [
+        {
+          id: 's0',
+          number: '0',
+          title: '目次・イラスト目次',
+          priority: 'high',
+          items: [
+            {
+              id: 'i0-1',
+              type: 'modify',
+              title: '車両名称の変更',
+              content: 'コムス (COMS) → Lean3（リーン3）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i0-2',
+              type: 'modify',
+              title: '車両分類の変更',
+              content: '第一種原動機付自転車（四輪）/ ミニカー → 第一種普通自動車 / Class I（WLTCモード）\n\n※Lean3は普通自動車扱いのため、運転免許証の記載も変更が必要',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i0-3',
+              type: 'add',
+              title: 'イラスト目次の大幅変更',
+              content: '新規追加項目:\n- 三輪配置（前2輪・後1輪）の図解\n- Active Lean Technology の傾斜機構図\n- タッチスクリーンディスプレイの位置\n- エアコン吹き出し口\n- USB Type-C充電ポート\n- ISOFIXチャイルドシート固定点（台湾仕様のみ）',
+              status: 'verify'
+            },
+            {
+              id: 'i0-4',
+              type: 'delete',
+              title: 'COMS仕様別装備（P-COM、B-COM等）',
+              content: 'Lean3には以下の装備は存在しないため削除:\n- トランクボックス（P-COM）\n- デリバリーボックス（B-COMデリバリー）\n- リヤデッキ（B-COMベーシック/デッキ）',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's1',
+          number: '1',
+          title: '必ず読みましょう',
+          priority: 'high',
+          items: [
+            {
+              id: 'i1-1',
+              type: 'modify',
+              title: '車両特性の説明変更',
+              content: '削除: 「電気自動車独自の取扱い方」\n追加: 「三輪傾斜車両（Active Lean Technology搭載）の取扱い方」',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i1-2',
+              type: 'add',
+              title: 'Active Lean Technology の注意事項',
+              content: '新規追加が必要な内容:\n- 傾斜時の体の動き: カーブ時に車両が自動で傾くため、体をまっすぐに保つこと\n- 急ハンドル禁止: 傾斜システムの追従速度を超える急激な操作は避ける\n- 傾斜角度: 最大28度まで傾斜することを理解する\n- 低速時の挙動: 極低速（5km/h以下）では傾斜機能が作動しないことを周知',
+              status: 'verify'
+            },
+            {
+              id: 'i1-3',
+              type: 'modify',
+              title: '乗車定員の変更',
+              content: '1人乗り専用 → 日本仕様: 1人乗り / 台湾仕様: 2人乗り（ISOFIXチャイルドシート対応）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i1-4',
+              type: 'modify',
+              title: 'タイヤ関連の変更',
+              content: 'タイヤサイズ:\n4輪とも同じサイズ → 前輪: 90/90 R14 / 後輪: 150/70 R14（サイズ異なる）\n\n※タイヤ交換時は必ず指定サイズを使用すること',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i1-5',
+              type: 'verify',
+              title: '最高速度制限',
+              content: '情報不足: Lean3の日本仕様は60km/hが最高速度ですが、以下の情報が不明:\n- 速度リミッターの詳細仕様\n- アクセルペダルの特性（60km/h到達時の挙動）\n- 下り坂での速度超過防止機能の有無',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's2',
+          number: '2',
+          title: '警告・使用方法ラベルの種類と貼付け位置',
+          priority: 'medium',
+          items: [
+            {
+              id: 'i2-1',
+              type: 'delete',
+              title: 'COMS固有のラベル',
+              content: '以下を削除:\n- トランクボックス使用上のご注意\n- デリバリーボックス使用上のご注意\n- リヤゲート操作上のご注意\n- 仕様別ラベル全般',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i2-2',
+              type: 'add',
+              title: 'Lean3固有のラベル',
+              content: '新規追加が必要なラベル:\n- Active Lean Technology 作動中: 走行中の車両傾斜に関する警告\n- タッチスクリーン操作注意: 走行中の操作制限\n- 三輪車両特有の注意: 積載制限、重心位置の警告\n- エアコン使用時の注意: 航続距離への影響',
+              status: 'verify'
+            },
+            {
+              id: 'i2-3',
+              type: 'verify',
+              title: 'ラベルのデザインと配置',
+              content: '情報不足: 実際のラベル画像と貼付位置の図面が必要',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's3',
+          number: '3',
+          title: '充電について',
+          priority: 'high',
+          items: [
+            {
+              id: 'i3-1',
+              type: 'modify',
+              title: 'バッテリー仕様の変更',
+              content: 'バッテリータイプ: 鉛バッテリー（6個） → リン酸鉄リチウムイオン電池（LFP）8.1kWh\n充電時間: 約6時間 → AC100V: 約7時間 / AC200V: 約5時間\n航続距離: 約50km → 約100km（WLTCモード Class1）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i3-2',
+              type: 'delete',
+              title: 'バッテリー長持ちのための押し込み充電',
+              content: 'LFPバッテリーは鉛バッテリーとは異なる管理方法のため、「押し込み充電」の概念は削除。\n代わりに、リチウムイオン電池の適切な管理方法（SOC 20-80%推奨等）を追加する必要あり。',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i3-3',
+              type: 'modify',
+              title: '充電表示灯の変更',
+              content: '削除: 充電表示灯（赤→オレンジ→緑点滅→緑点灯）\n追加: タッチスクリーンディスプレイでの充電状態表示（充電率%、推定完了時間等）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i3-4',
+              type: 'verify',
+              title: '充電ポートの位置と形状',
+              content: '情報不足:\n- 充電ポートの車両上の具体的な位置（左側面?右側面?）\n- 充電コネクタの種類（Type1? 独自規格?）\n- 充電ケーブルは車両付属か、別売りか\n- 充電中のディスプレイ表示のスクリーンショット\n- 急速充電（DC）対応の有無',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i3-5',
+              type: 'add',
+              title: 'バッテリー温度管理',
+              content: 'LFPバッテリー特有の温度管理に関する説明を追加:\n- 低温時（0℃以下）の充電性能低下\n- 高温時（35℃以上）の充電制限\n- バッテリーウォーマー機能の有無',
+              status: 'verify'
+            }
+          ]
+        },
+        {
+          id: 's4',
+          number: '4',
+          title: '安全装置（シートベルト）',
+          priority: 'low',
+          items: [
+            {
+              id: 'i4-1',
+              type: 'modify',
+              title: 'シートベルトの種類',
+              content: '基本的な3点式シートベルトの説明は同じだが、以下を追加:\n- 台湾仕様: 助手席用シートベルト（2人乗り対応）\n- ISOFIXチャイルドシート装着時の注意事項（台湾仕様のみ）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i4-2',
+              type: 'verify',
+              title: '日本仕様のシートベルト仕様',
+              content: '情報不足:\n- シートベルト警告灯の有無\n- シートベルトプリテンショナーの有無\n- 助手席（台湾仕様）のシートベルト固定点の位置',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's5',
+          number: '5',
+          title: '操作装置',
+          priority: 'high',
+          items: [
+            {
+              id: 'i5-1',
+              type: 'add',
+              title: 'タッチスクリーンディスプレイ',
+              content: '全面的に新規作成が必要:\n- ディスプレイの画面構成とメニュー\n- 速度表示、バッテリー残量表示の見方\n- 航続距離の推定表示\n- エアコン操作方法\n- 走行モード選択（エコ/ノーマル等があれば）\n- 各種設定画面の操作方法',
+              status: 'verify'
+            },
+            {
+              id: 'i5-2',
+              type: 'delete',
+              title: 'アナログメーターの説明',
+              content: '以下のCOMS固有の説明を削除:\n- スピードメーター（針式）\n- バッテリー残量計（8目盛）\n- トリップメーター/オドメーターボタン',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i5-3',
+              type: 'modify',
+              title: 'キースイッチ → スタートボタン',
+              content: 'キースイッチ（LOCK/ACC/ON） → プッシュスタートボタン（キーレスエントリー?）\n\n⚠ 要確認: Lean3のキー/スタートシステムの詳細仕様が不明',
+              status: 'verify'
+            },
+            {
+              id: 'i5-4',
+              type: 'modify',
+              title: 'シフトレバー → シフト操作',
+              content: 'COMSとLean3のシフト操作の違い:\n物理的なシフトレバー（R/N/D） → ボタン式シフト操作パネル（要確認）',
+              status: 'verify'
+            },
+            {
+              id: 'i5-5',
+              type: 'modify',
+              title: 'ハンドル操作範囲',
+              content: '通常のハンドル操作 → 半回転で旋回可能（約180度でフルロック）\n\n※最小回転半径3.6mを実現する特殊なステアリング設定',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i5-6',
+              type: 'add',
+              title: 'エアコン操作',
+              content: 'CODSには無かったエアコンの操作説明を追加:\n- 冷房システムの操作方法\n- 温度調整（範囲と設定方法）\n- 風量調整\n- デフロスター機能\n- エアコン使用時の航続距離への影響',
+              status: 'verify'
+            },
+            {
+              id: 'i5-7',
+              type: 'verify',
+              title: '操作系の詳細仕様',
+              content: '情報が不足している項目:\n- スタートシステム: キーレス? スマートキー? 物理キー?\n- ドアロック: 集中ドアロックの有無と操作方法\n- パーキングブレーキ: 電動? 機械式? 位置は?\n- ワイパー・ウォッシャー: 操作方法と位置\n- ライト操作: 自動点灯機能の有無\n- 方向指示器: レバー式? ボタン式?\n- ホーン: ハンドルのどの位置?',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's6',
+          number: '6',
+          title: '快適装備',
+          priority: 'medium',
+          items: [
+            {
+              id: 'i6-1',
+              type: 'delete',
+              title: 'COMS仕様別装備の全削除',
+              content: '以下のセクションを全て削除:\n- トランクボックス（P-COM）\n- デリバリーボックス（B-COMデリバリー）\n- リヤデッキ（B-COMベーシック）\n- デッキ（B-COMデッキ）\n- これらに関連する全ての説明と注意事項',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i6-2',
+              type: 'add',
+              title: 'Lean3の収納装備',
+              content: '新規作成が必要:\n- グローブボックス（位置・容量・使用上の注意）\n- ドアポケット（あれば）\n- カップホルダー（位置と数）\n- USB Type-C充電ポートの使用方法\n- スマートフォンホルダー（純正オプションがあれば）',
+              status: 'verify'
+            },
+            {
+              id: 'i6-3',
+              type: 'add',
+              title: '台湾仕様: ISOFIXチャイルドシート',
+              content: '台湾仕様のみ:\n- ISOFIX固定点の位置\n- 対応チャイルドシートの種類と重量制限\n- 取り付け方法\n- 使用時の注意事項',
+              status: 'verify'
+            },
+            {
+              id: 'i6-4',
+              type: 'delete',
+              title: 'オプション部品の大半',
+              content: '以下のCOMS専用オプションを削除:\n- キャンバスドア・リヤキャンバス\n- サンバイザー\n- サイドバイザー\n- ボディーカバー\n- アクセサリー電源ソケット（USB Type-Cに置き換え）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i6-5',
+              type: 'verify',
+              title: 'Lean3のオプション品',
+              content: '情報不足: Lean3に用意されているオプション品の詳細が不明\n- アルミホイール（カスタマイズオプション）\n- カラーバリエーション\n- 追加アクセサリー類\n- ヒーター（台湾仕様オプション）の仕様',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's7',
+          number: '7',
+          title: '運転操作',
+          priority: 'high',
+          items: [
+            {
+              id: 'i7-1',
+              type: 'add',
+              title: 'Active Lean Technology の運転方法',
+              content: '最重要の新規セクション:\n- 傾斜の原理: カーブ時に自動で車体が傾く仕組みの説明\n- 運転姿勢: 傾斜時も体はまっすぐに保つこと\n- ハンドル操作: 半回転で旋回可能、滑らかな操作を心がける\n- 速度と傾斜角: 速度が高いほど傾斜角が大きくなる（最大28度）\n- 低速時の挙動: 5km/h以下では傾斜機能が作動しない\n- 雨天時: 路面状況により傾斜角が制限される場合がある\n- 急な操作禁止: 傾斜システムの追従限界を超える操作は危険',
+              status: 'verify'
+            },
+            {
+              id: 'i7-2',
+              type: 'modify',
+              title: '発進手順の変更',
+              content: 'キースイッチ操作 → スタートボタン操作（要確認）\nメーター確認 → タッチスクリーンディスプレイ確認',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i7-3',
+              type: 'modify',
+              title: '航続距離表示と警告',
+              content: 'バッテリー残量8目盛 → 2目盛で警告 → バッテリー残量% + 推定航続距離km表示\n\n※警告タイミング（残量20%? 10km未満?）は要確認',
+              status: 'verify'
+            },
+            {
+              id: 'i7-4',
+              type: 'modify',
+              title: '回生ブレーキの説明',
+              content: 'CODSとLean3で基本は同じだが、以下を明確化:\n- 回生ブレーキの強度設定（エコモード等があれば）\n- 後輪インホイールモーターによる回生の特性\n- 満充電時は回生が制限されることの説明',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i7-5',
+              type: 'add',
+              title: 'エアコン使用時の注意',
+              content: 'エアコン使用による航続距離への影響を説明:\n- 冷房使用時: 航続距離が約○%減少（要データ）\n- 暖房使用時: 航続距離が約○%減少（要データ）\n- 推奨設定温度と節電方法',
+              status: 'verify'
+            },
+            {
+              id: 'i7-6',
+              type: 'verify',
+              title: '運転支援機能の有無',
+              content: '情報不足:\n- ABS（アンチロックブレーキシステム）の有無\n- トラクションコントロールの有無\n- ESC（横滑り防止装置）の有無\n- 坂道発進補助機能の有無\n- 後退時の警告音\n- パーキングセンサー',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's8',
+          number: '8',
+          title: '寒冷時の取扱い',
+          priority: 'medium',
+          items: [
+            {
+              id: 'i8-1',
+              type: 'add',
+              title: 'LFPバッテリーの低温特性',
+              content: 'リチウムイオン電池の低温時の特性を追加:\n- 0℃以下での出力低下（航続距離が約○%減少）\n- -10℃以下での充電制限または禁止\n- バッテリーウォーマー機能の有無と使用方法\n- 走行前のバッテリー予熱推奨（あれば）',
+              status: 'verify'
+            },
+            {
+              id: 'i8-2',
+              type: 'add',
+              title: 'ヒーター使用時の注意',
+              content: '台湾仕様のヒーターオプション、または日本仕様のヒーター機能について:\n- ヒーター使用時の電力消費\n- 航続距離への影響\n- 推奨設定温度',
+              status: 'verify'
+            },
+            {
+              id: 'i8-3',
+              type: 'modify',
+              title: 'タイヤチェーン装着位置',
+              content: '後2輪に装着 → 前2輪に装着（駆動輪は後1輪だが、操舵輪の前輪に装着推奨）\n\n⚠ 要確認: Lean3のタイヤチェーン装着推奨位置',
+              status: 'verify'
+            },
+            {
+              id: 'i8-4',
+              type: 'verify',
+              title: '寒冷時の仕様詳細',
+              content: '情報不足:\n- 動作保証温度範囲（-○℃ ～ ○℃）\n- バッテリーウォーマー機能の有無\n- 寒冷地仕様の設定有無\n- スタッドレスタイヤの推奨銘柄',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's9',
+          number: '9',
+          title: 'メンテナンス',
+          priority: 'medium',
+          items: [
+            {
+              id: 'i9-1',
+              type: 'modify',
+              title: 'タイヤ仕様の変更',
+              content: 'タイヤサイズ: 4輪とも同一サイズ → 前輪: 90/90 R14 / 後輪: 150/70 R14\n空気圧: 前: 2.5kgf/cm² / 後: 3.0kgf/cm² → 前輪: ○○kPa / 後輪: ○○kPa（要確認）',
+              status: 'verify'
+            },
+            {
+              id: 'i9-2',
+              type: 'modify',
+              title: 'ブレーキシステム',
+              content: '前輪ディスク、後輪ドラム → 前輪・後輪ともディスクブレーキ',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i9-3',
+              type: 'add',
+              title: 'Active Lean Technologyのメンテナンス',
+              content: '傾斜システム関連の点検項目を追加:\n- 傾斜機構の作動確認（定期点検項目）\n- センサー類の清掃と点検\n- システム異常時の警告表示\n- ソフトウェアアップデートの有無と方法',
+              status: 'verify'
+            },
+            {
+              id: 'i9-4',
+              type: 'delete',
+              title: 'バッテリー関連の点検項目',
+              content: '鉛バッテリー特有の点検項目を削除:\n- バッテリー液量の点検（LFPは密閉型）\n- バッテリー端子の腐食点検（不要）\n- バッテリー個別の電圧測定（システムで管理）',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i9-5',
+              type: 'modify',
+              title: '電球交換 → LED',
+              content: '全てのランプがLEDのため、電球交換の説明を大幅に簡略化:\n- LEDは基本的にユーザー交換不可\n- 点灯しない場合は販売店へ相談\n- LED交換が可能な箇所があれば、その手順を記載',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i9-6',
+              type: 'verify',
+              title: 'メンテナンスデータ',
+              content: '情報不足:\n- 車両重量（車両重量/総重量）\n- 推奨タイヤ空気圧\n- ブレーキフルードの種類\n- ウォッシャー液容量\n- 定期点検の間隔（12ヶ月/24ヶ月? 走行距離基準?）\n- 消耗品の交換時期一覧',
+              status: 'unconfirmed'
+            }
+          ]
+        },
+        {
+          id: 's10',
+          number: '10',
+          title: '万一の場合',
+          priority: 'medium',
+          items: [
+            {
+              id: 'i10-1',
+              type: 'add',
+              title: 'Active Lean Technology 異常時の対処',
+              content: '傾斜システム異常時の警告と対処方法を追加:\n- 傾斜システム警告灯の意味\n- 異常検知時の車両挙動（安全な姿勢で停止）\n- セーフモードでの走行可否\n- 緊急時の対処手順',
+              status: 'verify'
+            },
+            {
+              id: 'i10-2',
+              type: 'modify',
+              title: '警告機能の種類',
+              content: 'CODSの警告ランプから、Lean3のタッチスクリーン表示への変更:\n- 各種警告メッセージの表示内容\n- 警告音の種類\n- 緊急停止処理の条件',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i10-3',
+              type: 'modify',
+              title: 'けん引方法',
+              content: '三輪車両特有のけん引注意事項を追加:\n- けん引フックの位置（要確認）\n- 前2輪・後1輪の配置を考慮した固定方法\n- 傾斜機構のロック方法（けん引時）',
+              status: 'verify'
+            },
+            {
+              id: 'i10-4',
+              type: 'verify',
+              title: 'ジャッキアップポイント',
+              content: '情報不足:\n- 三輪車両のジャッキアップポイント図解\n- 前2輪を同時に上げる際の注意\n- スタンド支持ポイント\n- タイヤ交換時の手順',
+              status: 'unconfirmed'
+            },
+            {
+              id: 'i10-5',
+              type: 'add',
+              title: 'バッテリー上がり時の対処',
+              content: 'LFPバッテリー完全放電時の対処方法:\n- 補機バッテリー（12V）上がりへの対処\n- ジャンプスタートの可否と方法\n- レッカー車の手配先',
+              status: 'verify'
+            }
+          ]
+        },
+        {
+          id: 's11',
+          number: '11',
+          title: '廃棄するとき',
+          priority: 'low',
+          items: [
+            {
+              id: 'i11-1',
+              type: 'modify',
+              title: '製造・販売会社情報の変更',
+              content: 'トヨタ車体（0120-100-804） → Lean Mobility株式会社（連絡先要確認）',
+              status: 'verify'
+            },
+            {
+              id: 'i11-2',
+              type: 'add',
+              title: 'リチウムイオンバッテリーの廃棄',
+              content: 'LFPバッテリーの適切な廃棄・リサイクル方法を追加:\n- リチウムイオン電池の危険性\n- 専門業者による回収の必要性\n- 自治体の処理不可',
+              status: 'unconfirmed'
+            }
+          ]
+        }
+      ]
+    };
+
+    let currentEditItem = null;
+    let currentEditSection = null;
+
+    // 初期化（ローカルストレージを無視して常に初期データを使用）
+    document.addEventListener('DOMContentLoaded', () => {
+      // 初回はローカルストレージをクリアして初期データを使用
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.has('loaded')) {
+        localStorage.removeItem('lean3ComparisonData');
+        window.location.href = window.location.pathname + '?loaded=true';
+        return;
+      }
+      loadData();
+      renderAll();
+    });
+
+    // ローカルストレージからデータを読み込み
+    function loadData() {
+      const saved = localStorage.getItem('lean3ComparisonData');
+      if (saved) {
+        try {
+          const savedData = JSON.parse(saved);
+          // 保存データが初期データより項目数が少ない場合は初期データを使用
+          const savedItemCount = savedData.sections.reduce((sum, s) => sum + s.items.length, 0);
+          const initialItemCount = data.sections.reduce((sum, s) => sum + s.items.length, 0);
+          if (savedItemCount < initialItemCount * 0.5) {
+            console.log('古いデータを検出、初期データを使用します');
+          } else {
+            data = savedData;
+          }
+        } catch (e) {
+          console.error('データ読み込みエラー:', e);
+        }
+      }
+    }
+
+    // ローカルストレージにデータを保存
+    function saveData() {
+      localStorage.setItem('lean3ComparisonData', JSON.stringify(data));
+      showToast('データを保存しました');
+    }
+
+    // 全体を再描画
+    function renderAll() {
+      renderSummary();
+      renderContent();
+    }
+
+    // サマリーを描画
+    function renderSummary() {
+      const summary = document.getElementById('summary');
+      const stats = calculateStats();
+      
+      summary.innerHTML = `
+        <div class="summary-card add">
+          <div class="summary-number">${stats.add}</div>
+          <div class="summary-label">追加項目</div>
+        </div>
+        <div class="summary-card modify">
+          <div class="summary-number">${stats.modify}</div>
+          <div class="summary-label">書き換え項目</div>
+        </div>
+        <div class="summary-card delete">
+          <div class="summary-number">${stats.delete}</div>
+          <div class="summary-label">削除項目</div>
+        </div>
+        <div class="summary-card reuse">
+          <div class="summary-number">${stats.reuse}</div>
+          <div class="summary-label">流用項目</div>
+        </div>
+        <div class="summary-card verify">
+          <div class="summary-number">${stats.verify}</div>
+          <div class="summary-label">要確認項目</div>
+        </div>
+        <div class="summary-card unconfirmed">
+          <div class="summary-number">${stats.unconfirmed}</div>
+          <div class="summary-label">未確認</div>
+        </div>
+        <div class="summary-card confirmed">
+          <div class="summary-number">${stats.confirmed}</div>
+          <div class="summary-label">確認済み</div>
+        </div>
+        <div class="summary-card customer">
+          <div class="summary-number">${stats.customer}</div>
+          <div class="summary-label">顧客確認</div>
+        </div>
+      `;
+    }
+
+    // 統計を計算
+    function calculateStats() {
+      const stats = {
+        add: 0,
+        modify: 0,
+        delete: 0,
+        reuse: 0,
+        verify: 0,
+        unconfirmed: 0,
+        confirmed: 0,
+        customer: 0
+      };
+
+      data.sections.forEach(section => {
+        section.items.forEach(item => {
+          stats[item.type]++;
+          stats[item.status]++;
+        });
+      });
+
+      return stats;
+    }
+
+    // コンテンツを描画
+    function renderContent() {
+      const content = document.getElementById('content');
+      content.innerHTML = data.sections.map(section => renderSection(section)).join('');
+    }
+
+    // セクションを描画
+    function renderSection(section) {
+      const priorityClass = `badge-${section.priority}`;
+      const priorityLabel = section.priority === 'high' ? '高' : section.priority === 'medium' ? '中' : '低';
+      
+      return `
+        <div class="section" data-section-id="${section.id}">
+          <div class="section-header" onclick="toggleSection('${section.id}')">
+            <span class="toggle-icon">▼</span>
+            <span class="section-number">${section.number}.</span>
+            <span class="section-title">${section.title}</span>
+            <span class="section-badge ${priorityClass}">重要度: ${priorityLabel}</span>
+            <div class="section-actions" onclick="event.stopPropagation()">
+              <button class="section-button" onclick="addItemToSection('${section.id}')">➕ 項目追加</button>
+              <button class="section-button" onclick="deleteSection('${section.id}')">🗑️ セクション削除</button>
+            </div>
+          </div>
+          <div class="section-body">
+            ${section.items.map(item => renderItem(section.id, item)).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // 項目を描画
+    function renderItem(sectionId, item) {
+      const typeLabels = {
+        add: '追加',
+        modify: '書き換え',
+        delete: '削除',
+        reuse: '流用',
+        verify: '要確認'
+      };
+
+      const statusLabels = {
+        unconfirmed: '未確認',
+        confirmed: '確認済み',
+        customer: '顧客確認'
+      };
+
+      return `
+        <div class="change-item ${item.type}" data-item-id="${item.id}">
+          <div class="change-header">
+            <span class="change-type type-${item.type}">${typeLabels[item.type]}</span>
+            <span class="change-title">${item.title}</span>
+            <span class="change-status status-${item.status}" onclick="cycleStatus('${sectionId}', '${item.id}')">
+              ${statusLabels[item.status]}
+            </span>
+            <div class="change-actions">
+              <button class="icon-button" onclick="editItem('${sectionId}', '${item.id}')" title="編集">✏️</button>
+              <button class="icon-button delete" onclick="deleteItem('${sectionId}', '${item.id}')" title="削除">🗑️</button>
+            </div>
+          </div>
+          <div class="change-content">
+            <div class="change-detail">${item.content.replace(/\n/g, '<br>')}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // セクションの開閉
+    function toggleSection(sectionId) {
+      const section = document.querySelector(`[data-section-id="${sectionId}"]`);
+      section.classList.toggle('collapsed');
+    }
+
+    // 全て展開
+    function expandAll() {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('collapsed');
+      });
+    }
+
+    // 全て折りたたむ
+    function collapseAll() {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.add('collapsed');
+      });
+    }
+
+    // ステータスでフィルター
+    function filterByStatus(status) {
+      const items = document.querySelectorAll('.change-item');
+      items.forEach(item => {
+        if (status === 'all') {
+          item.style.display = '';
+        } else {
+          const statusSpan = item.querySelector('.change-status');
+          if (statusSpan.classList.contains(`status-${status}`)) {
+            item.style.display = '';
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    // ステータスをサイクル
+    function cycleStatus(sectionId, itemId) {
+      const section = data.sections.find(s => s.id === sectionId);
+      const item = section.items.find(i => i.id === itemId);
+      
+      const statuses = ['unconfirmed', 'confirmed', 'customer'];
+      const currentIndex = statuses.indexOf(item.status);
+      item.status = statuses[(currentIndex + 1) % statuses.length];
+      
+      renderAll();
+      saveData();
+    }
+
+    // 項目追加モーダルを表示
+    function addItemToSection(sectionId) {
+      currentEditSection = sectionId;
+      currentEditItem = null;
+      
+      document.getElementById('itemType').value = 'add';
+      document.getElementById('itemTitle').value = '';
+      document.getElementById('itemContent').value = '';
+      document.getElementById('itemStatus').value = 'unconfirmed';
+      
+      document.getElementById('itemModal').classList.add('active');
+    }
+
+    // 項目編集モーダルを表示
+    function editItem(sectionId, itemId) {
+      const section = data.sections.find(s => s.id === sectionId);
+      const item = section.items.find(i => i.id === itemId);
+      
+      currentEditSection = sectionId;
+      currentEditItem = itemId;
+      
+      document.getElementById('itemType').value = item.type;
+      document.getElementById('itemTitle').value = item.title;
+      document.getElementById('itemContent').value = item.content;
+      document.getElementById('itemStatus').value = item.status;
+      
+      document.getElementById('itemModal').classList.add('active');
+    }
+
+    // 項目を保存
+    function saveItem() {
+      const type = document.getElementById('itemType').value;
+      const title = document.getElementById('itemTitle').value;
+      const content = document.getElementById('itemContent').value;
+      const status = document.getElementById('itemStatus').value;
+      
+      if (!title || !content) {
+        showToast('タイトルと内容を入力してください', 'error');
+        return;
+      }
+      
+      const section = data.sections.find(s => s.id === currentEditSection);
+      
+      if (currentEditItem) {
+        // 編集
+        const item = section.items.find(i => i.id === currentEditItem);
+        item.type = type;
+        item.title = title;
+        item.content = content;
+        item.status = status;
+        showToast('項目を更新しました');
+      } else {
+        // 新規追加
+        const newItem = {
+          id: `i${currentEditSection}-${Date.now()}`,
+          type,
+          title,
+          content,
+          status
+        };
+        section.items.push(newItem);
+        showToast('項目を追加しました');
+      }
+      
+      closeItemModal();
+      renderAll();
+      saveData();
+    }
+
+    // 項目削除
+    function deleteItem(sectionId, itemId) {
+      if (!confirm('この項目を削除してもよろしいですか？')) return;
+      
+      const section = data.sections.find(s => s.id === sectionId);
+      section.items = section.items.filter(i => i.id !== itemId);
+      
+      renderAll();
+      saveData();
+      showToast('項目を削除しました');
+    }
+
+    // 項目モーダルを閉じる
+    function closeItemModal() {
+      document.getElementById('itemModal').classList.remove('active');
+    }
+
+    // セクション追加モーダルを表示
+    function showAddSectionModal() {
+      document.getElementById('sectionNumber').value = '';
+      document.getElementById('sectionTitle').value = '';
+      document.getElementById('sectionPriority').value = 'medium';
+      
+      document.getElementById('sectionModal').classList.add('active');
+    }
+
+    // セクションを保存
+    function saveSection() {
+      const number = document.getElementById('sectionNumber').value;
+      const title = document.getElementById('sectionTitle').value;
+      const priority = document.getElementById('sectionPriority').value;
+      
+      if (!number || !title) {
+        showToast('番号とタイトルを入力してください', 'error');
+        return;
+      }
+      
+      const newSection = {
+        id: `s${Date.now()}`,
+        number,
+        title,
+        priority,
+        items: []
+      };
+      
+      data.sections.push(newSection);
+      
+      closeSectionModal();
+      renderAll();
+      saveData();
+      showToast('セクションを追加しました');
+    }
+
+    // セクション削除
+    function deleteSection(sectionId) {
+      if (!confirm('このセクションとすべての項目を削除してもよろしいですか？')) return;
+      
+      data.sections = data.sections.filter(s => s.id !== sectionId);
+      
+      renderAll();
+      saveData();
+      showToast('セクションを削除しました');
+    }
+
+    // セクションモーダルを閉じる
+    function closeSectionModal() {
+      document.getElementById('sectionModal').classList.remove('active');
+    }
+
+    // JSONエクスポート
+    function exportJSON() {
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lean3-comparison-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('JSONファイルをエクスポートしました');
+    }
+
+    // HTMLエクスポート
+    function exportHTML() {
+      const html = generateStaticHTML();
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lean3-comparison-${new Date().toISOString().split('T')[0]}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('HTMLファイルをエクスポートしました');
+    }
+
+    // 静的HTMLを生成
+    function generateStaticHTML() {
+      // 現在のHTMLをベースに、編集機能を除いた静的版を生成
+      return `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>COMS → Lean3 マニュアル変更点分析</title>
+  <style>
+    /* スタイルをコピー（編集機能関連を除く） */
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>COMS → Lean3 マニュアル変更点分析</h1>
+      <p>生成日時: ${new Date().toLocaleString('ja-JP')}</p>
+    </div>
+    ${document.getElementById('summary').outerHTML}
+    ${document.getElementById('content').outerHTML}
+  </div>
+</body>
+</html>`;
+    }
+
+    // トースト通知を表示
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('active');
+      
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 3000);
+    }
+
+    // モーダル外クリックで閉じる
+    document.getElementById('itemModal').addEventListener('click', (e) => {
+      if (e.target.id === 'itemModal') {
+        closeItemModal();
+      }
+    });
+
+    document.getElementById('sectionModal').addEventListener('click', (e) => {
+      if (e.target.id === 'sectionModal') {
+        closeSectionModal();
+      }
+    });
+  </script>
+</body>
+</html>

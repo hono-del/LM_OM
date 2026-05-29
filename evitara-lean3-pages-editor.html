@@ -1,0 +1,3487 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eVITARA → Lean3 項目別変更点分析（編集可能版）</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+      color: white;
+      padding: 30px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header-left p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .header-button {
+      padding: 10px 20px;
+      background: white;
+      color: #1e3a8a;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .header-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .header-button.save {
+      background: #4caf50;
+      color: white;
+    }
+
+    .header-button.export {
+      background: #2196f3;
+      color: white;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      padding: 20px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .summary-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .summary-card.add { border-color: #4caf50; }
+    .summary-card.modify { border-color: #ffeb3b; }
+    .summary-card.delete { border-color: #f44336; }
+    .summary-card.reuse { border-color: #9c27b0; }
+    .summary-card.verify { border-color: #03a9f4; }
+
+    .summary-number {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .legend {
+      padding: 15px 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .add { background: #c8e6c9; }
+    .modify { background: #fff9c4; }
+    .delete { background: #ffcdd2; }
+    .reuse { background: #e1bee7; }
+    .verify { background: #b3e5fc; }
+
+    .toolbar {
+      padding: 15px 30px;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 40px 8px 35px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #4a4a4a;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 16px;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+      display: none;
+    }
+
+    .search-clear:hover {
+      color: #333;
+    }
+
+    .search-clear.visible {
+      display: block;
+    }
+
+    .toolbar-button {
+      padding: 8px 16px;
+      background: #4a4a4a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .toolbar-button:hover {
+      background: #1e3a8a;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-button {
+      padding: 6px 14px;
+      background: #e0e0e0;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .filter-button.active {
+      background: #4a4a4a;
+      color: white;
+    }
+
+    .content {
+      padding: 20px 30px;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .page-card {
+      border: 2px solid;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .page-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .page-card.add {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .page-card.modify {
+      background: #fffde7;
+      border-color: #ffeb3b;
+    }
+
+    .page-card.delete {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+
+    .page-card.reuse {
+      background: #f3e5f5;
+      border-color: #9c27b0;
+    }
+
+    .page-card.verify {
+      background: #e1f5fe;
+      border-color: #03a9f4;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .page-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .page-type {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .type-add { background: #4caf50; }
+    .type-modify { background: #ffeb3b; color: #333; }
+    .type-delete { background: #f44336; }
+    .type-reuse { background: #9c27b0; }
+    .type-verify { background: #03a9f4; }
+
+    .page-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .page-category {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .page-content {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+      max-height: 80px;
+      overflow: hidden;
+    }
+
+    .page-status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .status-unconfirmed {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .status-confirmed {
+      background: #4caf50;
+      color: white;
+    }
+
+    .status-customer {
+      background: #ff9800;
+      color: white;
+    }
+
+    .status-pending {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      display: flex;
+      gap: 20px;
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      max-width: 95vw;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+    }
+
+    .modal-left {
+      flex: 1;
+      max-height: calc(90vh - 60px);
+      overflow-y: auto;
+      padding-right: 20px;
+    }
+
+    .modal-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(90vh - 60px);
+    }
+
+    .pdf-container {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+    }
+
+    .pdf-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #1e3a8a;
+      color: white;
+      font-size: 14px;
+    }
+
+    .pdf-page-info {
+      font-weight: 600;
+    }
+
+    .pdf-viewer {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: white;
+    }
+
+    .pdf-viewer[hidden],
+    .pdf-fallback[hidden],
+    .pdf-js-viewer[hidden] {
+      display: none !important;
+    }
+
+    .pdf-js-viewer {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: auto;
+      background: #525659;
+      align-items: center;
+      padding: 8px;
+    }
+
+    .pdf-js-viewer canvas {
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      background: white;
+    }
+
+    .pdf-page-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 8px;
+      background: #374151;
+      color: white;
+      font-size: 13px;
+      flex-shrink: 0;
+      width: 100%;
+    }
+
+    .pdf-page-nav button {
+      padding: 4px 12px;
+      border: none;
+      border-radius: 4px;
+      background: #1e3a8a;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .pdf-page-nav button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .pdf-fallback {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .pdf-fallback p {
+      margin-bottom: 16px;
+      max-width: 320px;
+    }
+
+    .pdf-fallback .pdf-open-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #1e3a8a;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .pdf-fallback .pdf-open-button:hover {
+      background: #1e40af;
+    }
+
+    .pdf-fallback .pdf-hint {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      line-height: 1;
+    }
+
+    .close-button:hover {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #388e3c;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #bdbdbd;
+    }
+
+    .btn-ai {
+      background: #9c27b0;
+      color: white;
+    }
+
+    .btn-ai:hover {
+      background: #7b1fa2;
+    }
+
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .btn-secondary:hover {
+      background: #bdbdbd;
+    }
+
+    .ai-suggestion {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f3e5f5;
+      border: 2px solid #9c27b0;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .ai-suggestion.active {
+      display: block;
+    }
+
+    .ai-suggestion-header {
+      font-weight: 600;
+      color: #9c27b0;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .ai-change-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #9c27b0;
+    }
+
+    .ai-change-label {
+      font-weight: 600;
+      color: #666;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .ai-change-text {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .ai-change-text.before {
+      color: #d32f2f;
+      text-decoration: line-through;
+    }
+
+    .ai-change-text.after {
+      color: #2e7d32;
+      font-weight: 500;
+    }
+
+    .api-key-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #fff3e0;
+      border: 1px solid #ff9800;
+      border-radius: 6px;
+    }
+
+    .api-key-section input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .api-status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .api-status.success {
+      color: #2e7d32;
+    }
+
+    .api-status.error {
+      color: #d32f2f;
+    }
+
+    .ai-loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #9c27b0;
+    }
+
+    .ai-loading.active {
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #323232;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <h1>eVITARA → Lean3 項目別変更点分析</h1>
+        <p>eVITARAマニュアル全155項目をLean3仕様へ変換</p>
+      </div>
+      <div class="header-actions">
+        <button class="header-button save" onclick="saveData()">💾 保存</button>
+        <button class="header-button export" onclick="exportCSV()">📊 CSVエクスポート</button>
+        <button class="header-button export" onclick="exportJSON()">📥 JSONエクスポート</button>
+        <button class="header-button export" onclick="exportHTML()">📄 HTMLエクスポート</button>
+      </div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color add"></div>
+        <span>追加（新規作成）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color modify"></div>
+        <span>書き換え（要修正）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color delete"></div>
+        <span>削除（不要）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color reuse"></div>
+        <span>流用（そのまま使用）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color verify"></div>
+        <span>要確認（判断保留）</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="キーワード検索（例: バッテリー、充電、操作）" oninput="handleSearch()">
+        <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+      </div>
+      <button class="toolbar-button" onclick="resetFilters()">全て表示</button>
+      <div class="filter-group">
+        <button class="filter-button active" data-filter="all" onclick="filterPages('all')">全て</button>
+        <button class="filter-button" data-filter="add" onclick="filterPages('add')">追加</button>
+        <button class="filter-button" data-filter="modify" onclick="filterPages('modify')">書き換え</button>
+        <button class="filter-button" data-filter="delete" onclick="filterPages('delete')">削除</button>
+        <button class="filter-button" data-filter="reuse" onclick="filterPages('reuse')">流用</button>
+        <button class="filter-button" data-filter="verify" onclick="filterPages('verify')">要確認</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-grid" id="pageGrid"></div>
+    </div>
+  </div>
+
+  <!-- 編集モーダル -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-right">
+        <div class="pdf-container">
+          <div class="pdf-toolbar">
+            <span class="pdf-page-info" id="pdfPageInfo">eVITARA PDF: ページ 1</span>
+            <a id="pdfDownloadLink" href="#" target="_blank" style="color: white; text-decoration: none;">📄 別タブで開く</a>
+          </div>
+          <div class="pdf-js-viewer" id="pdfJsViewer" hidden>
+            <canvas id="pdfCanvas"></canvas>
+            <div class="pdf-page-nav">
+              <button type="button" id="pdfPrevBtn" onclick="changePdfPage(-1)">← 前へ</button>
+              <span id="pdfPageIndicator">- / -</span>
+              <button type="button" id="pdfNextBtn" onclick="changePdfPage(1)">次へ →</button>
+            </div>
+          </div>
+          <iframe class="pdf-viewer" id="pdfViewer" src="" title="eVITARA PDF" hidden></iframe>
+          <div class="pdf-fallback" id="pdfFallback" hidden>
+            <p>ブラウザのセキュリティ制限により、HTMLファイルを直接開いた状態ではPDFを画面内に表示できません。</p>
+            <a class="pdf-open-button" id="pdfOpenButton" href="#" target="_blank" rel="noopener">📄 PDFを開く</a>
+            <p class="pdf-hint">埋め込み表示するには <code>start-server.bat</code> を実行し、<br><code>http://localhost:8765/evitara-lean3-pages-editor.html</code> から開いてください。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-left">
+        <div class="modal-header">
+          <span id="modalTitle">項目編集</span>
+          <button class="close-button" onclick="closeModal()">×</button>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">項目No</label>
+          <input type="text" class="form-input" id="itemNo" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ページ数</label>
+          <input type="number" class="form-input" id="pageCount" min="0">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">大項目</label>
+          <input type="text" class="form-input" id="categoryLarge">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">中項目</label>
+          <input type="text" class="form-input" id="categoryMedium">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">小項目（ページタイトル）</label>
+          <input type="text" class="form-input" id="itemTitle" placeholder="例: 充電について">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">分類</label>
+          <select class="form-select" id="itemType">
+            <option value="追加">追加（新規作成）</option>
+            <option value="書き換え">書き換え（要修正）</option>
+            <option value="削除">削除（不要）</option>
+            <option value="流用">流用（そのまま使用）</option>
+            <option value="要確認">要確認（判断保留）</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">差分・備考</label>
+          <textarea class="form-textarea" id="itemDiff" placeholder="eVITARAとCOMSの差分、変更理由を入力..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lean3での扱い</label>
+          <textarea class="form-textarea" id="itemLean3" placeholder="Lean3マニュアルでどのように扱うかを入力..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">確認ステータス</label>
+          <select class="form-select" id="itemStatus">
+            <option value="未確認">未確認</option>
+            <option value="確認済">確認済</option>
+            <option value="顧客確認">顧客確認</option>
+            <option value="保留">保留</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button class="btn btn-danger" onclick="deleteItem()">削除</button>
+          <button class="btn btn-primary" onclick="saveItem()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- トースト通知 -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    // データ構造: eVITARA → Lean3 変換マッピング
+    let currentSearchKeyword = '';
+    let currentFilter = 'all';
+    
+    let items = [
+  {
+    "no": "1",
+    "pages": 2,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "はじめに",
+    "title": "知っておいていただきたいこと",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "知っておいていただきたいこと",
+    "comsSmall": "本書の内容について",
+    "diff": "COМSは「必ず読みましょう」セクションに安全注意事項を記載",
+    "lean3": "Lean3向けに車両特性・原付ミニカー区分・保管方法を書き換え"
+  },
+  {
+    "no": "2",
+    "pages": 1,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "はじめに",
+    "title": "データの記録について",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし。",
+    "lean3": "Lean3のデータ記録機能に応じて書き換え。5インチディスプレイとの連携"
+  },
+  {
+    "no": "3",
+    "pages": 1,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "はじめに",
+    "title": "充電ポート・走行するとき・車検/点検について",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには「充電について」「走行するときは！」で記載",
+    "lean3": "車検不要、100V/200V充電対応に書き換え"
+  },
+  {
+    "no": "4",
+    "pages": 1,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "本書の見かた",
+    "title": "本書の構成",
+    "type": "流用",
+    "status": "未確認",
+    "comsMedium": "安全に関する表示",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "そのまま流用可能"
+  },
+  {
+    "no": "5",
+    "pages": 2,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "クイックガイド",
+    "title": "車両装備",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "イラスト目次",
+    "comsSmall": "-",
+    "diff": "COMSには「イラスト目次」として外観図・運転者席付近配置図あり",
+    "lean3": "Lean3の外観図（Active Lean装備、密閉キャビン）に差し替え"
+  },
+  {
+    "no": "6",
+    "pages": 11,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "クイックガイド",
+    "title": "内装",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "イラスト目次",
+    "comsSmall": "-",
+    "diff": "COMSには「イラスト目次」として運転者席付近配置図あり、警告ブザーの記載はなし",
+    "lean3": "Lean3の内装（5インチタッチディスプレイ、プッシュ式シフト、USB Type-C等）に差し替え"
+  },
+  {
+    "no": "7",
+    "pages": 4,
+    "categoryLarge": "はじめに",
+    "categoryMedium": "よくあるご質問(Q&A)",
+    "title": "各種質問と回答",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3特有の質問（Active Lean Technology、傾斜の仕組み、200V充電等）に差し替え"
+  },
+  {
+    "no": "8",
+    "pages": 1,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "安全にお使いいただくために",
+    "title": "運転する前に",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "確認しましたか？",
+    "diff": "COMS:日常点検・タイヤ空気圧・ペダル位置・シフトレバー確認・ブレーキの効き確認。eVITARAは一般的な説明、COMSは具体的なチェック項目",
+    "lean3": "12名乗車、原付ミニカー特性、Active Lean Technology注意事項に書き換え"
+  },
+  {
+    "no": "9",
+    "pages": 4,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "安全にお使いいただくために",
+    "title": "安全なドライブのために",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "走行するときは！",
+    "diff": "COMS:道路交通法・シートベルト着用・雨天時注意・転倒注意など多数。eVITARAは一般的、COMSは原付四輪特有の注意事項が詳細",
+    "lean3": "最高速度60km/h、傾斜時の注意、密閉キャビン特性に書き換え"
+  },
+  {
+    "no": "10",
+    "pages": 4,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "安全にお使いいただくために",
+    "title": "シートベルト",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "安全装置(シートベルト)",
+    "comsSmall": "シートベルト",
+    "diff": "eVITARA:3点式/2点式。COMS:2点式のみ。eVITARAの方がSRSエアバッグとの連携で詳細",
+    "lean3": "Lean3の3点式シートベルト(ELR付き)に書き換え。12名乗車対応"
+  },
+  {
+    "no": "11",
+    "pages": 4,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "安全にお使いいただくために",
+    "title": "シートベルトの着用のしかた・外しかた",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "安全装置(シートベルト)",
+    "comsSmall": "シートベルト",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3のシートベルトに合わせて書き換え"
+  },
+  {
+    "no": "12",
+    "pages": 8,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "安全にお使いいただくために",
+    "title": "SRSエアバッグ",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし。COМSにはエアバッグ装備なし",
+    "lean3": "Lean3にはエアバッグ装備なし"
+  },
+  {
+    "no": "13",
+    "pages": 6,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "安全にお使いいただくために",
+    "title": "SRSエアバッグシステムの作動",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3にはエアバッグ装備なし"
+  },
+  {
+    "no": "14",
+    "pages": 4,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "お子さまの安全のために",
+    "title": "お子さまを乗せるときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "危険です！",
+    "diff": "COMS:お子様の乗車禁止(1人乗り)。eVITARA:お子さま用シート使用を前提",
+    "lean3": "12名乗車の制約、お子様乗車時の注意（2名乗車可能な場合）"
+  },
+  {
+    "no": "15",
+    "pages": 3,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "お子さまの安全のために",
+    "title": "お子さま用シート",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(1人乗り)※台湾仕様は要検討",
+    "lean3": "12名乗車で原則お子様用シート不要"
+  },
+  {
+    "no": "16",
+    "pages": 4,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "お子さまの安全のために",
+    "title": "座席位置別のお子さま用シート適合性について",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "お子様用シート非対応"
+  },
+  {
+    "no": "17",
+    "pages": 6,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "お子さまの安全のために",
+    "title": "お子さま用シートの取り付け",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "お子様用シート非対応"
+  },
+  {
+    "no": "18",
+    "pages": 1,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "警報装置",
+    "title": "イモビライザーシステム",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3のスマートキーにイモビライザー機能があるか確認"
+  },
+  {
+    "no": "19",
+    "pages": 5,
+    "categoryLarge": "1 安全なドライブのために",
+    "categoryMedium": "警報装置",
+    "title": "セキュリティアラーム(警報装置)",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3のセキュリティ機能を確認"
+  },
+  {
+    "no": "20",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "EVシステム",
+    "title": "EVシステムについて",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "危険です！",
+    "diff": "COMS:DC72V高電圧注意。eVITARA:EV特性全般(回生ブレーキ等)を詳細に説明",
+    "lean3": "Lean3のインホイールモーター、LFPバッテリー、前輪駆動方式に書き換え"
+  },
+  {
+    "no": "21",
+    "pages": 4,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "EVシステム",
+    "title": "EVシステムの注意",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "危険です！",
+    "diff": "COMS:高電圧部の点検整備禁止(DC72V)。eVITARA:より高電圧システムの詳細な注意事項",
+    "lean3": "Lean3の電圧系統、高電圧注意事項に書き換え"
+  },
+  {
+    "no": "22",
+    "pages": 1,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "EVシステム",
+    "title": "電気自動車運転のアドバイス",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "運転操作",
+    "comsSmall": "(2)走行",
+    "diff": "COMS:回生ブレーキ活用を含む。eVITARAの方が詳細",
+    "lean3": "Active Lean Technology考慮、回生ブレーキ特性、エコ運転に書き換え"
+  },
+  {
+    "no": "23",
+    "pages": 1,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "EVシステム",
+    "title": "走行可能距離について",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(1)メーターの見方",
+    "diff": "COMS:バッテリー残量計の説明のみ。eVITARAは走行可能距離表示の詳細な説明",
+    "lean3": "航続距離約100km、WLTC 8.1kWh/100km、変動要因に書き換え"
+  },
+  {
+    "no": "24",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "充電に関する装備",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(1)充電に関する装備",
+    "diff": "COMS内容と同等。eVITARAはタイマー充電等の機能が追加",
+    "lean3": "100V/200V充電対応、充電インレット位置、充電時間比較表を追加"
+  },
+  {
+    "no": "25",
+    "pages": 4,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "普通充電ケーブルについて",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(1)充電に関する装備",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3の充電ケーブル仕様に書き換え"
+  },
+  {
+    "no": "26",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "普通充電コネクターのロック・アンロック",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(簡易な充電コード差し込み口のみ)",
+    "lean3": "Lean3の充電コネクター施錠方式に書き換え"
+  },
+  {
+    "no": "27",
+    "pages": 1,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "接続可能な外部電源について",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(1)充電に関する装備",
+    "diff": "eVITARA:普通充電・急速充電・V2H対応。COMS:100Vアース付きコンセントのみ",
+    "lean3": "100V/200V家庭用電源、急速充電非対応に書き換え"
+  },
+  {
+    "no": "28",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "充電方法について",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(5)充電の方法",
+    "diff": "COMS内容と同等。eVITARAは急速充電・V2Hを追加",
+    "lean3": "100V/200Vの充電時間比較、充電手順に書き換え"
+  },
+  {
+    "no": "29",
+    "pages": 1,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "充電に関するアドバイス",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(4)バッテリーを長持ちさせるための充電方法",
+    "diff": "COMS内容と同等",
+    "lean3": "LFPバッテリー特性、長期保管時推奨SOC(5080%)、満充電保管回避に書き換え"
+  },
+  {
+    "no": "30",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "充電の前に知っておいていただきたいこと",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(3)充電時の注意事項",
+    "diff": "COMS内容と同等",
+    "lean3": "家庭用電源充電の注意、寒冷地での充電時間延長に書き換え"
+  },
+  {
+    "no": "31",
+    "pages": 6,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "普通充電のしかた",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "充電について",
+    "comsSmall": "(5)充電の方法",
+    "diff": "COMS内容と同等",
+    "lean3": "100V/200V充電手順、コネクタ接続方法に書き換え"
+  },
+  {
+    "no": "32",
+    "pages": 5,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "急速充電・V2H充電/V2H給電のしかた",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(普通充電のみ)",
+    "lean3": "Lean3は急速充電・V2H非対応"
+  },
+  {
+    "no": "33",
+    "pages": 5,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "タイマー充電機能を使う",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3にタイマー充電機能があるか確認。5インチディスプレイでの設定方法"
+  },
+  {
+    "no": "34",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "マイルームモードを使う",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(エアコン装備なし)",
+    "lean3": "Lean3にプリエアコン機能があるか確認"
+  },
+  {
+    "no": "35",
+    "pages": 13,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "充電",
+    "title": "正常に充電できないときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(1)警告機能",
+    "diff": "COMS:充電表示灯の説明。eVITARAの方がエラー対処が詳細",
+    "lean3": "Lean3の充電エラー表示、トラブルシューティングに書き換え"
+  },
+  {
+    "no": "36",
+    "pages": 6,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "DC外部給電システム",
+    "title": "DC外部給電システムの使いかた",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には外部給電機能なし"
+  },
+  {
+    "no": "37",
+    "pages": 3,
+    "categoryLarge": "2 EVシステム",
+    "categoryMedium": "DC外部給電システム",
+    "title": "DC外部給電システムが正常に作動しないときは",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には外部給電機能なし"
+  },
+  {
+    "no": "38",
+    "pages": 5,
+    "categoryLarge": "3 走行に関する情報表示",
+    "categoryMedium": "メーターディスプレイ",
+    "title": "計器の見かた",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(1)メーターの見方",
+    "diff": "COMS内容と同等。eVITARA:パワーメーター。COMS:シフトポジション表示",
+    "lean3": "5インチタッチディスプレイの表示項目、UI操作、アイコン説明に書き換え"
+  },
+  {
+    "no": "39",
+    "pages": 3,
+    "categoryLarge": "3 走行に関する情報表示",
+    "categoryMedium": "メーターディスプレイ",
+    "title": "マルチインフォメーションディスプレイ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(簡易メーターのみ)",
+    "lean3": "5インチディスプレイの設定メニュー、各種情報表示に書き換え"
+  },
+  {
+    "no": "40",
+    "pages": 3,
+    "categoryLarge": "3 走行に関する情報表示",
+    "categoryMedium": "センターディスプレイ",
+    "title": "センターディスプレイ",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3は5インチディスプレイに統合"
+  },
+  {
+    "no": "41",
+    "pages": 23,
+    "categoryLarge": "3 走行に関する情報表示",
+    "categoryMedium": "警告と表示",
+    "title": "警告灯と表示灯",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(2)表示灯・警告灯の見方",
+    "diff": "COMS内容と同等。eVITARAの方が警告灯の種類が多い",
+    "lean3": "Lean3の警告灯、5インチディスプレイでの警告表示に書き換え"
+  },
+  {
+    "no": "42",
+    "pages": 22,
+    "categoryLarge": "3 走行に関する情報表示",
+    "categoryMedium": "警告と表示",
+    "title": "マルチインフォメーションディスプレイのメッセージ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(1)警告機能",
+    "diff": "COMS:警告ブザーと警告灯。eVITARAの方が詳細なメッセージ表示",
+    "lean3": "5インチディスプレイの警告メッセージ、エラーコードに書き換え"
+  },
+  {
+    "no": "43",
+    "pages": 2,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "キー",
+    "title": "キー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(4)運転装置",
+    "diff": "COMS:キースイッチのみ。eVITARA:携帯リモコン・キーレス機能",
+    "lean3": "スマートキー（電子キー）、近接自動解錠、電池交換方法に書き換え"
+  },
+  {
+    "no": "44",
+    "pages": 3,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ドアの開閉",
+    "title": "ドア",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSにはドアなし(オープンボディ)",
+    "lean3": "Lean3のハードドア（密閉キャビン）、施錠/解錠方法に書き換え"
+  },
+  {
+    "no": "45",
+    "pages": 3,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ドアの開閉",
+    "title": "バックドア",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(3)車両仕様別装備",
+    "diff": "COMS:リヤゲート(B-COMデッキのみ)。eVITARA:全車標準装備",
+    "lean3": "Lean3にはバックドアなし"
+  },
+  {
+    "no": "46",
+    "pages": 2,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ドアの開閉",
+    "title": "キーレスエントリー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "スマートキーでの施錠/解錠、作動範囲に統合"
+  },
+  {
+    "no": "47",
+    "pages": 4,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ドアの開閉",
+    "title": "キーレスプッシュスタートシステム",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(キースイッチ)",
+    "lean3": "スマートキー機能に統合"
+  },
+  {
+    "no": "48",
+    "pages": 3,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "シートの調節",
+    "title": "前席シート",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(1)収納装備",
+    "diff": "COMS:シートスライドレバーあり。eVITARAの方が調節機能多い",
+    "lean3": "Lean3のシート調節機能（12名乗車対応）に書き換え"
+  },
+  {
+    "no": "49",
+    "pages": 7,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "シートの調節",
+    "title": "後席シート",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(1人乗り)",
+    "lean3": "Lean3は12名乗車のため後席なし"
+  },
+  {
+    "no": "50",
+    "pages": 1,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ハンドル/ミラー",
+    "title": "ハンドル",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMS:固定式ハンドル。eVITARA:チルト・テレスコピック調節可能",
+    "lean3": "ステアバイワイヤ方式、ハーフターンステアリング、操舵感の説明に書き換え"
+  },
+  {
+    "no": "51",
+    "pages": 4,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ハンドル/ミラー",
+    "title": "ミラー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(3)視界の確保",
+    "diff": "COMS:サイドミラーのみ。eVITARA:ルームミラー・ドアミラー(電動格納・ヒーター付)",
+    "lean3": "Lean3のミラー仕様（ドアミラー/バックミラー）に書き換え"
+  },
+  {
+    "no": "52",
+    "pages": 7,
+    "categoryLarge": "4 運転する前に",
+    "categoryMedium": "ウインドーの開閉",
+    "title": "ウインドー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(ウインドーなし)",
+    "lean3": "パワーウインドウ操作、密閉キャビンの換気注意に書き換え"
+  },
+  {
+    "no": "53",
+    "pages": 7,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "出発の前に",
+    "title": "運転するとき",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "運転操作",
+    "comsSmall": "(1)走行する前に",
+    "diff": "COMS内容と同等。COMS:キースイッチON・メーター確認・シフトレバー位置確認を明示",
+    "lean3": "Active Lean Technology確認、走行前チェック項目に書き換え"
+  },
+  {
+    "no": "54",
+    "pages": 1,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "出発の前に",
+    "title": "荷物を積むときの注意",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "危険です！",
+    "diff": "COMS:積載オーバー禁止・トランクボックス/デリバリーボックスへの収納。eVITARA:一般的な積載注意",
+    "lean3": "Lean3の室内収納（荷室スペース、ペットボトルホルダー）、積載制限に書き換え"
+  },
+  {
+    "no": "55",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転手順",
+    "title": "パワースイッチ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(4)運転装置",
+    "diff": "COMS:キースイッチ(ON/OFF)。eVITARA:パワースイッチ(ONモード/READYモード)",
+    "lean3": "Lean3のスタートスイッチ、ONモード/READYモードに書き換え"
+  },
+  {
+    "no": "56",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転手順",
+    "title": "ダイヤルシフトの操作",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(4)運転装置",
+    "diff": "COMS:シフトレバー(P・R・N・D)。eVITARA:ダイヤルシフト。機能は同等",
+    "lean3": "プッシュ式シフトスイッチ（D/R/N/P）の操作方法に書き換え"
+  },
+  {
+    "no": "57",
+    "pages": 2,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転手順",
+    "title": "走行モード",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(走行モード切替機能なし)",
+    "lean3": "Lean3に走行モード切替機能があるか確認"
+  },
+  {
+    "no": "58",
+    "pages": 3,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転手順",
+    "title": "ヒルディセントコントロール(4WD車)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3は前輪駆動、該当機能なし"
+  },
+  {
+    "no": "59",
+    "pages": 1,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転手順",
+    "title": "方向指示器レバー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(3)視界の確保",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3のターンシグナルスイッチ操作に書き換え"
+  },
+  {
+    "no": "60",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転手順",
+    "title": "電動パーキングブレーキ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(4)運転装置",
+    "diff": "COMS:手動パーキングブレーキ。eVITARA:電動パーキングブレーキ(オートホールド機能付)",
+    "lean3": "パーキングブレーキペダル（Lean3仕様）に書き換え"
+  },
+  {
+    "no": "61",
+    "pages": 4,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "ライト・ワイパーの使いかた",
+    "title": "ライトスイッチ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(3)視界の確保",
+    "diff": "eVITARA:オート機能あり。COMS:手動切替のみ",
+    "lean3": "LEDヘッドランプ操作、オート機能に書き換え"
+  },
+  {
+    "no": "62",
+    "pages": 2,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "ライト・ワイパーの使いかた",
+    "title": "フォグランプスイッチ",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(フォグランプ装備なし)",
+    "lean3": "Lean3にはフォグランプなし"
+  },
+  {
+    "no": "63",
+    "pages": 2,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "ライト・ワイパーの使いかた",
+    "title": "ワイパー/ウォッシャー(フロント)",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(3)視界の確保",
+    "diff": "eVITARA:AUTO機能・ミスト機能あり。COMS:手動操作のみ",
+    "lean3": "Lean3のワイパースイッチ操作に書き換え"
+  },
+  {
+    "no": "64",
+    "pages": 2,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "ライト・ワイパーの使いかた",
+    "title": "ワイパー/ウォッシャー(リヤ)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(リヤワイパーなし)",
+    "lean3": "Lean3にはリヤワイパーなし"
+  },
+  {
+    "no": "65",
+    "pages": 13,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "スズキ セーフティサポート",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(運転支援装置なし)",
+    "lean3": "Lean3には運転支援装置なし"
+  },
+  {
+    "no": "66",
+    "pages": 7,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "デュアルセンサーブレーキサポート(DSBS )",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "67",
+    "pages": 3,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "誤発進抑制機能",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "68",
+    "pages": 1,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "発進お知らせ機能",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "69",
+    "pages": 4,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "アダプティブハイビームシステム",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "70",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "車線逸脱抑制機能",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "71",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "車線維持支援",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "72",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "二次衝突軽減ブレーキ",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "73",
+    "pages": 4,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "アダプティブクルーズコントロール",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "74",
+    "pages": 3,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "標識認識機能",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "75",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "ブラインドスポットモニター(BSM)(車線変更サポート付)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "76",
+    "pages": 2,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "リヤクロストラフィックアラート(RCTA)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "77",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "パーキングセンサー",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "78",
+    "pages": 5,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "低速時ブレーキサポート(前進・後退)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "79",
+    "pages": 3,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "後方誤発進抑制機能",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "80",
+    "pages": 16,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "全方位モニター",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "81",
+    "pages": 4,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "ドライバーモニタリングシステム(DMS)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "82",
+    "pages": 7,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転支援装置について",
+    "title": "運転支援装置",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には運転支援装置なし"
+  },
+  {
+    "no": "83",
+    "pages": 2,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転するときのアドバイス",
+    "title": "走行するときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "走行するときは！",
+    "diff": "COMS:クリープ現象・上り坂後退注意・スタック時注意等詳細。eVITARA:一般的なアドバイス",
+    "lean3": "Active Lean Technology使用時の注意、傾斜時の挙動、最高速度60km/hでの走行に書き換え"
+  },
+  {
+    "no": "84",
+    "pages": 1,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転するときのアドバイス",
+    "title": "駐車するときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "運転操作",
+    "comsSmall": "(4)駐車",
+    "diff": "COMS内容と同等",
+    "lean3": "小回り性能（最小回転半径3.6m）、都市部での駐車に書き換え"
+  },
+  {
+    "no": "85",
+    "pages": 7,
+    "categoryLarge": "5 運転するときは",
+    "categoryMedium": "運転するときのアドバイス",
+    "title": "寒冷時の運転",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "寒冷時の取扱い",
+    "comsSmall": "寒冷時の注意",
+    "diff": "COMS内容と同等。バッテリー性能低下・走行距離減少等",
+    "lean3": "LFPバッテリー寒冷地性能、航続距離減少、充電時間延長に書き換え"
+  },
+  {
+    "no": "86",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "エアコンの吹き出し口",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(エアコン装備なし)",
+    "lean3": "Lean3のエアアウトレット位置（足元含む）に書き換え"
+  },
+  {
+    "no": "87",
+    "pages": 2,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "オートエアコン",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(2)その他の装備",
+    "diff": "COMS:外気導入ダクトのみ。eVITARA:オートエアコン標準装備",
+    "lean3": "Lean3の空調操作（タッチコントロールパネル）に書き換え"
+  },
+  {
+    "no": "88",
+    "pages": 5,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "各スイッチの使いかた",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3の空調操作、5インチディスプレイでの設定に書き換え"
+  },
+  {
+    "no": "89",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "エアコンの上手な使いかた",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "密閉キャビンでの換気、航続距離への影響に書き換え"
+  },
+  {
+    "no": "90",
+    "pages": 2,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "リモート操作によるエアコン操作について",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3にスマホ連動プリエアコン機能があるか確認"
+  },
+  {
+    "no": "91",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "シートヒーター",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3にはシートヒーターなし"
+  },
+  {
+    "no": "92",
+    "pages": 2,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "エアコン・ヒーターの使いかた",
+    "title": "ステアリングヒーター",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3にはステアリングヒーターなし"
+  },
+  {
+    "no": "93",
+    "pages": 4,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "室内灯の使いかた",
+    "title": "室内灯",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(室内灯なし)",
+    "lean3": "Lean3の室内灯仕様を確認"
+  },
+  {
+    "no": "94",
+    "pages": 2,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "収納スペース",
+    "title": "収納スペース",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(1)収納装備",
+    "diff": "COMS:小物入れ・シートアンダートレイ。eVITARA:グローブボックス・センターコンソールボックス等多数",
+    "lean3": "Lean3の収納（荷室スペース L1000×W80×H100mm等）に書き換え"
+  },
+  {
+    "no": "95",
+    "pages": 2,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "収納スペース",
+    "title": "ドリンクホルダー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(1)収納装備",
+    "diff": "COMS:小物入れで代用。eVITARA:専用ドリンクホルダー",
+    "lean3": "ペットボトルホルダー位置に書き換え"
+  },
+  {
+    "no": "96",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "収納スペース",
+    "title": "ショッピングフック",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "97",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "収納スペース",
+    "title": "ラゲッジシェルフ(荷室カバー)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "98",
+    "pages": 2,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "収納スペース",
+    "title": "ラゲッジボード",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(3)車両仕様別装備",
+    "diff": "COMS:トランクボックス・デリバリーボックス・デッキ(仕様別)。eVITARA:標準装備",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "99",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "サンバイザー",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(4)オプション部品",
+    "diff": "COMS:オプション。eVITARA:標準装備",
+    "lean3": "Lean3のサンバイザー仕様を確認"
+  },
+  {
+    "no": "100",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "可倒式アシストグリップ",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "101",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "フットレスト",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "102",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "アームレスト(ひじ掛け)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "103",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "アクセサリーソケット",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(4)オプション部品",
+    "diff": "COMS:オプション(12V)。eVITARA:標準装備",
+    "lean3": "USB Type-Cに置き換え"
+  },
+  {
+    "no": "104",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "USBソケット",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "USB Type-C端子（2口）、充電機能、位置に書き換え"
+  },
+  {
+    "no": "105",
+    "pages": 10,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "AC電源コンセント(V、1500W)[非常時給電モード付]",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "106",
+    "pages": 5,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "ワイヤレス充電",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "107",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "ガラスルーフ(サンシェード付き)(タイプ別装備)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(オープンボディ)",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "108",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "ルーフラックアンカー",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "109",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "アンテナ",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3のアンテナ仕様を確認"
+  },
+  {
+    "no": "110",
+    "pages": 1,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "オーディオ機能について",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3のBluetooth接続、スマホ連携を確認"
+  },
+  {
+    "no": "111",
+    "pages": 3,
+    "categoryLarge": "6 装備の取扱い",
+    "categoryMedium": "そのほかの装備",
+    "title": "ステアリングオーディオスイッチ",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当装備なし"
+  },
+  {
+    "no": "112",
+    "pages": 4,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "外装の手入れ",
+    "title": "外装のお手入れ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(2)お手入れ",
+    "diff": "COMS内容と同等。洗車・ワックスがけ・高圧洗浄機注意",
+    "lean3": "Lean3の外装素材、洗車方法、充電インレット部の清掃注意に書き換え"
+  },
+  {
+    "no": "113",
+    "pages": 2,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "内装の手入れ",
+    "title": "内装のお手入れ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(2)お手入れ",
+    "diff": "COMS内容と同等。シート手入れ・樹脂部品",
+    "lean3": "密閉キャビン内装、5インチディスプレイの清掃方法に書き換え"
+  },
+  {
+    "no": "114",
+    "pages": 2,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "ボンネット",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(1)日常点検",
+    "diff": "COMS:メンテナンスホール。eVITARA:ボンネット",
+    "lean3": "Lean3はユーザーメンテナンス想定外"
+  },
+  {
+    "no": "115",
+    "pages": 1,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "ウインドーウォッシャー液の補充",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(1)日常点検",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3のウォッシャータンク位置、補充方法に書き換え"
+  },
+  {
+    "no": "116",
+    "pages": 2,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "タイヤの点検",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(1)日常点検",
+    "diff": "COMS内容と同等。空気圧・溝深さ・摩耗状態",
+    "lean3": "Lean3のタイヤサイズ（前90/90-14、後150/70-14）、空気圧、点検方法に書き換え"
+  },
+  {
+    "no": "117",
+    "pages": 2,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "エアコンのお手入れ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(エアコン装備なし)",
+    "lean3": "Lean3のエアコンフィルター（ある場合）交換方法に書き換え"
+  },
+  {
+    "no": "118",
+    "pages": 1,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "携帯リモコン",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(3)電球(バルブ)の交換",
+    "diff": "COMS:キースイッチのみ(電池交換不要)。eVITARA:携帯リモコン電池交換",
+    "lean3": "スマートキーの電池交換方法に書き換え"
+  },
+  {
+    "no": "119",
+    "pages": 8,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "ヒューズが切れたときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(3)電球(バルブ)の交換",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3のヒューズボックス位置、ヒューズ配置図に書き換え"
+  },
+  {
+    "no": "120",
+    "pages": 1,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "電球の交換",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(3)電球(バルブ)の交換",
+    "diff": "COMS内容と同等。eVITARA:LED電球多数(販売店対応)",
+    "lean3": "LED一体型のためユーザー交換不可、サービス対応のみ"
+  },
+  {
+    "no": "121",
+    "pages": 5,
+    "categoryLarge": "7 お手入れのしかた",
+    "categoryMedium": "簡単な点検・部品交換",
+    "title": "ワイパー",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(3)電球(バルブ)の交換",
+    "diff": "COMSには簡易な記載。eVITARAの方が詳細",
+    "lean3": "Lean3のワイパーブレード交換方法に書き換え"
+  },
+  {
+    "no": "122",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "まずはじめに",
+    "title": "非常点滅灯表示灯スイッチ(ハザードランプ)",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "操作装置",
+    "comsSmall": "(3)視界の確保",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3のハザードスイッチ位置、操作方法に書き換え"
+  },
+  {
+    "no": "123",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "まずはじめに",
+    "title": "故障したときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "点検を受けてください！",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3の販売店連絡先、サポート体制に書き換え"
+  },
+  {
+    "no": "124",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "まずはじめに",
+    "title": "万一、事故が起きたときは",
+    "type": "流用",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには一般的な記載なし。「必ず読みましょう」に事故時の対処含む",
+    "lean3": "一般的な内容として流用可能"
+  },
+  {
+    "no": "125",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "まずはじめに",
+    "title": "発炎筒",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には発炎筒装備なし"
+  },
+  {
+    "no": "126",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "まずはじめに",
+    "title": "車両を緊急停止するには",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし。キースイッチOFFで対応",
+    "lean3": "Lean3のスタートスイッチOFF、緊急停止方法に書き換え"
+  },
+  {
+    "no": "127",
+    "pages": 2,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "まずはじめに",
+    "title": "水没/冠水したときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "走行するときは！",
+    "diff": "COMS:冠水路走行禁止(10cm以上)。eVITARA:水没時の脱出方法含む",
+    "lean3": "小型EV特性、高電圧部の安全、脱出方法に書き換え"
+  },
+  {
+    "no": "128",
+    "pages": 7,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "けん引について",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(2)けん引",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3の小型車体でのけん引方法、制限事項に書き換え"
+  },
+  {
+    "no": "129",
+    "pages": 5,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "スズキ緊急通報(ヘルプネット)",
+    "type": "削除",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3には該当機能なし"
+  },
+  {
+    "no": "130",
+    "pages": 11,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "パンクしたときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "走行するときは！",
+    "diff": "COMS:スペアタイヤなし・販売店連絡。eVITARA:パンク修理キット使用方法",
+    "lean3": "Lean3はスペア交換より救援前提、パンク時の対処に書き換え"
+  },
+  {
+    "no": "131",
+    "pages": 3,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "鉛バッテリーあがりのときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(1)警告機能",
+    "diff": "COMS:補機バッテリー警告。eVITARA:ジャンプスタート方法詳細",
+    "lean3": "Lean3の補機バッテリー（12V）あがり時の対処に書き換え"
+  },
+  {
+    "no": "132",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "EVシステムが始動できないときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(1)警告機能",
+    "diff": "COMS内容と同等",
+    "lean3": "Lean3の始動不可時の確認項目、対処方法に書き換え"
+  },
+  {
+    "no": "133",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "充電リッドが開かないときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし(簡易な充電コード差し込み口)",
+    "lean3": "Lean3の充電インレット緊急開錠方法に書き換え"
+  },
+  {
+    "no": "134",
+    "pages": 1,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "オーバーヒートしたときは",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(1)警告機能",
+    "diff": "COMS:モーター過熱警告。eVITARA:冷却系統過熱対処",
+    "lean3": "Lean3のモーター/バッテリー過熱時の対処に書き換え"
+  },
+  {
+    "no": "135",
+    "pages": 2,
+    "categoryLarge": "8 万一のとき",
+    "categoryMedium": "トラブルが起きたときの対処方法",
+    "title": "スタック(立ち往生)したときは",
+    "type": "流用",
+    "status": "未確認",
+    "comsMedium": "必ず読みましょう",
+    "comsSmall": "走行するときは！",
+    "diff": "COMS内容と同等",
+    "lean3": "一般的な内容として流用可能"
+  },
+  {
+    "no": "136",
+    "pages": 1,
+    "categoryLarge": "9 サービスデータ",
+    "categoryMedium": "仕様一覧",
+    "title": "車体番号",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "警告・使用方法ラベルの種類と貼付け位置",
+    "comsSmall": "ラベル類",
+    "diff": "COMS:型式認定番号標。eVITARA:車体番号位置",
+    "lean3": "Lean3の車体番号位置、型式に書き換え"
+  },
+  {
+    "no": "137",
+    "pages": 2,
+    "categoryLarge": "9 サービスデータ",
+    "categoryMedium": "仕様一覧",
+    "title": "サービスデータ",
+    "type": "書き換え",
+    "status": "未確認",
+    "comsMedium": "メンテナンス",
+    "comsSmall": "(5)メンテナンスデータ",
+    "diff": "COMS内容と同等。車両諸元・バッテリー容量・タイヤサイズ等",
+    "lean3": "Lean3の諸元（2470×970×1570mm、515kg、590Wモーター、航続100km等）に書き換え"
+  },
+  {
+    "no": "138",
+    "pages": 8,
+    "categoryLarge": "9 サービスデータ",
+    "categoryMedium": "仕様一覧",
+    "title": "こんな機能が設定切替え(カスタマイズ)できます",
+    "type": "要確認",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには該当なし",
+    "lean3": "Lean3の5インチディスプレイでのカスタマイズ項目を確認"
+  },
+  {
+    "no": "139",
+    "pages": 11,
+    "categoryLarge": "索引",
+    "categoryMedium": "索引",
+    "title": "五十音順索引",
+    "type": "流用",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "COMSには索引なし",
+    "lean3": "Lean3マニュアル完成後に作成"
+  },
+  {
+    "no": "140",
+    "pages": 0,
+    "categoryLarge": "(COMS独自)",
+    "categoryMedium": "警告・使用方法ラベルの種類と貼付け位置",
+    "title": "ラベル類",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "警告・使用方法ラベルの種類と貼付け位置",
+    "comsSmall": "ラベル類",
+    "diff": "COMSは警告ラベルを独立セクションで詳細説明。eVITARAは各章に分散",
+    "lean3": ""
+  },
+  {
+    "no": "141",
+    "pages": 0,
+    "categoryLarge": "(COMS独自)",
+    "categoryMedium": "快適装備",
+    "title": "(3)車両仕様別装備",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "快適装備",
+    "comsSmall": "(3)車両仕様別装備",
+    "diff": "COMS特有:B-COM ベーシック・P-COM・B-COM デリバリー・B-COM デッキの4仕様。eVITARAはグレード別",
+    "lean3": ""
+  },
+  {
+    "no": "142",
+    "pages": 0,
+    "categoryLarge": "(COMS独自)",
+    "categoryMedium": "万一の場合",
+    "title": "(3)固縛ポイント",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(3)固縛ポイント",
+    "diff": "COMS特有:輸送時の車両固定位置。eVITARAには記載なし",
+    "lean3": ""
+  },
+  {
+    "no": "143",
+    "pages": 0,
+    "categoryLarge": "(COMS独自)",
+    "categoryMedium": "万一の場合",
+    "title": "(4)ジャッキアップ",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "万一の場合",
+    "comsSmall": "(4)ジャッキアップ",
+    "diff": "COMS特有:ジャッキアップ位置・方法。eVITARAには記載なし",
+    "lean3": ""
+  },
+  {
+    "no": "144",
+    "pages": 0,
+    "categoryLarge": "(COMS独自)",
+    "categoryMedium": "廃棄するとき",
+    "title": "廃棄方法",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "廃棄するとき",
+    "comsSmall": "廃棄方法",
+    "diff": "COMS特有:廃車手続き・バッテリーリサイクル。eVITARAには記載なし",
+    "lean3": ""
+  },
+  {
+    "no": "145",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "Active Lean Technology",
+    "title": "Active Lean Technology（車体傾斜システム）",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "最大28度傾斜の仕組み、動作条件（速度・カーブ角度）、安全な使用方法、転倒防止機能、図解・イラスト必須"
+  },
+  {
+    "no": "146",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "Active Lean Technology",
+    "title": "Active Lean Technology使用時の注意",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "傾斜時の挙動、乗降時の注意、荷物積載時の影響、急ハンドル禁止"
+  },
+  {
+    "no": "147",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "200V充電",
+    "title": "200V充電の接続方法",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "200Vコンセントの確認、充電時間比較（100V vs 200V）、安全注意事項"
+  },
+  {
+    "no": "148",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "5インチタッチディスプレイ",
+    "title": "タッチディスプレイの基本操作",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "タッチ操作方法、メニュー構成、設定変更、スクリーンショット付き手順"
+  },
+  {
+    "no": "149",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "LFPバッテリー",
+    "title": "LFPバッテリーの特性と管理",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "長期保管時の推奨SOC（5080%）、満充電保管回避、寒冷地での性能特性"
+  },
+  {
+    "no": "150",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "インホイールモーター",
+    "title": "インホイールモーターの特徴",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "前2輪駆動方式、メンテナンス不要の利点、走行感覚の説明"
+  },
+  {
+    "no": "151",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "原付ミニカー",
+    "title": "原付ミニカーについて",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "原付ミニカー区分の説明、道路交通法上の扱い、普通免許必要、ヘルメット不要、車検不要、車庫証明不要"
+  },
+  {
+    "no": "152",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "小回り性能",
+    "title": "小回り性能と都市部での運転",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "最小回転半径3.6m、狭い道での取り回し、Uターン方法、駐車スペース効率"
+  },
+  {
+    "no": "153",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "Bluetooth接続",
+    "title": "Bluetooth接続とスマホ連携",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "Bluetooth接続手順、スマホとのペアリング、USB Type-C充電との併用"
+  },
+  {
+    "no": "154",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "車両接近通報装置",
+    "title": "車両接近通報装置（EV音）",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "歩行者保護のための接近音、作動条件、音量"
+  },
+  {
+    "no": "155",
+    "pages": 0,
+    "categoryLarge": "(Lean3追加)",
+    "categoryMedium": "密閉キャビンの換気",
+    "title": "密閉キャビンでの換気の重要性",
+    "type": "追加",
+    "status": "未確認",
+    "comsMedium": "-",
+    "comsSmall": "-",
+    "diff": "",
+    "lean3": "換気不足の危険、窓開け推奨、エアコン内外気切替"
+  }
+];
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (!urlParams.has('loaded')) {
+        localStorage.removeItem('evitaraLean3ItemsData');
+        window.location.href = window.location.pathname + '?loaded=true';
+        return;
+      }
+      
+      loadData();
+      renderAll();
+
+      if (isLocalFileProtocol()) {
+        showToast('PDF埋め込み表示には start-server.bat でローカルサーバーを起動してください');
+      }
+    });
+
+    // データ読み込み
+    function loadData() {
+      const saved = localStorage.getItem('evitaraLean3ItemsData');
+      if (saved) {
+        try {
+          const savedData = JSON.parse(saved);
+          if (savedData.length >= items.length * 0.8) {
+            items = savedData;
+          }
+        } catch (e) {
+          console.error('データ読み込みエラー:', e);
+        }
+      }
+    }
+
+    // データ保存
+    function saveData() {
+      localStorage.setItem('evitaraLean3ItemsData', JSON.stringify(items));
+      showToast('データを保存しました');
+    }
+
+    // 全体再描画
+    function renderAll() {
+      renderSummary();
+      renderPages();
+    }
+
+    // サマリー描画
+    function renderSummary() {
+      const stats = calculateStats();
+      const summary = document.getElementById('summary');
+      
+      summary.innerHTML = `
+        <div class="summary-card add">
+          <div class="summary-number">${stats.追加}</div>
+          <div class="summary-label">追加項目</div>
+        </div>
+        <div class="summary-card modify">
+          <div class="summary-number">${stats.書き換え}</div>
+          <div class="summary-label">書き換え項目</div>
+        </div>
+        <div class="summary-card delete">
+          <div class="summary-number">${stats.削除}</div>
+          <div class="summary-label">削除項目</div>
+        </div>
+        <div class="summary-card reuse">
+          <div class="summary-number">${stats.流用}</div>
+          <div class="summary-label">流用項目</div>
+        </div>
+        <div class="summary-card verify">
+          <div class="summary-number">${stats.要確認}</div>
+          <div class="summary-label">要確認項目</div>
+        </div>
+      `;
+    }
+
+    // 統計計算
+    function calculateStats() {
+      const stats = { 追加: 0, 書き換え: 0, 削除: 0, 流用: 0, 要確認: 0 };
+      items.forEach(item => {
+        if (stats[item.type] !== undefined) {
+          stats[item.type]++;
+        }
+      });
+      return stats;
+    }
+
+    // ページ描画
+    function renderPages() {
+      const grid = document.getElementById('pageGrid');
+      let filtered = items;
+      
+      // フィルター適用
+      if (currentFilter !== 'all') {
+        const filterMap = {
+          'add': '追加',
+          'modify': '書き換え',
+          'delete': '削除',
+          'reuse': '流用',
+          'verify': '要確認'
+        };
+        filtered = filtered.filter(p => p.type === filterMap[currentFilter]);
+      }
+      
+      // キーワード検索適用
+      if (currentSearchKeyword) {
+        const keyword = currentSearchKeyword.toLowerCase();
+        filtered = filtered.filter(p => 
+          p.title.toLowerCase().includes(keyword) || 
+          (p.diff && p.diff.toLowerCase().includes(keyword)) ||
+          (p.lean3 && p.lean3.toLowerCase().includes(keyword)) ||
+          (p.categoryLarge && p.categoryLarge.toLowerCase().includes(keyword)) ||
+          (p.categoryMedium && p.categoryMedium.toLowerCase().includes(keyword))
+        );
+      }
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">該当する項目が見つかりませんでした</div>';
+        return;
+      }
+      
+      grid.innerHTML = filtered.map(item => {
+        const content = [item.diff, item.lean3].filter(x => x).join(' ');
+        
+        // ハイライト表示用の処理
+        const highlightText = (text) => {
+          const escaped = escapeHtml(text || '');
+          if (!currentSearchKeyword) return escaped;
+          const regex = new RegExp(`(${currentSearchKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          return escaped.replace(regex, '<mark style="background: #fef08a; padding: 2px 4px; border-radius: 2px;">$1</mark>');
+        };
+        const highlightedTitle = highlightText(item.title);
+        const contentPreview = content ? (content.length > 100 ? content.substring(0, 100) + '...' : content) : '';
+        const highlightedContent = content ? highlightText(contentPreview) : '';
+        
+        const typeClass = item.type === '追加' ? 'add' : 
+                          item.type === '書き換え' ? 'modify' : 
+                          item.type === '削除' ? 'delete' : 
+                          item.type === '流用' ? 'reuse' : 'verify';
+        
+        const statusClass = item.status === '未確認' ? 'unconfirmed' : 
+                            item.status === '確認済' ? 'confirmed' : 
+                            item.status === '顧客確認' ? 'customer' : 'pending';
+        
+        const statusLabel = item.status === '未確認' ? '未確認' : 
+                            item.status === '確認済' ? '確認済' : 
+                            item.status === '顧客確認' ? '顧客確認' : '保留';
+        
+        const typeLabel = item.type === '追加' ? '追加' : 
+                          item.type === '書き換え' ? '書き換え' : 
+                          item.type === '削除' ? '削除' : 
+                          item.type === '流用' ? '流用' : '要確認';
+        
+        return `
+          <div class="page-card ${typeClass}" onclick="editItem('${escapeAttr(item.no)}')">
+            <div class="page-status status-${statusClass}">${statusLabel}</div>
+            <div class="page-header">
+              <div class="page-number">No.${escapeHtml(item.no)}</div>
+              <div class="page-type type-${typeClass}">${typeLabel}</div>
+            </div>
+            <div class="page-category">${escapeHtml(item.categoryLarge)} ＞ ${escapeHtml(item.categoryMedium)}</div>
+            <div class="page-title">${highlightedTitle}</div>
+            <div class="page-content">${highlightedContent || '（内容なし）'}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // フィルター
+    function filterPages(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+      renderPages();
+    }
+
+    // HTMLエスケープ
+    function escapeHtml(text) {
+      if (text == null) return '';
+      const div = document.createElement('div');
+      div.textContent = String(text);
+      return div.innerHTML;
+    }
+
+    function escapeAttr(text) {
+      return String(text == null ? '' : text)
+        .replace(/&/g, '&amp;')
+        .replace(/'/g, '&#39;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // eVITARA PDF: 1〜7ページは目次、本文は8ページから
+    const PDF_TOC_PAGES = 7;
+    const PDF_FIRST_CONTENT_PAGE = PDF_TOC_PAGES + 1;
+
+    // 項目NoからPDF開始ページを算出（各項目のページ数を累積）
+    function getPdfPageForItem(itemNo) {
+      const targetNo = String(itemNo);
+      const sorted = [...items].sort((a, b) => parseInt(a.no, 10) - parseInt(b.no, 10));
+      let currentPage = PDF_FIRST_CONTENT_PAGE;
+
+      for (const it of sorted) {
+        if (String(it.no) === targetNo) {
+          return currentPage;
+        }
+        const pageCount = parseInt(it.pages, 10) || 0;
+        if (pageCount > 0) {
+          currentPage += pageCount;
+        }
+      }
+      return PDF_FIRST_CONTENT_PAGE;
+    }
+
+    function getPdfPageLabel(item) {
+      const start = getPdfPageForItem(item.no);
+      const count = parseInt(item.pages, 10) || 0;
+      if (count > 1) {
+        return `ページ ${start}〜${start + count - 1}`;
+      }
+      return `ページ ${start}`;
+    }
+
+    // file:// では iframe 内 PDF がブロックされる
+    function isLocalFileProtocol() {
+      return location.protocol === 'file:';
+    }
+
+    const PDF_FILE = 'eVITARA_OM.pdf';
+    let pdfDocument = null;
+    let pdfViewState = { current: 1, total: 1 };
+
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    function buildPdfUrl(pdfPage) {
+      return `${PDF_FILE}#page=${pdfPage}`;
+    }
+
+    async function ensurePdfDocument() {
+      if (pdfDocument) return pdfDocument;
+      if (typeof pdfjsLib === 'undefined') {
+        throw new Error('PDF.js が読み込めません');
+      }
+      const task = pdfjsLib.getDocument(PDF_FILE);
+      pdfDocument = await task.promise;
+      return pdfDocument;
+    }
+
+    async function renderPdfPage(pageNum) {
+      const doc = await ensurePdfDocument();
+      const page = await doc.getPage(pageNum);
+      const canvas = document.getElementById('pdfCanvas');
+      const ctx = canvas.getContext('2d');
+      const container = document.getElementById('pdfJsViewer');
+      const maxWidth = container.clientWidth - 16;
+      const baseViewport = page.getViewport({ scale: 1 });
+      const scale = Math.min(1.5, maxWidth / baseViewport.width);
+      const viewport = page.getViewport({ scale });
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      pdfViewState.current = pageNum;
+      pdfViewState.total = doc.numPages;
+      document.getElementById('pdfPageIndicator').textContent =
+        `${pageNum} / ${doc.numPages}`;
+      document.getElementById('pdfPrevBtn').disabled = false;
+      document.getElementById('pdfNextBtn').disabled = false;
+    }
+
+    function changePdfPage(delta) {
+      const next = pdfViewState.current + delta;
+      if (next < 1 || next > pdfViewState.total) return;
+      renderPdfPage(next).catch(err => console.error(err));
+    }
+
+    function setPdfViewMode(mode) {
+      const jsViewer = document.getElementById('pdfJsViewer');
+      const iframe = document.getElementById('pdfViewer');
+      const fallback = document.getElementById('pdfFallback');
+      jsViewer.hidden = mode !== 'embed';
+      iframe.hidden = true;
+      iframe.removeAttribute('src');
+      fallback.hidden = mode !== 'fallback';
+    }
+
+    async function showPdfPanel(item, pdfPage) {
+      const pdfUrl = buildPdfUrl(pdfPage);
+      const openBtn = document.getElementById('pdfOpenButton');
+
+      document.getElementById('pdfPageInfo').textContent =
+        `eVITARA PDF: ${getPdfPageLabel(item)} (項目No.${item.no}・目次${PDF_TOC_PAGES}ページスキップ)`;
+      document.getElementById('pdfDownloadLink').href = pdfUrl;
+      openBtn.href = pdfUrl;
+      openBtn.textContent = `📄 PDFを開く（${getPdfPageLabel(item)}）`;
+
+      if (isLocalFileProtocol()) {
+        setPdfViewMode('fallback');
+        return;
+      }
+
+      setPdfViewMode('embed');
+      pdfViewState.current = pdfPage;
+
+      try {
+        await renderPdfPage(pdfPage);
+      } catch (err) {
+        console.error(err);
+        setPdfViewMode('fallback');
+        showToast('PDFの読み込みに失敗しました。別タブで開いてください。');
+      }
+    }
+
+    function clearPdfPanel() {
+      setPdfViewMode('none');
+      pdfViewState = { current: 1, total: 1 };
+    }
+
+    // 項目編集
+    function editItem(itemNo) {
+      const item = items.find(p => p.no === itemNo);
+      if (!item) return;
+
+      document.getElementById('itemNo').value = item.no;
+      document.getElementById('pageCount').value = item.pages ?? 0;
+      document.getElementById('categoryLarge').value = item.categoryLarge || '';
+      document.getElementById('categoryMedium').value = item.categoryMedium || '';
+      document.getElementById('itemTitle').value = item.title || '';
+      document.getElementById('itemType').value = item.type || '書き換え';
+      document.getElementById('itemDiff').value = item.diff || '';
+      document.getElementById('itemLean3').value = item.lean3 || '';
+      document.getElementById('itemStatus').value = item.status || '未確認';
+
+      document.getElementById('modalTitle').textContent = `No.${item.no} - ${item.title}`;
+
+      const pdfContainer = document.querySelector('.modal-right');
+      if (item.type === '追加') {
+        pdfContainer.style.display = 'none';
+      } else {
+        pdfContainer.style.display = 'flex';
+        showPdfPanel(item, getPdfPageForItem(item.no));
+      }
+
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    // 項目保存
+    function saveItem() {
+      const itemNo = document.getElementById('itemNo').value;
+      const item = items.find(p => p.no === itemNo);
+      if (!item) return;
+
+      item.pages = parseInt(document.getElementById('pageCount').value, 10) || 0;
+      item.categoryLarge = document.getElementById('categoryLarge').value;
+      item.categoryMedium = document.getElementById('categoryMedium').value;
+      item.title = document.getElementById('itemTitle').value;
+      item.type = document.getElementById('itemType').value;
+      item.diff = document.getElementById('itemDiff').value;
+      item.lean3 = document.getElementById('itemLean3').value;
+      item.status = document.getElementById('itemStatus').value;
+
+      closeModal();
+      renderAll();
+      saveData();
+      showToast('項目を更新しました');
+    }
+
+    // 項目削除
+    function deleteItem() {
+      const itemNo = document.getElementById('itemNo').value;
+      const item = items.find(p => p.no === itemNo);
+      if (!item) return;
+
+      if (confirm(`No.${itemNo}「${item.title}」を削除してもよろしいですか？`)) {
+        const itemIndex = items.findIndex(p => p.no === itemNo);
+        items.splice(itemIndex, 1);
+        closeModal();
+        renderAll();
+        saveData();
+        showToast(`No.${itemNo}を削除しました`);
+      }
+    }
+
+    // モーダル操作
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('active');
+      clearPdfPanel();
+    }
+
+    // トースト表示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('active');
+      setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // 検索処理
+    function handleSearch() {
+      const input = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('searchClear');
+      
+      currentSearchKeyword = input.value.trim();
+      
+      if (currentSearchKeyword) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+      
+      renderPages();
+    }
+
+    // 検索クリア
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      currentSearchKeyword = '';
+      document.getElementById('searchClear').classList.remove('visible');
+      renderPages();
+    }
+
+    // フィルターリセット
+    function resetFilters() {
+      currentFilter = 'all';
+      currentSearchKeyword = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchClear').classList.remove('visible');
+      
+      document.querySelectorAll('.filter-button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === 'all');
+      });
+      
+      renderPages();
+    }
+
+    // CSVエクスポート
+    function exportCSV() {
+      let csv = '\uFEFF';
+      csv += '項目No,ページ数,eVITARA大項目,eVITARA中項目,eVITARA小項目,分類,確認ステータス,差分・備考,Lean3での扱い\n';
+
+      const escapeCSV = (str) => {
+        if (!str) return '""';
+        str = String(str);
+        if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+          return '"' + str.replace(/"/g, '""') + '"';
+        }
+        return str;
+      };
+
+      items.forEach(item => {
+        csv += `${item.no},`;
+        csv += `${item.pages ?? 0},`;
+        csv += `${escapeCSV(item.categoryLarge)},`;
+        csv += `${escapeCSV(item.categoryMedium)},`;
+        csv += `${escapeCSV(item.title)},`;
+        csv += `${escapeCSV(item.type)},`;
+        csv += `${escapeCSV(item.status)},`;
+        csv += `${escapeCSV(item.diff)},`;
+        csv += `${escapeCSV(item.lean3)}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `evitara-lean3-items-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSVファイルをエクスポートしました');
+    }
+
+    // JSONエクスポート
+    function exportJSON() {
+      const json = JSON.stringify(items, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `evitara-lean3-items-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('JSONファイルをエクスポートしました');
+    }
+
+    // HTMLエクスポート
+    function exportHTML() {
+      const typeLabel = (t) => t;
+      const html = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>eVITARA → Lean3 項目別変更点分析</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 1200px; margin: 0 auto; }
+    h1 { color: #1e3a8a; }
+    .item { border: 2px solid; padding: 15px; margin: 10px 0; border-radius: 8px; }
+    .add { background: #ecfdf5; border-color: #10b981; }
+    .modify { background: #fffbeb; border-color: #f59e0b; }
+    .delete { background: #fef2f2; border-color: #ef4444; }
+    .reuse { background: #f5f3ff; border-color: #8b5cf6; }
+    .verify { background: #f0f9ff; border-color: #06b6d4; }
+    .item-header { font-weight: bold; margin-bottom: 8px; }
+    .meta { font-size: 12px; color: #666; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1>eVITARA → Lean3 項目別変更点分析</h1>
+  <p>生成日時: ${new Date().toLocaleString('ja-JP')}</p>
+  ${items.map(item => {
+    const tc = item.type === '追加' ? 'add' : item.type === '書き換え' ? 'modify' : item.type === '削除' ? 'delete' : item.type === '流用' ? 'reuse' : 'verify';
+    return `<div class="item ${tc}">
+      <div class="item-header">No.${escapeHtml(item.no)} - ${escapeHtml(item.title)} [${typeLabel(item.type)}]</div>
+      <div class="meta">${escapeHtml(item.categoryLarge)} ＞ ${escapeHtml(item.categoryMedium)} | ページ数: ${item.pages ?? 0} | ${escapeHtml(item.status)}</div>
+      <p><strong>差分・備考:</strong> ${escapeHtml(item.diff)}</p>
+      <p><strong>Lean3での扱い:</strong> ${escapeHtml(item.lean3)}</p>
+    </div>`;
+  }).join('')}
+</body>
+</html>`;
+
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `evitara-lean3-items-${new Date().toISOString().split('T')[0]}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('HTMLファイルをエクスポートしました');
+    }
+
+    // モーダル外クリックで閉じる
+    document.getElementById('editModal').addEventListener('click', (e) => {
+      if (e.target.id === 'editModal') closeModal();
+    });
+  </script>
+
+</body>
+</html>
+

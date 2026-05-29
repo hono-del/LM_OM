@@ -1,0 +1,805 @@
+<!doctype html>
+  <html lang="ja">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>
+        4-5-1 フロントサポート
+      </title>
+      <link rel="stylesheet" href="../styles.css" />
+    </head>
+    <body class="topic-body">
+      <article class="topic-page" id="a_3-1-1_maintenance-general-description">
+        <h1>
+          4-5-1 フロントサポート
+        </h1>
+        <section id="section_2e7e854f_c8e5_4f54_8b91_5fcbb8a2e37e">
+          <h2>
+            構成図
+          </h2>
+          <figure id="fig_2d67b887_4c9e_4be3_a14a_2e1040d547bc">
+            <div class="svg-container">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1192px" height="707px" viewbox="0 0 1192 707" xmlns="http://www.w3.org/2000/svg">
+                <image x="3" y="1" width="1192px" height="707px" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/images/frontsp_0.png" dlg="no" href="../assets/images/frontsp_0.png">
+                </image>
+                <polyline id="svg_5392c55a_858f_4802_994d_06cffaac27e3" points="449.488 582.726 459.633 578.342 459.32 605.346 525.715 573.346 525.733 550.499 543.151 542.874" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_4525b9d1_2b51_4fc1_919b_1606f494aa86" points="438.75 576.85 450.15 571.312 449.265 594.804 517.453 563.486 517.003 543.29 530.453 537.938" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_a8ed09aa_3a72_4a1a_81b2_dfac6f5b82ef" points="468.15 563.35 473.628 561.27 472.652 552.862 539.713 523.181 540.414 533.948 549.233 529.81" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_3ddde629_68f6_4535_9329_50144c2849d8" points="450.208 556.875 460.889 552.469 460.015 541.74 515.607 518.359 515.659 527.666 529.253 522.377" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_740298cc_2f01_4238_8106_59d044aa53f0" points="594.444 480.694 436.905 540.211" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_4ac82c73_ce78_44da_862f_6927edc3b32d" points="414.528 525.056 505.516 489.933" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_11a1c693_1806_411c_9b10_f51dfb251d43" points="467.917 352.778 752.516 233.21" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_6a8a5e96_f989_4df0_b1bf_eae411c2d66a" points="448.889 324.861 732.1 208.072" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_f15bdee0_5fad_46a6_89ff_87bed5cd2d82" points="259.028 267.083 545.71 150.294" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_0ce18884_432c_48fb_bd0d_3a315606dd2c" points="269.444 252.5 554.738 135.017" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_8ca318e5_0f04_48f0_a6e5_ae932deb3dd8" points="442.885 85.2707 455.174 87.1611 455.42 131.092 477.268 140.152" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_6370c228_1853_4cc1_a455_48fd85006abd" points="448.194 80.278 461.266 82.932 461.805 126.389 481.945 134.723" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_fd881d09_2c0e_431b_b4ed_d61310beaca5" points="454.167 73.1942 469.323 78.6272 468.75 121.528 486.806 127.083" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_d573fdae_ca22_4a49_8421_e671b0b9e32c" points="458.194 68.8893 476.822 73.6273 477.083 115.972 492.361 120.139" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_ef7b037e_f4c2_44c2_963b_b4884adf6215" points="832 314 851.711 324.711 852 205 866 210" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_3f2caa45_91ee_4522_9c6a_5bc17b0ad17c" points="866 163 839.431 153.36 839.28 277.64 822 269" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_6ba85e0b_5e5b_4eee_819d_52ebff6aa403" points="544 99 559.133 105.289 560.266 206.097 580.711 213.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_9e5b16fe_f402_4bdc_9797_23a740a69f93" points="556 52 568.316 58.5572 568.936 162.561 582.711 169.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <text id="svg_ba174da1_88a8_469b_b267_164559a2a0ce" transform="matrix(1,0,0,1,629,377)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        1
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_6efef243_3b25_4b4e_a4fc_a3c1a2f252b3" points="638 362 637.711 373.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_ef1afff7_6f65_4769_8fe5_1cc0e3a8c8aa" transform="matrix(1,0,0,1,174,86)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        2
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_8dd6fe5e_4356_4184_aa3f_24163e44ea34" points="212.711 95 189.711 95" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_dd69ebcb_b801_4686_9196_62cf56a34ad1" transform="matrix(1,0,0,1,188,422)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        3
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_e5b73abd_8110_4388_84ed_f791066eec86" points="204 431 230.711 431" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_d5f10895_20f1_486f_ad23_f0b21aff36c4" transform="matrix(1,0,0,1,244,564)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        4
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_2466708e_27a4_4aaa_9965_98bd4da91e66" points="261 569.711 286.711 569.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_45f9f103_bff6_40a1_b220_0fc999c66fcc" transform="matrix(1,0,0,1,327,487)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        5
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_e6d18638_6484_43b0_bfcf_49c1202ade5e" points="341 496 365.711 496" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_06e71381_184f_4f5b_a4be_590f52072311" transform="matrix(1,0,0,1,305,622)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 80 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_5227b349_c9b3_41b5_a4b9_a3e73d40326d" points="427 584 407.672 631.929 395.711 632.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <rect id="svg_3e59a3e9_2188_473a_bdba_559fa046a9b8" x="307" y="621" height="20" width="88" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <polyline id="svg_fd283736_9c8f_4ff1_9099_0f0d8f757088" points="437 590 408.711 632.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <text id="svg_f8e9b836_5ba2_462f_80d7_fe1146913878" transform="matrix(1,0,0,1,304,588)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 38 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_769bd5b4_0bd0_4fd7_92d5_87aa06b55e78" x="305" y="584" height="22" width="83" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <polyline id="svg_d0f4381e_d468_4f9c_9f2b_f4a9947e1f3d" points="399 532.587 364.35 532.587 355.711 583.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <polyline id="svg_042bf659_317d_45d8_b624_1d619731bf74" points="366 534 424.711 542.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <text id="svg_f2bd96f0_3332_4fd8_961e_6fab8846d033" transform="matrix(1,0,0,1,80,276)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 38 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_62e47884_5d6d_4f7c_b54d_44a16b71c7d8" transform="matrix(1,0,0,1,744,106)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 38 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_c1c8f966_ec39_42c4_add5_1a8d48880b69" transform="matrix(1,0,0,1,626,8)" font-family="Arial" font-size="12px" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 38 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_bb038d38_3fbc_4d38_a398_9eb3e8640f2f" x="80" y="274" height="21" width="93" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <rect id="svg_f6250e14_b0b3_4887_854a_05fe83c12613" x="741" y="102" height="21" width="94" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <rect id="svg_a4592b37_3a2f_4bd2_b6ba_c5e3420b2cdd" x="622" y="7" height="18" width="85" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </rect>
+                <polyline id="svg_eb87701c_70b1_43b8_a113_af9b4757da41" points="175 287 197.164 287 255.711 256.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_b3d4d33f_30b0_4bc0_a7b3_c793c9a42be6" points="199 288 249.711 268.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_16e3c83e_5b57_4289_9ebe_561280d84cc3" points="200 287 435.711 326.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_e887fb5a_3d0b_49c1_9b8a_7cf2d74295fd" points="200 288 455.711 355.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_3acfe8ef_4dc5_49cc_98ee_aad346dbe90d" points="869 169 786 157 786 125" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10" shadow="true">
+                </polyline>
+                <polyline id="svg_8340e1d0_f3fa_4ec1_8550_aeae11dd9ba4" points="787 158 868.711 207.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" arrowtype="1">
+                </polyline>
+                <polyline id="svg_e1ffe5b0_4141_4575_82e1_43c4487d09e0" points="620 16 594.07 16 553.711 46.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_a952363d_d056_44e3_8ec2_367b830322c4" points="595 17 540.711 88.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <text id="svg_fb54b47d_9c7b_4267_a7b1_6817209162ef" transform="matrix(1,0,0,1,360,143)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = XXX N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_ff79530f_0640_49f0_bf2c_86fa88f18322" x="361" y="141" height="18" width="98" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <text id="svg_bec97677_7616_42a9_8dd4_e42f5371b188" transform="matrix(1,0,0,1,550,607)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 20 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_5c7b55af_1f96_41f9_90f9_559207c8bb09" x="547" y="604" height="23" width="97" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <polyline id="svg_c8062df9_6e7a_4c54_87cd_3eff56fd57e3" points="468 568 518.43 614.43 545.711 614.43" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <polyline id="svg_5b8294d3_fc57_4e99_926f_0ce0333fb91b" points="448 563 517.711 615.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+              </svg>
+            </div>
+          </figure>
+        </section>
+        <table id="table_907b37c3_1d35_4a63_9593_349b36350f09">
+          <tbody>
+            <tbody>
+              <tr>
+                <td id="entry_2df254ec_a61b_45f6_bd45_8d46891ad5fd">
+                  <p style="text-align:center;">
+                    1
+                  </p>
+                </td>
+                <td id="entry_f87696fe_51bc_4260_814d_57b15a0b9af9">
+                  <p>
+                    SUPPORT ASSY, FRONT (E3210-A1000)
+                  </p>
+                </td>
+                <td id="entry_e8135667_e790_4ee7_ba17_b58323db800c">
+                  <p style="text-align:center;">
+                    2
+                  </p>
+                </td>
+                <td id="entry_4b3a9754_4d75_4ba1_ad4d_78593096074a">
+                  <p>
+                    TANK PUMP ASSY, WINDSHIELD WASHER (H5310-A1000)
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td id="entry_70ef189b_85c7_4143_88f9_060dc302cc60">
+                  <p style="text-align:center;">
+                    3
+                  </p>
+                </td>
+                <td id="entry_5e924adb_39c7_45da_8a43_cada45330e92">
+                  <p>
+                    HEADLAMP ASSY, CTR (H1100-A1010)
+                  </p>
+                </td>
+                <td id="entry_d4b69c57_b89b_4ca9_ba6d_757216a26cfd">
+                  <p style="text-align:center;">
+                    4
+                  </p>
+                </td>
+                <td id="entry_f515101e_2aec_4ad6_b749_57b72314260a">
+                  <p>
+                    SPEAKER ASSY, VHECLE APPROACHING SYSTEM (H6610-A1000)
+                  </p>
+                </td>
+              </tr>
+              <tr>
+                <td id="entry_49f69e3c_a608_4314_88ae_23c898f509d5">
+                  <p id="p_9597ad81_626b_44ac_8306_282cb7545e7e" style="text-align:center;">
+                    5
+                  </p>
+                </td>
+                <td id="entry_9e404dfb_46f6_430a_8032_00b5f7c7e5bb">
+                  <p id="p_39911b10_9fa9_47c3_a32c_98c9807ae679">
+                    HORN ASSY, LOW PITCHED (H6510-B1000)
+                  </p>
+                </td>
+                <td id="entry_4bfc7093_acdb_4156_8ea3_333055f339ad">
+                  <p id="p_b4cd1634_a28a_4a00_839f_36439a78452d" style="text-align:center;">
+                    -
+                  </p>
+                </td>
+                <td id="entry_74998c6c_8f22_4f7a_8cbd_07e9e06b7d88">
+                  <p id="p_9b63e996_548a_4c9d_82d1_1e3025363264">
+                    -
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </tbody>
+        </table>
+        <section id="section_1f494d4f_aacb_45d3_a21c_f26517ad95e7">
+          <h2>
+            取り外し前作業
+          </h2>
+          <ol id="ol_d0f72789_5ce8_4581_a0e3_88c82a19c4de">
+            <li id="li_9f896b18_52c8_45b8_bd7a_e2abf07ae872">
+              <p id="p_aa854b65_173c_42cb_bf1f_cf3b16a08d00">
+                COVER, FR COWL取り外し<a id="xref_f43ecf9b_9e12_4b5d_aa3a_ace75c4cbc44" class="xref" href="../contents/topic-010.html">4-1-1 外装(フロント)</a>
+              </p>
+            </li>
+            <li id="li_68a35fc1_1180_4a5e_8108_6786fb79fbfb">
+              <p id="p_112d8225_f557_4af3_bb13_7164b08444b3">
+                TANK PUMP ASSY, WINDSHIELD WASHER取り外し<a id="xref_a165da77_3535_4788_a41a_f5c15298a6aa" class="xref" href="../contents/topic-080.html">10-4-2 ウォッシャータンク</a>
+              </p>
+            </li>
+            <li id="li_136f5827_ffb0_4eda_8786_2578a96caba3">
+              <p id="p_a3f9aee9_7f6e_49f2_9736_a4c323192a1b">
+                LAMP ASSY, FR TURN SIGNAL取り外し<a id="xref_a0cbdb1b_a7bf_40b7_a8c7_24157a3f9308" class="xref" href="../contents/topic-077.html">10-3-3 ターンシグナル</a>
+              </p>
+            </li>
+            <li id="li_d9c8f5a5_b121_4e17_93ad_e016ea008920">
+              <p id="p_06d72eff_1622_405c_a973_2db7e81491bf">
+                HEADLAMP ASSY, CTR取り外し<a id="xref_6bf93ea9_1d1c_4d69_a4e7_811505393d6b" class="xref" href="../contents/topic-075.html">10-3-1 ヘッドライト</a>
+              </p>
+            </li>
+            <li id="li_8161782b_c3a5_42db_b96e_84c1f9544787">
+              <p id="p_9c83421d_f899_4a7b_8976_2a955f1fc204">
+                SPEAKER ASSY, VHECLE APPROACHING SYSTEM取り外し<a id="xref_f673cd24_b8a9_4fbf_bb34_536d3afe9b9c" class="xref" href="../contents/topic-083.html">10-X ビーグルアプローチングスピーカー</a>
+              </p>
+            </li>
+            <li id="li_07c9ea04_28e9_4b0a_9bb5_7ebd40a724b7">
+              <p id="p_e08666dc_cbf0_4e9c_8b58_98e9180d3473">
+                HORN ASSY, LOW PITCHED取り外し<a id="xref_7553c74a_4ec9_47b1_bfe5_062b34b5409e" class="xref" href="../contents/topic-081.html">10-X ホーン</a>
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section id="section_eabd0544_9048_4376_bade_48f1dde3ae63">
+          <h2>
+            取り外し手順
+          </h2>
+        </section>
+        <div id="bodydiv_ae12a2ce_fe62_413c_b417_d20cf344c4cd" class="two-column">
+          <div id="div_5deeaa46_4687_43cc_8713_7c8aff6441fc">
+            <figure id="fig_a6f04928_c9ec_470c_8adf_9d2deb79481d">
+              <img id="image_d1a315a5_a315_40db_8be8_f40cecc56f4a" src="../assets/images/frontsp_1.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_7f83f63e_6d69_4896_84a6_a491f383bca7">
+            <p id="p_1c9913f8_6804_4a3e_be3b_3e67d01ecfa9">
+              <strong id="b_37a07809_f618_47b8_86cd_9953e6db4afe"><span class="two-column-step-number">1.</span><span class="two-column-step-text">ワイヤーハーネス切り離し</span></strong>
+            </p>
+            <ol id="ul_8f97629a_55ce_4adb_bfeb_39ce6192d27b" type="a" start="1">
+              <li id="li_b8f73e44_8f3e_4dea_9068_2cb022fe09fa">
+                <p id="p_0c4277b1_9699_4b7a_ae99_c5b6b015bebb">
+                  コネクター、ワイヤーハーネスクランプを切り離す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_c055z70" class="two-column">
+          <div id="div_c055z71">
+            <figure id="fig_c055z72">
+              <img id="image_c055z73" src="../assets/images/frontsp_2.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_c055z74">
+            <ol id="ul_806cb47b_4e48_45f7_859f_96b9cd385943" type="a" start="2">
+              <li id="li_a2a15a26_75d2_4067_96c5_1ee087205587">
+                <p id="p_74951a70_c1e5_446a_bbdc_dfca4504712b">
+                  ボルト４本を取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_acngts0" class="two-column">
+          <div id="div_acngts1">
+            <figure id="fig_acngts2">
+              <img id="image_acngts3" src="../assets/images/frontsp_3.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_acngts4">
+            <div id="div_89cf8179_b556_4902_b377_e6666fff09df">
+              <p id="p_5ec9d115_a285_40d0_acac_939e7ba5db5f">
+                <strong id="b_340afe56_21ae_43cf_99c9_51a293d9ee5e"><span class="two-column-step-number">2.</span><span class="two-column-step-text">SUPPORT ASSY, FRONT取り外し</span></strong>
+              </p>
+            </div>
+            <ol id="ul_acngts5" type="a" start="1">
+              <li id="li_acngts6">
+                <p id="p_acngts7">
+                  ボルト14本を取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_hhxdzh0" class="two-column">
+          <div id="div_hhxdzh1">
+            <figure id="fig_hhxdzh2">
+              <img id="image_hhxdzh3" src="../assets/images/frontsp_4.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_hhxdzh4">
+            <ol id="ul_hhxdzh5" type="a" start="2">
+              <li id="li_hhxdzh6">
+                <p id="p_hhxdzh7">
+                  ブレーキリザーバータンクを切り離す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_iftsjg0" class="two-column">
+          <div id="div_iftsjg1">
+            <figure id="fig_iftsjg2">
+              <img id="image_iftsjg3" src="../assets/images/frontsp_5.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_iftsjg4">
+            <ol id="ul_iftsjg5" type="a" start="3">
+              <li id="li_iftsjg6">
+                <p id="p_iftsjg7">
+                  SUPPORT ASSY, FRONTを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <section id="section_aiojri0">
+          <h2>
+            取り付け手順
+          </h2>
+          <div id="div_241b7172_6fdf_4630_bbc6_11e6446a9af0">
+            <p id="p_6e5cd845_573d_4d4b_978f_de56403ea2f1">
+              取り外しと逆の手順で取りつける。
+            </p>
+          </div>
+        </section>
+        <div id="bodydiv_60d59x0" class="two-column">
+          <div id="div_60d59x1">
+            <figure id="fig_60d59x2">
+              <img id="image_60d59x3" src="../assets/images/frontsp_7.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_60d59x4">
+            <div id="div_75c01183_cb7a_4fc1_9529_1e465fc6bddf">
+              <p id="p_fb0ddd11_428c_47c6_b1a9_bbddb3243f70">
+                <strong id="b_d8899dad_6884_4158_a34b_ef79db8e0286"><span class="two-column-step-number">1.</span><span class="two-column-step-text">SUPPORT ASSY, FRONT取り付け</span></strong>
+              </p>
+            </div>
+            <ol id="ul_60d59x5" type="a" start="1">
+              <li id="li_60d59x6">
+                <p id="p_60d59x7">
+                  ボルト10本を締め付ける。
+                </p>
+                <aside id="note_8254ebbe_5556_4fb8_a428_29cf72fb124a" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_d26bfa5a_777c_41f6_ac4e_c3a86b3d2d88">
+                    T = 38 N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_6hqu7m0" class="two-column">
+          <div id="div_6hqu7m1">
+            <figure id="fig_6hqu7m2">
+              <div class="svg-container">
+                <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="464px" height="288px" viewbox="0 0 464 288" xmlns="http://www.w3.org/2000/svg">
+                  <image x="0" y="4" width="464px" height="288px" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/images/frontsp_6.png" dlg="no" href="../assets/images/frontsp_6.png">
+                  </image>
+                  <rect id="svg_284ebe29_c8f7_4488_9024_5e265f11ab80" x="223" y="24" height="25" width="32" fill="white" stroke="#000000" stroke-width="1" cursor="pointer">
+                  </rect>
+                  <text id="svg_e4f0f233_163e_4102_a4a0_79c1a82bfa7b" transform="matrix(1,0,0,1,77,190)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                    <tspan>
+                      <tspan x="4" y="12">
+                        <tspan x="4" y="12">
+                          A
+                        </tspan>
+                      </tspan>
+                    </tspan>
+                  </text>
+                  <rect id="svg_5009cf4f_8007_4e67_8438_554fb57947b6" x="68" y="186" height="22" width="33" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                  </rect>
+                  <polyline id="svg_7cbc2283_8668_4a03_9206_24f741b35251" points="103 197 167.711 152.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                  </polyline>
+                  <polyline id="svg_46863db3_f04b_44b4_aa23_712a722fcd5f" points="103 197 212.711 168.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                  </polyline>
+                  <text id="svg_c73d4768_5107_48ec_a7f6_3a5b9665eee8" transform="matrix(1,0,0,1,230,28)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                    <tspan>
+                      <tspan x="4" y="12">
+                        <tspan x="4" y="12">
+                          B
+                        </tspan>
+                      </tspan>
+                    </tspan>
+                  </text>
+                  <polyline id="svg_1c735cce_3ead_4cce_8d3a_15a7e7f3d091" points="238 86 236.711 48.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10" shadow="true">
+                  </polyline>
+                  <polyline id="svg_b29748f2_8f9a_4c8a_a811_50986009624f" points="237 49 183.711 75.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" arrowtype="1">
+                  </polyline>
+                </svg>
+              </div>
+            </figure>
+          </div>
+          <div id="div_6hqu7m4">
+            <ol id="ul_6hqu7m5" type="a" start="2">
+              <li id="li_6hqu7m6">
+                <p id="p_6hqu7m7">
+                  ボルト4本を締め付ける。
+                </p>
+                <aside id="note_6hqu7m8" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_6hqu7m9">
+                    ボルトA: T = 80 N・m
+                  </p>
+                </aside>
+                <aside id="note_4224251c_0782_49cf_b267_93325f9b1f6b" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_34541680_9fc4_4a05_b7d0_e8ba98b10e96">
+                    ボルトB: T = 20 N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_8y6y8w0" class="two-column">
+          <div id="div_8y6y8w1">
+            <figure id="fig_8y6y8w2">
+              <img id="image_8y6y8w3" src="../assets/images/frontsp_2.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_8y6y8w4">
+            <ol id="ul_8y6y8w5" type="a" start="3">
+              <li id="li_8y6y8w6">
+                <p id="p_8y6y8w7">
+                  ボルト4本を取り付ける。
+                </p>
+                <aside id="note_97q5gf0" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_97q5gf1">
+                    T = XXX N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </article>
+      <script>
+        function applySvgShadowUnderlay(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const shadowNodes = svgRoot.querySelectorAll('[shadow="true"]');
+          shadowNodes.forEach(function (node) {
+            if (!node || !node.parentNode) {
+              return;
+            }
+            if (node.getAttribute("data-shadow-applied") === "true") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke");
+            if (!strokeColor || strokeColor === "none") {
+              return;
+            }
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const underlay = node.cloneNode(false);
+            underlay.removeAttribute("id");
+            underlay.removeAttribute("shadow");
+            underlay.removeAttribute("arrowtype");
+            underlay.removeAttribute("cursor");
+            underlay.removeAttribute("marker-start");
+            underlay.removeAttribute("marker-mid");
+            underlay.removeAttribute("marker-end");
+            underlay.setAttribute("data-shadow-underlay", "true");
+            underlay.setAttribute("stroke", "#ffffff");
+            underlay.setAttribute("fill", "none");
+            underlay.setAttribute("stroke-width", String(strokeWidth + 2));
+            underlay.setAttribute("pointer-events", "none");
+            node.parentNode.insertBefore(underlay, node);
+            node.setAttribute("data-shadow-applied", "true");
+          });
+        }
+        function ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth) {
+          const svgNs = "http://www.w3.org/2000/svg";
+          let defs = svgRoot.querySelector('defs[data-dita-arrow-defs="true"]');
+          if (!defs) {
+            defs = document.createElementNS(svgNs, "defs");
+            defs.setAttribute("data-dita-arrow-defs", "true");
+            svgRoot.insertBefore(defs, svgRoot.firstChild);
+          }
+          const colorKey = String(strokeColor || "#000000").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "000000";
+          const widthKey = String(Math.max(1, Math.round((strokeWidth || 1) * 10)));
+          const markerId = `dita-arrow-${colorKey}-${widthKey}`;
+          let marker = defs.querySelector(`#${markerId}`);
+          if (!marker) {
+            marker = document.createElementNS(svgNs, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "9");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "6");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto-start-reverse");
+            const markerPath = document.createElementNS(svgNs, "path");
+            markerPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            markerPath.setAttribute("fill", strokeColor || "#000000");
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+          }
+          return markerId;
+        }
+        function applySvgArrowMarkers(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const arrowNodes = svgRoot.querySelectorAll("[arrowtype]");
+          arrowNodes.forEach(function (node) {
+            const tagName = (node.tagName || "").toLowerCase();
+            if (!tagName || !["line", "polyline", "path", "polygon"].includes(tagName)) {
+              return;
+            }
+            const arrowType = String(node.getAttribute("arrowtype") || "").trim().toLowerCase();
+            if (!arrowType || arrowType === "0" || arrowType === "none") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke") || "#000000";
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const markerId = ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth);
+            node.removeAttribute("marker-start");
+            node.removeAttribute("marker-end");
+            if (arrowType === "10" || arrowType === "start") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              return;
+            }
+            if (arrowType === "2" || arrowType === "both") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              node.setAttribute("marker-end", `url(#${markerId})`);
+              return;
+            }
+            node.setAttribute("marker-end", `url(#${markerId})`);
+          });
+        }
+        document.querySelectorAll(".svg-container svg").forEach(function (svgRoot) {
+          applySvgArrowMarkers(svgRoot);
+          applySvgShadowUnderlay(svgRoot);
+        });
+        function clearTopicSearchHighlights() {
+          document.querySelectorAll("mark.topic-search-hit").forEach(function (markNode) {
+            const parent = markNode.parentNode;
+            if (!parent) {
+              return;
+            }
+            parent.replaceChild(document.createTextNode(markNode.textContent || ""), markNode);
+            parent.normalize();
+          });
+        }
+        function highlightTextNode(textNode, keyword) {
+          const value = textNode.nodeValue || "";
+          const lowerValue = value.toLowerCase();
+          let cursor = 0;
+          let hit = lowerValue.indexOf(keyword, cursor);
+          if (hit === -1) {
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          while (hit !== -1) {
+            if (hit > cursor) {
+              fragment.appendChild(document.createTextNode(value.slice(cursor, hit)));
+            }
+            const mark = document.createElement("mark");
+            mark.className = "topic-search-hit";
+            mark.textContent = value.slice(hit, hit + keyword.length);
+            fragment.appendChild(mark);
+            cursor = hit + keyword.length;
+            hit = lowerValue.indexOf(keyword, cursor);
+          }
+          if (cursor
+        < value.length) {
+          fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      }
+
+      function applyTopicSearchHighlights(term) {
+        clearTopicSearchHighlights();
+        const keyword = String(term || "").trim().toLowerCase();
+        if (!keyword) {
+          return;
+        }
+
+        const root = document.querySelector(".topic-page");
+        if (!root) {
+          return;
+        }
+
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function (node) {
+              const value = node.nodeValue || "";
+              if (!value.trim()) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              const parent = node.parentElement;
+              if (!parent) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (parent.closest("script, style, textarea, noscript, svg, mark")) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (value.toLowerCase().indexOf(keyword) === -1) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+
+        const targets = [];
+        while (walker.nextNode()) {
+          targets.push(walker.currentNode);
+        }
+        targets.forEach(function (node) {
+          highlightTextNode(node, keyword);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        const payload = event.data;
+        if (!payload || payload.type !== "dita-search-highlight") {
+          return;
+        }
+        applyTopicSearchHighlights(payload.term || "");
+      });
+
+      document.addEventListener("click", function (event) {
+        const image = event.target.closest("img");
+        if (image) {
+          event.preventDefault();
+          window.parent.postMessage(
+            {
+              type: "dita-image-preview",
+              kind: "img",
+              src: image.currentSrc || image.src || "",
+              alt: image.alt || ""
+            },
+            "*"
+          );
+          return;
+        }
+
+        const svg = event.target.closest(".svg-container svg");
+        if (!svg) {
+          return;
+        }
+
+        event.preventDefault();
+        const clonedSvg = svg.cloneNode(true);
+        applySvgArrowMarkers(clonedSvg);
+        applySvgShadowUnderlay(clonedSvg);
+        const imageNodes = clonedSvg.querySelectorAll("image");
+        imageNodes.forEach(function (node) {
+          const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+          if (!href || href.startsWith("data:") || href.startsWith("http://") || href.startsWith("https://")) {
+            return;
+          }
+          try {
+            const abs = new URL(href, window.location.href).href;
+            node.setAttribute("href", abs);
+            node.setAttribute("xlink:href", abs);
+          } catch (_error) {
+            // keep original href when URL normalization fails
+          }
+        });
+
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(clonedSvg);
+        window.parent.postMessage(
+          {
+            type: "dita-image-preview",
+            kind: "svg",
+            svg: svgText,
+            baseUri: window.location.href,
+            alt: "SVG preview"
+          },
+          "*"
+        );
+      });
+    </script>
+        </body>
+      </html>

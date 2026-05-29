@@ -1,0 +1,955 @@
+<!doctype html>
+  <html lang="ja">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>
+        8-1 リーンアクチュエーター
+      </title>
+      <link rel="stylesheet" href="../styles.css" />
+    </head>
+    <body class="topic-body">
+      <article class="topic-page" id="xml_85c15cd1_21c2_11f1_9062_39c354ce3ec0">
+        <h1>
+          8-1 リーンアクチュエーター
+        </h1>
+        <section id="section_e8e189a4_1707_4381_8af9_884239724346">
+          <h2>
+            構成図
+          </h2>
+          <figure id="fig_8aae8e42_0797_4515_a6b8_52084549098e">
+            <div class="svg-container">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="916px" height="610px" viewbox="0 0 916 610" xmlns="http://www.w3.org/2000/svg">
+                <image x="0" y="0" width="916px" height="610px" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/images/LeanAct_0.png" dlg="no" href="../assets/images/LeanAct_0.png">
+                </image>
+                <text id="svg_9c64a2d9_cc8e_46b7_a786_bad93adfc0bf" transform="matrix(1,0,0,1,571,109)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        1
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_c493001d_14cf_490a_8a49_08c03f1e100a" points="549 114 572.711 113.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_7363ee48_2a7f_4408_a0b4_1b0a526d9efe" transform="matrix(1,0,0,1,659,302)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        2
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_80df4774_d88f_4db3_957e_81f473ef89ff" points="648 310 658.711 310" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_cda92e09_19c0_4535_bb1f_bb4444a32cc8" transform="matrix(1,0,0,1,348,248)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        2
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_ea389af1_0536_4d3d_b7b5_492188be0239" points="363 255 372.711 255" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_3b0c6161_0e86_49a2_b6ef_fd7fed071f4c" transform="matrix(1,0,0,1,319,207)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        3
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_dcd3c865_c7c3_4e1b_a13a_0fcb1c4ee7e0" points="343 213 333.711 213.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_5073840c_c3b9_4b3e_8a0e_6ba391efe7ac" transform="matrix(1,0,0,1,702,352)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        3
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_75be69b0_4fcb_43f6_83c5_97c3b5dd12f7" transform="matrix(1,0,0,1,394,261)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        3
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_44fde350_1131_45b3_a1f8_d1884f518247" transform="matrix(1,0,0,1,600,279)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        3
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_5294d405_f0b4_4290_a26e_2e1043741820" transform="matrix(1,0,0,1,425,240)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        4
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_7a46cd4d_42f8_4994_b362_6e6e326fbbff" points="419 262 427.711 252.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <polyline id="svg_5ecc0f6f_dea6_4359_9591_03e6b24a1bb8" points="339 186 338.711 197.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_7a7f3f20_b6be_41bd_b572_369bb3352e28" transform="matrix(1,0,0,1,331,169)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        4
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_cf2e0879_06d9_4f8d_b07a_e542162dafdf" transform="matrix(1,0,0,1,693,322)" font-size="14" style="fill:black;stroke:none;" font-family="Arial">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        4
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_8877eeda_bf43_4372_8608_458eb29340a1" points="689 339 694.711 329.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_2827fffd_2e02_4ee7_b4f6_ea22c967d9e5" transform="matrix(1,0,0,1,621,281)" font-family="Arial" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        4
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_3a44835a_5184_4353_aa6b_47a544ea6160" points="631 271 631 280.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_0d7fbcb5_937a_48e0_b941_6b1fd233071f" transform="matrix(1,0,0,1,463,13)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        5
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <text id="svg_5bf48cb5_a71d_413e_a4d9_c9a8bd2d10b4" transform="matrix(1,0,0,1,206,294)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        6
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_9a925b2c_5035_445d_99a7_f2c9973ffafa" points="213 312 213 359.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_69b7f978_6a90_471e_a109_52ea121a84d6" transform="matrix(1,0,0,1,731,48)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        7
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_f59b5940_a4fb_4dc6_9318_09db59f3f793" points="738 65 738.711 80.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_fefb2749_b1d6_4c0d_845b_496f5f5ca17c" transform="matrix(1,0,0,1,184,259)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 50 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_c203226b_e70d_43ba_8cb1_6640fdff3b12" points="280 267 306.875 267 343.711 219" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_017054c1_c782_45e3_ab73_17679fa6b1b1" points="307 268 395.711 286.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <text id="svg_f99f00d4_4b80_49ec_8b18_e21dacf0af83" transform="matrix(1,0,0,1,723,403)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 50 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_3e788a3b_ec52_4588_bb55_494214ed29d3" points="693 362 703.711 409.711 724 410" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <polyline id="svg_f76a46bf_a84a_4b5a_9640_59297928f7a4" points="611 271 701.711 409.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <polyline id="svg_ac0b16e6_48b0_4cd9_87b9_1e0bc3c57834" points="410 67 524.711 50.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_4d63aebd_8ce8_4104_8dca_99094753832c" points="349 67 407.507 66.6648 543.711 36.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_75b2d9df_0a5a_4701_a3a0_1f4409daf0e9" points="404 66 404.941 65.6755 491.733 35.7381" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_52fc44e8_4581_4d42_a66c_bb03ac153a94" points="410 66 504.711 22.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <text id="svg_61bd126c_ed86_47c2_833d_4d6059824052" transform="matrix(1,0,0,1,247,58)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 72 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_5a586e9b_ba10_4348_b24f_d9b6af10b8d4" x="246" y="54" height="23" width="102" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <rect id="svg_dde71db1_a18f_4b44_b0b1_4840e74b6445" x="184" y="254" height="23" width="99" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <rect id="svg_c6f80ce0_5296_41eb_acce_31e12b7fe64a" x="721" y="400" height="19" width="106" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+              </svg>
+            </div>
+          </figure>
+          <table id="table_1ac524b6_8c98_4f65_82d5_99978c6b4f32">
+            <tbody>
+              <tbody>
+                <tr>
+                  <td id="entry_f1fc53f4_0ba1_48d6_847f_eaee0cc67839">
+                    <p style="text-align:center;">
+                      1
+                    </p>
+                  </td>
+                  <td id="entry_42b66746_7143_469d_bacc_901688f1df27">
+                    <p>
+                      ACTUATOR ASSY, SUSPENSION CONTROL, FR (C3110-B1000)
+                    </p>
+                  </td>
+                  <td id="entry_c6fc74a3_cd2e_4c6d_8338_c86e66fab96c">
+                    <p style="text-align:center;">
+                      2
+                    </p>
+                  </td>
+                  <td id="entry_7dc0a029_d86c_4e3f_a61b_62f605603fb4">
+                    <p>
+                      ROD ASSY, SUSPENSION CONTROL (D8420-B1000)
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_99fd5105_ea71_47c9_b30b_19387d84bac2">
+                    <p style="text-align:center;">
+                      3
+                    </p>
+                  </td>
+                  <td id="entry_dd6dca21_9c5e_4075_add7_bdbe47f2fb3e">
+                    <p>
+                      NUT, CASTLE Ｗ/FRNAGE
+                    </p>
+                  </td>
+                  <td id="entry_b0951807_1032_4e2e_8d8b_a85e498a0aab">
+                    <p style="text-align:center;">
+                      4
+                    </p>
+                  </td>
+                  <td id="entry_b09e183f_3ce8_4a86_8472_e1c0f8fa7fd1">
+                    <p>
+                      PIN, COTTER
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_1284f80c_eec8_4254_ae96_141a2d759adb">
+                    <p style="text-align:center;">
+                      5
+                    </p>
+                  </td>
+                  <td id="entry_f8cb1f8b_cfee_4d00_b7ed_29bfc0da911b">
+                    <p>
+                      BOLT, FLANGE (Z2210-03000)
+                    </p>
+                  </td>
+                  <td id="entry_d82a85cb_993e_44a7_bd1b_91eaa6c6367f">
+                    <p style="text-align:center;">
+                      6
+                    </p>
+                  </td>
+                  <td id="entry_e9cce1b2_0344_44db_a345_322b01d595a6">
+                    <p>
+                      SUPPORT ASSY, FRONT (E3210-A1000)
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_62225908_5914_4615_a16f_bff61f77bd07">
+                    <p style="text-align:center;">
+                      7
+                    </p>
+                  </td>
+                  <td id="entry_13e4c306_4070_4cb1_8611_9dd41fe19d1f">
+                    <p>
+                      COVER, DASH PANEL HOLE (E5211-A1000)
+                    </p>
+                  </td>
+                  <td id="entry_8d39c8f7_e282_4e94_897c_f55767ed75f1">
+                    <p style="text-align:center;">
+                      -
+                    </p>
+                  </td>
+                  <td id="entry_763042e2_c22d_4fb7_83cf_59f9cbabbd76">
+                    <p style="text-align:center;">
+                      -
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </tbody>
+          </table>
+        </section>
+        <section id="section_63236afb_dd75_448d_b88a_3bf125eea952">
+          <h2>
+            取り外し前作業
+          </h2>
+          <ol id="ol_f7230534_f598_4e4c_95d6_3cba874d4075">
+            <li id="li_0b4c47db_1109_4281_9187_8a0e817f901c">
+              <p id="p_203e4732_0717_4959_9121_c2e2e8480396">
+                フロントサポート取り外し<a id="xref_a1349ca0_653d_43b3_a2e0_6592eee8bc6c" class="xref" href="../contents/topic-032.html">4-5-1 フロントサポート</a>
+              </p>
+            </li>
+            <li id="li_e9f53dac_fde0_43df_9a8d_68c13f3acbdd">
+              <p id="p_9d26a4f4_8791_4f81_aecf_a696bda11928">
+                ステアリングホイール取り外し<a id="xref_c52f05f9_a6cb_4964_9a97_ad6544c8c110" class="xref" href="../contents/topic-067.html">9-1 ステアリングホイール</a>
+              </p>
+            </li>
+            <li id="li_075f1351_4e1e_45fe_905c_b3b8f2459451">
+              <p id="p_b43fbb38_eedb_4f6a_94da_1894aa2fc547">
+                ダッシュパネルホールカバー取り外し<a id="xref_8d3c3dc4_7fe6_4d82_8fb1_c1cdf6d0f64d" class="xref" href="../contents/topic-019.html">4-2-5 ダッシュホールカバー</a>
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section id="section_40577355_0ffc_4f4a_8b2d_6fda8eaad30e">
+          <h2>
+            取り外し手順
+          </h2>
+        </section>
+        <div id="bodydiv_2e53765b_7c91_41eb_a30f_e98eaf9f3c45" class="two-column">
+          <div id="div_268c1461_d33e_48d3_8059_3853928b810a">
+            <figure id="fig_05579c42_5031_49d7_aa18_ba67468420d7">
+              <img id="image_4331d9a4_8a07_4044_bfa4_7e72c92a44a7" src="../assets/images/LeanAct_6.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_2c513df9_cbc3_49d2_be17_524ba3edc01f">
+            <p id="p_c4bc0dc0_da93_4fe6_863e_4cfbe68e2391">
+              <strong id="b_068d7498_ee16_4d58_8588_bf931d57fdfc"><span class="two-column-step-number">1.</span><span class="two-column-step-text">ROD ASSY, SUSPENSION CONTROL</span></strong>
+            </p>
+            <ol id="ul_9f30d4e2_fd05_47b6_b91e_d5872a051cbe" type="a" start="1">
+              <li id="li_cf734686_6b90_4337_b3ac_9edd1f2c48cb">
+                <p id="p_8398b3b7_7c09_4046_8b0b_2a1a1b17d6a3">
+                  コッターピンを取り外す。
+                </p>
+              </li>
+              <li id="li_8406d71c_17e1_431a_a8c7_aa769eb86c2e">
+                <p id="p_62445f0e_2282_4789_978d_25a91ab64d01">
+                  ナット２個を取り外し、ROD ASSY, SUSPENSION CONTROLを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_bjmieb0" class="two-column">
+          <div id="div_bjmieb1">
+            <figure id="fig_bjmieb2">
+              <img id="image_bjmieb3" src="../assets/images/LeanAct_7.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_bjmieb4">
+            <ol id="ul_bjmieb7" type="a" start="3">
+              <li id="li_bjmieb8">
+                <p id="p_bjmieb9">
+                  コッターピンを取り外す。
+                </p>
+              </li>
+              <li id="li_bjmieb10">
+                <p id="p_bjmieb11">
+                  ナット２個を取り外し、ROD ASSY, SUSPENSION CONTROLを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_l9zd760" class="two-column">
+          <div id="div_l9zd761">
+            <figure id="fig_l9zd762">
+              <img id="image_l9zd763" src="../assets/images/LeanAct_1.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_l9zd764">
+            <p id="p_l9zd765">
+              <strong id="b_l9zd766"><span class="two-column-step-number">2.</span><span class="two-column-step-text">ACTUATOR ASSY, SUSPENSION CONTROL, FR取り外し</span></strong>
+            </p>
+            <ol id="ul_l9zd767" type="a" start="1">
+              <li id="li_l9zd768">
+                <p id="p_l9zd769">
+                  室内側からACTUATOR ASSY, SUSPENSION CONTROL, FR接続コネクターを切り離す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_1e3q740" class="two-column">
+          <div id="div_1e3q741">
+            <figure id="fig_1e3q742">
+              <img id="image_1e3q743" src="../assets/images/LeanAct_2.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_1e3q744">
+            <ol id="ul_1e3q747" type="a" start="2">
+              <li id="li_1e3q748">
+                <p id="p_1e3q749">
+                  リーンアクチュエーター結束バンドを切断する。
+                </p>
+              </li>
+              <li id="li_6bb772fe_9556_40fa_8261_30a9ab92150b">
+                <p id="p_a0663b98_71a4_4e34_940b_c7e592fa3782">
+                  カバーを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_18tvan0" class="two-column">
+          <div id="div_18tvan1">
+            <figure id="fig_18tvan2">
+              <img id="image_18tvan3" src="../assets/images/LeanAct_3.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_18tvan4">
+            <ol id="ul_18tvan5" type="a" start="4">
+              <li id="li_18tvan6">
+                <p id="p_18tvan7">
+                  ボルト４本を取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_8152w40" class="two-column">
+          <div id="div_8152w41">
+            <figure id="fig_8152w42">
+              <img id="image_8152w43" src="../assets/images/LeanAct_4.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_8152w44">
+            <ol id="ul_8152w45" type="a" start="5">
+              <li id="li_8152w46">
+                <p id="p_8152w47">
+                  ワイヤーハーネスクランプを切り離す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_atxfv30" class="two-column">
+          <div id="div_atxfv31">
+            <figure id="fig_atxfv32">
+              <img id="image_atxfv33" src="../assets/images/スクリーンショット 2026-04-10 160940.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_atxfv34">
+            <ol id="ul_atxfv35" type="a" start="6">
+              <li id="li_atxfv36">
+                <p id="p_atxfv37">
+                  ACTUATOR ASSY, SUSPENSION CONTROL, FRを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <section id="section_3f135b80_7911_42f3_b7a6_099f2dc1b33a">
+          <h2>
+            取り付け手順
+          </h2>
+        </section>
+        <div id="bodydiv_je4jdt0" class="two-column">
+          <div id="div_je4jdt1">
+            <figure id="fig_je4jdt2">
+              <img id="image_je4jdt3" src="../assets/images/スクリーンショット 2026-04-10 160940.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_je4jdt4">
+            <div id="div_dd2677f6_7d71_42f7_9bd7_80c059f27e35">
+              <p id="p_deab037a_d182_4e9a_9ed3_97bcf80fc827">
+                <strong id="b_e962f1a5_9d9f_4df0_878a_675ce7124326"><span class="two-column-step-number">1.</span><span class="two-column-step-text">ACTUATOR ASSY, SUSPENSION CONTROL, FR取り付け</span></strong>
+              </p>
+            </div>
+            <ol id="ul_je4jdt5" type="a" start="1">
+              <li id="li_je4jdt6">
+                <p id="p_je4jdt7">
+                  ACTUATOR ASSY, SUSPENSION CONTROL, FRを取り付ける。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_gu9380" class="two-column">
+          <div id="div_gu9381">
+            <figure id="fig_gu9382">
+              <img id="image_gu9383" src="../assets/images/LeanAct_3.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_gu9384">
+            <ol id="ul_gu9385" type="a" start="2">
+              <li id="li_gu9386">
+                <p id="p_gu9387">
+                  ボルト４本を取り付ける。
+                </p>
+                <aside id="note_4f35ca05_4e2f_40f8_a648_fb7bf337ad56" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_05615180_0f17_459c_9a00_5658284b8f2c">
+                    T = 72 N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_1umbml0" class="two-column">
+          <div id="div_1umbml1">
+            <figure id="fig_1umbml2">
+              <img id="image_1umbml3" src="../assets/images/LeanAct_4.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_1umbml4">
+            <ol id="ul_1umbml5" type="a" start="3">
+              <li id="li_1umbml6">
+                <p id="p_1umbml7">
+                  ワイヤーハーネスクランプを接続する。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_2inerr0" class="two-column">
+          <div id="div_2inerr1">
+            <figure id="fig_2inerr2">
+              <img id="image_2inerr3" src="../assets/images/LeanAct_2.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_2inerr4">
+            <ol id="ul_2inerr5" type="a" start="4">
+              <li id="li_2inerr8">
+                <p id="p_2inerr9">
+                  カバーを取り付ける。
+                </p>
+              </li>
+              <li id="li_2inerr6">
+                <p id="p_2inerr7">
+                  結束バンドを取り付ける。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_8wtuul0" class="two-column">
+          <div id="div_8wtuul1">
+            <figure id="fig_8wtuul2">
+              <img id="image_8wtuul3" src="../assets/images/LeanAct_1.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_8wtuul4">
+            <ol id="ul_8wtuul7" type="a" start="6">
+              <li id="li_8wtuul8">
+                <p id="p_8wtuul9">
+                  室内側からACTUATOR ASSY, SUSPENSION CONTROL, FR接続コネクターを接続する。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_4kfne50" class="two-column">
+          <div id="div_4kfne51">
+            <figure id="fig_4kfne52">
+              <img id="image_4kfne53" src="../assets/images/LeanAct_7.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_4kfne54">
+            <p id="p_4kfne55">
+              <strong id="b_4kfne56"><span class="two-column-step-number">2.</span><span class="two-column-step-text">ROD ASSY, SUSPENSION CONTROL取り付け</span></strong>
+            </p>
+            <ol id="ul_4kfne57" type="a" start="1">
+              <li id="li_4kfne510">
+                <p id="p_4kfne511">
+                  ROD ASSY, SUSPENSION CONTROLを取り付ける。
+                </p>
+              </li>
+              <li id="li_330ada4e_813c_4a98_ad1e_a6bcbea3d3de">
+                <p id="p_9da3c829_200c_4e1f_b615_a61cbbcbd850">
+                  ナット２個を取り付ける。
+                </p>
+                <aside id="note_602c0632_85ac_4808_9d5e_8c62f55a89ab" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_05986567_c0c4_471e_ac59_c0ed3874517e">
+                    T ＝ 50 N・m
+                  </p>
+                </aside>
+                <aside id="note_a024b734_5530_4512_8f9c_0e33373ad3f4" class="note note-caution">
+                  <p class="note-title">
+                    注意
+                  </p>
+                  <p id="p_7694ceeb_221c_4267_9bfd_3abfe2a0d3da">
+                    キャッスルナット締め付け後のコッターピン穴合わせは増し締め側とし、ナット 回転角は60°以内 とする。緩み側での 穴合わせは不可。
+                  </p>
+                </aside>
+              </li>
+              <li id="li_4kfne58">
+                <p id="p_4kfne59">
+                  新品のコッターピンを取り付ける。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_7ox6mq0" class="two-column">
+          <div id="div_7ox6mq1">
+            <figure id="fig_7ox6mq2">
+              <img id="image_7ox6mq3" src="../assets/images/LeanAct_6.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_7ox6mq4">
+            <ol id="ul_7ox6mq7" type="a" start="4">
+              <li id="li_7ox6mq8">
+                <p id="p_7ox6mq9">
+                  ROD ASSY, SUSPENSION CONTROLを取り付ける。
+                </p>
+              </li>
+              <li id="li_7ox6mq10">
+                <p id="p_7ox6mq11">
+                  ナット２個を取り付ける。
+                </p>
+                <aside id="note_7ox6mq12" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_7ox6mq13">
+                    T ＝ 50 N・m
+                  </p>
+                </aside>
+                <aside id="note_9fb33cf0_d50e_4144_9cfa_4ecf7ca01e47" class="note note-caution">
+                  <p class="note-title">
+                    注意
+                  </p>
+                  <p id="p_5dc85fef_251f_42c3_bea2_f9260fae4892">
+                    キャッスルナット締め付け後のコッターピン穴合わせは増し締め側とし、ナット 回転角は60°以内 とする。緩み側での 穴合わせは不可。
+                  </p>
+                </aside>
+              </li>
+              <li id="li_7ox6mq14">
+                <p id="p_7ox6mq15">
+                  新品のコッターピンを取り付ける。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_bw3iux0" class="two-column">
+          <div id="div_bw3iux1">
+            <div id="div_709c2a8c_01fd_490e_89b2_cc06bbda91f7">
+            </div>
+          </div>
+          <div id="div_bw3iux4">
+            <div id="div_31a014a0_e35c_47ef_8053_d6419410d43f">
+              <p id="p_9beb1d7f_639b_4cb1_87f4_4314373fe428">
+                <strong id="b_011ca2c2_f709_45f0_904d_40c08d4427c6"><span class="two-column-step-number">3.</span><span class="two-column-step-text">ダッシュパネルホールカバー取り付け</span></strong>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="bodydiv_e2soqa0" class="two-column">
+          <div id="div_e2soqa1">
+            <div id="div_e2soqa2">
+            </div>
+          </div>
+          <div id="div_e2soqa4">
+            <div id="div_e2soqa5">
+              <p id="p_e2soqa6">
+                <strong id="b_e2soqa7"><span class="two-column-step-number">4.</span><span class="two-column-step-text">ステアリングホイール取り付け</span></strong>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="bodydiv_eelhdn0" class="two-column">
+          <div id="div_eelhdn1">
+            <div id="div_eelhdn2">
+            </div>
+          </div>
+          <div id="div_eelhdn4">
+            <div id="div_eelhdn5">
+              <p id="p_eelhdn6">
+                <strong id="b_eelhdn7"><span class="two-column-step-number">5.</span><span class="two-column-step-text">フロントサポート取り付け</span></strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+      <script>
+        function applySvgShadowUnderlay(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const shadowNodes = svgRoot.querySelectorAll('[shadow="true"]');
+          shadowNodes.forEach(function (node) {
+            if (!node || !node.parentNode) {
+              return;
+            }
+            if (node.getAttribute("data-shadow-applied") === "true") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke");
+            if (!strokeColor || strokeColor === "none") {
+              return;
+            }
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const underlay = node.cloneNode(false);
+            underlay.removeAttribute("id");
+            underlay.removeAttribute("shadow");
+            underlay.removeAttribute("arrowtype");
+            underlay.removeAttribute("cursor");
+            underlay.removeAttribute("marker-start");
+            underlay.removeAttribute("marker-mid");
+            underlay.removeAttribute("marker-end");
+            underlay.setAttribute("data-shadow-underlay", "true");
+            underlay.setAttribute("stroke", "#ffffff");
+            underlay.setAttribute("fill", "none");
+            underlay.setAttribute("stroke-width", String(strokeWidth + 2));
+            underlay.setAttribute("pointer-events", "none");
+            node.parentNode.insertBefore(underlay, node);
+            node.setAttribute("data-shadow-applied", "true");
+          });
+        }
+        function ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth) {
+          const svgNs = "http://www.w3.org/2000/svg";
+          let defs = svgRoot.querySelector('defs[data-dita-arrow-defs="true"]');
+          if (!defs) {
+            defs = document.createElementNS(svgNs, "defs");
+            defs.setAttribute("data-dita-arrow-defs", "true");
+            svgRoot.insertBefore(defs, svgRoot.firstChild);
+          }
+          const colorKey = String(strokeColor || "#000000").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "000000";
+          const widthKey = String(Math.max(1, Math.round((strokeWidth || 1) * 10)));
+          const markerId = `dita-arrow-${colorKey}-${widthKey}`;
+          let marker = defs.querySelector(`#${markerId}`);
+          if (!marker) {
+            marker = document.createElementNS(svgNs, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "9");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "6");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto-start-reverse");
+            const markerPath = document.createElementNS(svgNs, "path");
+            markerPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            markerPath.setAttribute("fill", strokeColor || "#000000");
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+          }
+          return markerId;
+        }
+        function applySvgArrowMarkers(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const arrowNodes = svgRoot.querySelectorAll("[arrowtype]");
+          arrowNodes.forEach(function (node) {
+            const tagName = (node.tagName || "").toLowerCase();
+            if (!tagName || !["line", "polyline", "path", "polygon"].includes(tagName)) {
+              return;
+            }
+            const arrowType = String(node.getAttribute("arrowtype") || "").trim().toLowerCase();
+            if (!arrowType || arrowType === "0" || arrowType === "none") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke") || "#000000";
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const markerId = ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth);
+            node.removeAttribute("marker-start");
+            node.removeAttribute("marker-end");
+            if (arrowType === "10" || arrowType === "start") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              return;
+            }
+            if (arrowType === "2" || arrowType === "both") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              node.setAttribute("marker-end", `url(#${markerId})`);
+              return;
+            }
+            node.setAttribute("marker-end", `url(#${markerId})`);
+          });
+        }
+        document.querySelectorAll(".svg-container svg").forEach(function (svgRoot) {
+          applySvgArrowMarkers(svgRoot);
+          applySvgShadowUnderlay(svgRoot);
+        });
+        function clearTopicSearchHighlights() {
+          document.querySelectorAll("mark.topic-search-hit").forEach(function (markNode) {
+            const parent = markNode.parentNode;
+            if (!parent) {
+              return;
+            }
+            parent.replaceChild(document.createTextNode(markNode.textContent || ""), markNode);
+            parent.normalize();
+          });
+        }
+        function highlightTextNode(textNode, keyword) {
+          const value = textNode.nodeValue || "";
+          const lowerValue = value.toLowerCase();
+          let cursor = 0;
+          let hit = lowerValue.indexOf(keyword, cursor);
+          if (hit === -1) {
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          while (hit !== -1) {
+            if (hit > cursor) {
+              fragment.appendChild(document.createTextNode(value.slice(cursor, hit)));
+            }
+            const mark = document.createElement("mark");
+            mark.className = "topic-search-hit";
+            mark.textContent = value.slice(hit, hit + keyword.length);
+            fragment.appendChild(mark);
+            cursor = hit + keyword.length;
+            hit = lowerValue.indexOf(keyword, cursor);
+          }
+          if (cursor
+        < value.length) {
+          fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      }
+
+      function applyTopicSearchHighlights(term) {
+        clearTopicSearchHighlights();
+        const keyword = String(term || "").trim().toLowerCase();
+        if (!keyword) {
+          return;
+        }
+
+        const root = document.querySelector(".topic-page");
+        if (!root) {
+          return;
+        }
+
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function (node) {
+              const value = node.nodeValue || "";
+              if (!value.trim()) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              const parent = node.parentElement;
+              if (!parent) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (parent.closest("script, style, textarea, noscript, svg, mark")) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (value.toLowerCase().indexOf(keyword) === -1) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+
+        const targets = [];
+        while (walker.nextNode()) {
+          targets.push(walker.currentNode);
+        }
+        targets.forEach(function (node) {
+          highlightTextNode(node, keyword);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        const payload = event.data;
+        if (!payload || payload.type !== "dita-search-highlight") {
+          return;
+        }
+        applyTopicSearchHighlights(payload.term || "");
+      });
+
+      document.addEventListener("click", function (event) {
+        const image = event.target.closest("img");
+        if (image) {
+          event.preventDefault();
+          window.parent.postMessage(
+            {
+              type: "dita-image-preview",
+              kind: "img",
+              src: image.currentSrc || image.src || "",
+              alt: image.alt || ""
+            },
+            "*"
+          );
+          return;
+        }
+
+        const svg = event.target.closest(".svg-container svg");
+        if (!svg) {
+          return;
+        }
+
+        event.preventDefault();
+        const clonedSvg = svg.cloneNode(true);
+        applySvgArrowMarkers(clonedSvg);
+        applySvgShadowUnderlay(clonedSvg);
+        const imageNodes = clonedSvg.querySelectorAll("image");
+        imageNodes.forEach(function (node) {
+          const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+          if (!href || href.startsWith("data:") || href.startsWith("http://") || href.startsWith("https://")) {
+            return;
+          }
+          try {
+            const abs = new URL(href, window.location.href).href;
+            node.setAttribute("href", abs);
+            node.setAttribute("xlink:href", abs);
+          } catch (_error) {
+            // keep original href when URL normalization fails
+          }
+        });
+
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(clonedSvg);
+        window.parent.postMessage(
+          {
+            type: "dita-image-preview",
+            kind: "svg",
+            svg: svgText,
+            baseUri: window.location.href,
+            alt: "SVG preview"
+          },
+          "*"
+        );
+      });
+    </script>
+        </body>
+      </html>

@@ -1,0 +1,264 @@
+<!doctype html>
+  <html lang="ja">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>
+        14. トラブルシューティング
+      </title>
+      <link rel="stylesheet" href="../styles.css" />
+    </head>
+    <body class="topic-body">
+      <article class="topic-page" id="a_10_appendix">
+        <h1>
+          14. トラブルシューティング
+        </h1>
+      </article>
+      <script>
+        function applySvgShadowUnderlay(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const shadowNodes = svgRoot.querySelectorAll('[shadow="true"]');
+          shadowNodes.forEach(function (node) {
+            if (!node || !node.parentNode) {
+              return;
+            }
+            if (node.getAttribute("data-shadow-applied") === "true") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke");
+            if (!strokeColor || strokeColor === "none") {
+              return;
+            }
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const underlay = node.cloneNode(false);
+            underlay.removeAttribute("id");
+            underlay.removeAttribute("shadow");
+            underlay.removeAttribute("arrowtype");
+            underlay.removeAttribute("cursor");
+            underlay.removeAttribute("marker-start");
+            underlay.removeAttribute("marker-mid");
+            underlay.removeAttribute("marker-end");
+            underlay.setAttribute("data-shadow-underlay", "true");
+            underlay.setAttribute("stroke", "#ffffff");
+            underlay.setAttribute("fill", "none");
+            underlay.setAttribute("stroke-width", String(strokeWidth + 2));
+            underlay.setAttribute("pointer-events", "none");
+            node.parentNode.insertBefore(underlay, node);
+            node.setAttribute("data-shadow-applied", "true");
+          });
+        }
+        function ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth) {
+          const svgNs = "http://www.w3.org/2000/svg";
+          let defs = svgRoot.querySelector('defs[data-dita-arrow-defs="true"]');
+          if (!defs) {
+            defs = document.createElementNS(svgNs, "defs");
+            defs.setAttribute("data-dita-arrow-defs", "true");
+            svgRoot.insertBefore(defs, svgRoot.firstChild);
+          }
+          const colorKey = String(strokeColor || "#000000").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "000000";
+          const widthKey = String(Math.max(1, Math.round((strokeWidth || 1) * 10)));
+          const markerId = `dita-arrow-${colorKey}-${widthKey}`;
+          let marker = defs.querySelector(`#${markerId}`);
+          if (!marker) {
+            marker = document.createElementNS(svgNs, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "9");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "6");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto-start-reverse");
+            const markerPath = document.createElementNS(svgNs, "path");
+            markerPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            markerPath.setAttribute("fill", strokeColor || "#000000");
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+          }
+          return markerId;
+        }
+        function applySvgArrowMarkers(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const arrowNodes = svgRoot.querySelectorAll("[arrowtype]");
+          arrowNodes.forEach(function (node) {
+            const tagName = (node.tagName || "").toLowerCase();
+            if (!tagName || !["line", "polyline", "path", "polygon"].includes(tagName)) {
+              return;
+            }
+            const arrowType = String(node.getAttribute("arrowtype") || "").trim().toLowerCase();
+            if (!arrowType || arrowType === "0" || arrowType === "none") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke") || "#000000";
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const markerId = ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth);
+            node.removeAttribute("marker-start");
+            node.removeAttribute("marker-end");
+            if (arrowType === "10" || arrowType === "start") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              return;
+            }
+            if (arrowType === "2" || arrowType === "both") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              node.setAttribute("marker-end", `url(#${markerId})`);
+              return;
+            }
+            node.setAttribute("marker-end", `url(#${markerId})`);
+          });
+        }
+        document.querySelectorAll(".svg-container svg").forEach(function (svgRoot) {
+          applySvgArrowMarkers(svgRoot);
+          applySvgShadowUnderlay(svgRoot);
+        });
+        function clearTopicSearchHighlights() {
+          document.querySelectorAll("mark.topic-search-hit").forEach(function (markNode) {
+            const parent = markNode.parentNode;
+            if (!parent) {
+              return;
+            }
+            parent.replaceChild(document.createTextNode(markNode.textContent || ""), markNode);
+            parent.normalize();
+          });
+        }
+        function highlightTextNode(textNode, keyword) {
+          const value = textNode.nodeValue || "";
+          const lowerValue = value.toLowerCase();
+          let cursor = 0;
+          let hit = lowerValue.indexOf(keyword, cursor);
+          if (hit === -1) {
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          while (hit !== -1) {
+            if (hit > cursor) {
+              fragment.appendChild(document.createTextNode(value.slice(cursor, hit)));
+            }
+            const mark = document.createElement("mark");
+            mark.className = "topic-search-hit";
+            mark.textContent = value.slice(hit, hit + keyword.length);
+            fragment.appendChild(mark);
+            cursor = hit + keyword.length;
+            hit = lowerValue.indexOf(keyword, cursor);
+          }
+          if (cursor
+        < value.length) {
+          fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      }
+
+      function applyTopicSearchHighlights(term) {
+        clearTopicSearchHighlights();
+        const keyword = String(term || "").trim().toLowerCase();
+        if (!keyword) {
+          return;
+        }
+
+        const root = document.querySelector(".topic-page");
+        if (!root) {
+          return;
+        }
+
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function (node) {
+              const value = node.nodeValue || "";
+              if (!value.trim()) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              const parent = node.parentElement;
+              if (!parent) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (parent.closest("script, style, textarea, noscript, svg, mark")) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (value.toLowerCase().indexOf(keyword) === -1) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+
+        const targets = [];
+        while (walker.nextNode()) {
+          targets.push(walker.currentNode);
+        }
+        targets.forEach(function (node) {
+          highlightTextNode(node, keyword);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        const payload = event.data;
+        if (!payload || payload.type !== "dita-search-highlight") {
+          return;
+        }
+        applyTopicSearchHighlights(payload.term || "");
+      });
+
+      document.addEventListener("click", function (event) {
+        const image = event.target.closest("img");
+        if (image) {
+          event.preventDefault();
+          window.parent.postMessage(
+            {
+              type: "dita-image-preview",
+              kind: "img",
+              src: image.currentSrc || image.src || "",
+              alt: image.alt || ""
+            },
+            "*"
+          );
+          return;
+        }
+
+        const svg = event.target.closest(".svg-container svg");
+        if (!svg) {
+          return;
+        }
+
+        event.preventDefault();
+        const clonedSvg = svg.cloneNode(true);
+        applySvgArrowMarkers(clonedSvg);
+        applySvgShadowUnderlay(clonedSvg);
+        const imageNodes = clonedSvg.querySelectorAll("image");
+        imageNodes.forEach(function (node) {
+          const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+          if (!href || href.startsWith("data:") || href.startsWith("http://") || href.startsWith("https://")) {
+            return;
+          }
+          try {
+            const abs = new URL(href, window.location.href).href;
+            node.setAttribute("href", abs);
+            node.setAttribute("xlink:href", abs);
+          } catch (_error) {
+            // keep original href when URL normalization fails
+          }
+        });
+
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(clonedSvg);
+        window.parent.postMessage(
+          {
+            type: "dita-image-preview",
+            kind: "svg",
+            svg: svgText,
+            baseUri: window.location.href,
+            alt: "SVG preview"
+          },
+          "*"
+        );
+      });
+    </script>
+        </body>
+      </html>

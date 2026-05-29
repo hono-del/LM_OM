@@ -1,0 +1,507 @@
+<!doctype html>
+  <html lang="ja">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>
+        9-4 DCU (ドライバーコントロールユニット)
+      </title>
+      <link rel="stylesheet" href="../styles.css" />
+    </head>
+    <body class="topic-body">
+      <article class="topic-page" id="xml_9d2adcc1_21c2_11f1_9062_39c354ce3ec0">
+        <h1>
+          9-4 DCU (ドライバーコントロールユニット)
+        </h1>
+        <section id="section_390ffce4_7cda_4254_b972_2867af2795ce">
+          <h2>
+            構成図
+          </h2>
+          <figure id="fig_71515329_bd62_467a_a81c_0ac160df58b4">
+            <div class="svg-container">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="972px" height="671px" viewbox="0 0 972 671" xmlns="http://www.w3.org/2000/svg">
+                <image x="-19.0401" y="0.720016" width="997px" height="685.469px" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/images/DCU_0.png" id="svg_e5e5a499_c331_4b18_afcb_e03643d7b136" dlg="no" href="../assets/images/DCU_0.png">
+                </image>
+                <polyline id="svg_8e64e6a1_b943_4017_ac7f_1e15cdfe48d8" points="710 77 714.218 97.9281 305.154 98.696 323.711 143.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_ae45859c_c449_4739_9091_85745cfcb3e8" points="745 63 754.598 110.65 343.169 111.633 355.711 137.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <text id="svg_ce83379d_7ea2_4033_839a_902246ff3508" transform="matrix(1,0,0,1,669,321)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        1
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_b07b8f9e_a3bd_48f5_a1bf_c10a9e64d91b" points="676 293 676.711 316.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_b2eeecf5_ee3a_4634_8d54_0d600d8d1150" transform="matrix(1,0,0,1,195,95)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        2
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_983c600c_408b_4686_b507_848e8b836370" points="203 113 203 147.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <text id="svg_b2177fbb_0183_4401_b736_49d3825cfdf5" transform="matrix(1,0,0,1,796,78)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 45 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_0b934aa1_b606_4b2a_8aab_6b813902c47b" x="796" y="73" height="25" width="107" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <polyline id="svg_7b162329_2af4_4916_acb3_72d6d6045ffd" points="750 58 773.85 85.2194 793.711 85.2194" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <polyline id="svg_34e32e76_ac5a_416e_b7de_73190ac9d7ec" points="711 73 773.711 85.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10">
+                </polyline>
+                <polyline id="svg_f5b8d32a_3e74_429b_95a6_a159750c41a8" points="681 62 688.032 86.7853 275.295 83.9852 293.711 130.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_763e15d7_6ff6_483f_8a65_1e5e0d600afa" points="722 49 732.279 92.455 316.382 92.3989 331.711 110.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+              </svg>
+            </div>
+          </figure>
+          <table id="table_656c6d18_21bc_4269_be94_2d07a7f11f9a">
+            <tbody>
+              <tbody>
+                <tr>
+                  <td id="entry_9de781c1_ee74_4f4f_80fa_271ef8b8aa5c">
+                    <p style="text-align:center;">
+                      1
+                    </p>
+                  </td>
+                  <td id="entry_da6f30f5_97f1_4e84_80d4_14af0d085692">
+                    <p>
+                      CONTROLLER UNIT, DRIVE (D4110-B1000-A)
+                    </p>
+                  </td>
+                  <td id="entry_2cfe10dd_8bcb_4588_9cfc_99a2f82fbae3">
+                    <p style="text-align:center;">
+                      2
+                    </p>
+                  </td>
+                  <td id="entry_c4fa1661_1b79_4b8d_8705_42ad7fea2b3f">
+                    <p>
+                      REINFORCEMENT ASSY, INSTRUMENT PANEL (E5310-A1000)
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_615c819c_8b29_4f93_a35e_4ecc169f29a4">
+                    <p style="text-align:center;">
+                      3
+                    </p>
+                  </td>
+                  <td id="entry_01344b6e_cd23_4a0f_bf68_b2e908bcf740">
+                    <p>
+                      BOLT, FLANGE (Z1210-02000)
+                    </p>
+                  </td>
+                  <td id="entry_ddbdffcd_1fd1_467c_9670_e002d0ac1548">
+                    <p style="text-align:center;">
+                      -
+                    </p>
+                  </td>
+                  <td id="entry_9e65866a_2833_4bca_86c3_2df03417ecff">
+                    <p>
+                      -
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </tbody>
+          </table>
+        </section>
+        <section id="section_d5279c69_1bd2_4742_a384_049c3bb8bfd8">
+          <h2>
+            取り外し前作業
+          </h2>
+          <ol id="ol_b7b740c1_90ae_4378_87b1_6ea1309747f5">
+            <li id="li_fdab8026_1d93_4070_abf9_c5a88b8a6657">
+              <p id="p_858f8bb2_4b2a_437c_83fc_6a9c7d9b2d8a">
+                ステアリングホイール取り外し<a id="xref_3dbe184c_6088_46fd_9ce6_861d60e9bd9f" class="xref" href="../contents/topic-067.html">9-1 ステアリングホイール</a>
+              </p>
+            </li>
+            <li id="li_9855d2a9_302f_4cca_961c_e17147373e4d">
+              <p id="p_7d28a99f_6dde_4bc5_a278_c81294cafda4">
+                CABLE SUB-ASSY, SPIRAL W/SENSOR取り外し<a id="xref_8c45c4ed_5f8a_4781_a828_d9c625c64b6d" class="xref" href="../contents/topic-088.html">10-X コンビネーションスイッチ</a>
+              </p>
+            </li>
+            <li id="li_b5fd6d49_9858_4deb_af91_e3619ec77109">
+              <p id="p_c796bc3f_3e0b_440d_a176_38d35ce3cb6a">
+                PANEL SUB-ASSY, INSTRUMENT, UPR取り外し<a id="xref_1020d5de_52b2_4760_b450_a90d63b0da48" class="xref" href="../contents/topic-017.html#p_19ilzp5">PANEL SUB-ASSY, INSTRUMENT, UPR取り外し</a>
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section id="section_19d7eb3a_4791_4c26_a5db_865e34dfef72">
+          <h2>
+            取り外し手順
+          </h2>
+        </section>
+        <div id="bodydiv_715e2254_f9a1_4ed5_8c6c_e70119572be8" class="two-column">
+          <div id="div_8dded460_8101_47d8_a607_78c5dc0f4a22">
+            <figure id="fig_5e5525b1_0893_480a_a8b4_ef855fab8782">
+              <img id="image_0021e6fc_7337_4706_b403_9f2ee23f43dc" src="../assets/images/DCU_4.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_4d66993e_a946_4ec4_ab9e_61f42b77cdcd">
+            <p id="p_9e0e0ce7_872f_41f7_a648_176effd4b9bc">
+              <strong id="b_acbb27d4_e081_46f1_8780_4b55d56f2641"><span class="two-column-step-number">1.</span><span class="two-column-step-text">CONTROLLER UNIT, DRIVE取り外し</span></strong>
+            </p>
+            <ol id="ul_dcfdc351_c946_4091_8476_837f6d9a404c" type="a" start="1">
+              <li id="li_3ef21ced_b345_4f41_a9d9_384015623f56">
+                <p id="p_60bce281_9ff0_4bac_b669_706f243f3c58">
+                  コネクターを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_d8arn30" class="two-column">
+          <div id="div_d8arn31">
+            <figure id="fig_d8arn32">
+              <img id="image_d8arn33" src="../assets/images/DCU5.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_d8arn34">
+            <ol id="ul_d8arn37" type="a" start="2">
+              <li id="li_d8arn38">
+                <p id="p_d8arn39">
+                  ボルト4本を取り外し、CONTROLLER UNIT, DRIVEを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <section id="section_aeec148b_9493_4428_8b0b_6e1eae4692a7">
+          <h2>
+            取り付け手順
+          </h2>
+        </section>
+        <div id="bodydiv_f6nu380" class="two-column">
+          <div id="div_f6nu381">
+            <figure id="fig_f6nu382">
+              <img id="image_f6nu383" src="../assets/images/DCU5.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_f6nu384">
+            <div id="div_e09910d3_c272_482b_b76d_8c0c1c0224ce">
+              <p id="p_97823b1d_1d4f_4d0c_a9d2_b15fc53f7608">
+                <strong id="b_caf50aca_2da4_49fe_9dc7_0f9f89336aaa"><span class="two-column-step-number">1.</span><span class="two-column-step-text">CONTROLLER UNIT, DRIVE取り付け</span></strong>
+              </p>
+            </div>
+            <ol id="ul_f6nu385" type="a" start="1">
+              <li id="li_f6nu386">
+                <p id="p_f6nu387">
+                  ボルト4本でCONTROLLER UNIT, DRIVEを取り付ける。
+                </p>
+                <aside id="note_8b7340ae_af84_47b0_b380_c1356970a351" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_2fe805fe_350d_40b1_a4a8_ef29fad4ce91">
+                    T = 45 N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_j6nuaf0" class="two-column">
+          <div id="div_j6nuaf1">
+            <div id="div_2d6f8b5a_9486_4823_bb15_115db874fc78">
+            </div>
+          </div>
+          <div id="div_j6nuaf4">
+            <div id="div_j6nuaf5">
+              <p id="p_j6nuaf6">
+                <strong id="b_j6nuaf7"><span class="two-column-step-number">2.</span><span class="two-column-step-text">インストルメントパネル取り付け</span></strong>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="bodydiv_brq5ip0" class="two-column">
+          <div id="div_brq5ip1">
+            <div id="div_brq5ip2">
+            </div>
+          </div>
+          <div id="div_brq5ip4">
+            <div id="div_brq5ip5">
+              <p id="p_brq5ip6">
+                <strong id="b_brq5ip7"><span class="two-column-step-number">3.</span><span class="two-column-step-text">CABLE SUB-ASSY, SPIRAL W/SENSOR取り付け</span></strong>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="bodydiv_k00lmu0" class="two-column">
+          <div id="div_k00lmu1">
+            <div id="div_k00lmu2">
+            </div>
+          </div>
+          <div id="div_k00lmu4">
+            <div id="div_k00lmu5">
+              <p id="p_k00lmu6">
+                <strong id="b_k00lmu7"><span class="two-column-step-number">4.</span><span class="two-column-step-text">ステアリングホイール取り付け</span></strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+      <script>
+        function applySvgShadowUnderlay(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const shadowNodes = svgRoot.querySelectorAll('[shadow="true"]');
+          shadowNodes.forEach(function (node) {
+            if (!node || !node.parentNode) {
+              return;
+            }
+            if (node.getAttribute("data-shadow-applied") === "true") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke");
+            if (!strokeColor || strokeColor === "none") {
+              return;
+            }
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const underlay = node.cloneNode(false);
+            underlay.removeAttribute("id");
+            underlay.removeAttribute("shadow");
+            underlay.removeAttribute("arrowtype");
+            underlay.removeAttribute("cursor");
+            underlay.removeAttribute("marker-start");
+            underlay.removeAttribute("marker-mid");
+            underlay.removeAttribute("marker-end");
+            underlay.setAttribute("data-shadow-underlay", "true");
+            underlay.setAttribute("stroke", "#ffffff");
+            underlay.setAttribute("fill", "none");
+            underlay.setAttribute("stroke-width", String(strokeWidth + 2));
+            underlay.setAttribute("pointer-events", "none");
+            node.parentNode.insertBefore(underlay, node);
+            node.setAttribute("data-shadow-applied", "true");
+          });
+        }
+        function ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth) {
+          const svgNs = "http://www.w3.org/2000/svg";
+          let defs = svgRoot.querySelector('defs[data-dita-arrow-defs="true"]');
+          if (!defs) {
+            defs = document.createElementNS(svgNs, "defs");
+            defs.setAttribute("data-dita-arrow-defs", "true");
+            svgRoot.insertBefore(defs, svgRoot.firstChild);
+          }
+          const colorKey = String(strokeColor || "#000000").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "000000";
+          const widthKey = String(Math.max(1, Math.round((strokeWidth || 1) * 10)));
+          const markerId = `dita-arrow-${colorKey}-${widthKey}`;
+          let marker = defs.querySelector(`#${markerId}`);
+          if (!marker) {
+            marker = document.createElementNS(svgNs, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "9");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "6");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto-start-reverse");
+            const markerPath = document.createElementNS(svgNs, "path");
+            markerPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            markerPath.setAttribute("fill", strokeColor || "#000000");
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+          }
+          return markerId;
+        }
+        function applySvgArrowMarkers(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const arrowNodes = svgRoot.querySelectorAll("[arrowtype]");
+          arrowNodes.forEach(function (node) {
+            const tagName = (node.tagName || "").toLowerCase();
+            if (!tagName || !["line", "polyline", "path", "polygon"].includes(tagName)) {
+              return;
+            }
+            const arrowType = String(node.getAttribute("arrowtype") || "").trim().toLowerCase();
+            if (!arrowType || arrowType === "0" || arrowType === "none") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke") || "#000000";
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const markerId = ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth);
+            node.removeAttribute("marker-start");
+            node.removeAttribute("marker-end");
+            if (arrowType === "10" || arrowType === "start") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              return;
+            }
+            if (arrowType === "2" || arrowType === "both") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              node.setAttribute("marker-end", `url(#${markerId})`);
+              return;
+            }
+            node.setAttribute("marker-end", `url(#${markerId})`);
+          });
+        }
+        document.querySelectorAll(".svg-container svg").forEach(function (svgRoot) {
+          applySvgArrowMarkers(svgRoot);
+          applySvgShadowUnderlay(svgRoot);
+        });
+        function clearTopicSearchHighlights() {
+          document.querySelectorAll("mark.topic-search-hit").forEach(function (markNode) {
+            const parent = markNode.parentNode;
+            if (!parent) {
+              return;
+            }
+            parent.replaceChild(document.createTextNode(markNode.textContent || ""), markNode);
+            parent.normalize();
+          });
+        }
+        function highlightTextNode(textNode, keyword) {
+          const value = textNode.nodeValue || "";
+          const lowerValue = value.toLowerCase();
+          let cursor = 0;
+          let hit = lowerValue.indexOf(keyword, cursor);
+          if (hit === -1) {
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          while (hit !== -1) {
+            if (hit > cursor) {
+              fragment.appendChild(document.createTextNode(value.slice(cursor, hit)));
+            }
+            const mark = document.createElement("mark");
+            mark.className = "topic-search-hit";
+            mark.textContent = value.slice(hit, hit + keyword.length);
+            fragment.appendChild(mark);
+            cursor = hit + keyword.length;
+            hit = lowerValue.indexOf(keyword, cursor);
+          }
+          if (cursor
+        < value.length) {
+          fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      }
+
+      function applyTopicSearchHighlights(term) {
+        clearTopicSearchHighlights();
+        const keyword = String(term || "").trim().toLowerCase();
+        if (!keyword) {
+          return;
+        }
+
+        const root = document.querySelector(".topic-page");
+        if (!root) {
+          return;
+        }
+
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function (node) {
+              const value = node.nodeValue || "";
+              if (!value.trim()) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              const parent = node.parentElement;
+              if (!parent) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (parent.closest("script, style, textarea, noscript, svg, mark")) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (value.toLowerCase().indexOf(keyword) === -1) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+
+        const targets = [];
+        while (walker.nextNode()) {
+          targets.push(walker.currentNode);
+        }
+        targets.forEach(function (node) {
+          highlightTextNode(node, keyword);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        const payload = event.data;
+        if (!payload || payload.type !== "dita-search-highlight") {
+          return;
+        }
+        applyTopicSearchHighlights(payload.term || "");
+      });
+
+      document.addEventListener("click", function (event) {
+        const image = event.target.closest("img");
+        if (image) {
+          event.preventDefault();
+          window.parent.postMessage(
+            {
+              type: "dita-image-preview",
+              kind: "img",
+              src: image.currentSrc || image.src || "",
+              alt: image.alt || ""
+            },
+            "*"
+          );
+          return;
+        }
+
+        const svg = event.target.closest(".svg-container svg");
+        if (!svg) {
+          return;
+        }
+
+        event.preventDefault();
+        const clonedSvg = svg.cloneNode(true);
+        applySvgArrowMarkers(clonedSvg);
+        applySvgShadowUnderlay(clonedSvg);
+        const imageNodes = clonedSvg.querySelectorAll("image");
+        imageNodes.forEach(function (node) {
+          const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+          if (!href || href.startsWith("data:") || href.startsWith("http://") || href.startsWith("https://")) {
+            return;
+          }
+          try {
+            const abs = new URL(href, window.location.href).href;
+            node.setAttribute("href", abs);
+            node.setAttribute("xlink:href", abs);
+          } catch (_error) {
+            // keep original href when URL normalization fails
+          }
+        });
+
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(clonedSvg);
+        window.parent.postMessage(
+          {
+            type: "dita-image-preview",
+            kind: "svg",
+            svg: svgText,
+            baseUri: window.location.href,
+            alt: "SVG preview"
+          },
+          "*"
+        );
+      });
+    </script>
+        </body>
+      </html>

@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMS → Lean3 ページ別変更点分析（編集可能版）</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+      color: white;
+      padding: 30px;
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header-left p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .header-button {
+      padding: 10px 20px;
+      background: white;
+      color: #2d2d2d;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .header-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .header-button.save {
+      background: #4caf50;
+      color: white;
+    }
+
+    .header-button.export {
+      background: #2196f3;
+      color: white;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      padding: 20px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .summary-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .summary-card.add { border-color: #4caf50; }
+    .summary-card.modify { border-color: #ffeb3b; }
+    .summary-card.delete { border-color: #f44336; }
+    .summary-card.reuse { border-color: #9c27b0; }
+    .summary-card.verify { border-color: #03a9f4; }
+
+    .summary-number {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .legend {
+      padding: 15px 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .add { background: #c8e6c9; }
+    .modify { background: #fff9c4; }
+    .delete { background: #ffcdd2; }
+    .reuse { background: #e1bee7; }
+    .verify { background: #b3e5fc; }
+
+    .toolbar {
+      padding: 15px 30px;
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 40px 8px 35px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #4a4a4a;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 16px;
+    }
+
+    .search-clear {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+      display: none;
+    }
+
+    .search-clear:hover {
+      color: #333;
+    }
+
+    .search-clear.visible {
+      display: block;
+    }
+
+    .toolbar-button {
+      padding: 8px 16px;
+      background: #4a4a4a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .toolbar-button:hover {
+      background: #2d2d2d;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-button {
+      padding: 6px 14px;
+      background: #e0e0e0;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+    }
+
+    .filter-button.active {
+      background: #4a4a4a;
+      color: white;
+    }
+
+    .content {
+      padding: 20px 30px;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+    }
+
+    .page-card {
+      border: 2px solid;
+      border-radius: 8px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .page-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .page-card.add {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .page-card.modify {
+      background: #fffde7;
+      border-color: #ffeb3b;
+    }
+
+    .page-card.delete {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+
+    .page-card.reuse {
+      background: #f3e5f5;
+      border-color: #9c27b0;
+    }
+
+    .page-card.verify {
+      background: #e1f5fe;
+      border-color: #03a9f4;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 10px;
+    }
+
+    .page-number {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .page-type {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .type-add { background: #4caf50; }
+    .type-modify { background: #ffeb3b; color: #333; }
+    .type-delete { background: #f44336; }
+    .type-reuse { background: #9c27b0; }
+    .type-verify { background: #03a9f4; }
+
+    .page-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .page-content {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+      max-height: 80px;
+      overflow: hidden;
+    }
+
+    .page-status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .status-unconfirmed {
+      background: #e0e0e0;
+      color: #666;
+    }
+
+    .status-confirmed {
+      background: #4caf50;
+      color: white;
+    }
+
+    .status-customer {
+      background: #ff9800;
+      color: white;
+    }
+
+    .status-pending {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      display: flex;
+      gap: 20px;
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      max-width: 95vw;
+      width: 100%;
+      max-height: 90vh;
+      overflow: hidden;
+    }
+
+    .modal-left {
+      flex: 1;
+      max-height: calc(90vh - 60px);
+      overflow-y: auto;
+      padding-right: 20px;
+    }
+
+    .modal-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(90vh - 60px);
+    }
+
+    .pdf-container {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #f5f5f5;
+    }
+
+    .pdf-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #2d2d2d;
+      color: white;
+      font-size: 14px;
+    }
+
+    .pdf-page-info {
+      font-weight: 600;
+    }
+
+    .pdf-viewer {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: white;
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #999;
+      line-height: 1;
+    }
+
+    .close-button:hover {
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .form-textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #388e3c;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #bdbdbd;
+    }
+
+    .btn-ai {
+      background: #9c27b0;
+      color: white;
+    }
+
+    .btn-ai:hover {
+      background: #7b1fa2;
+    }
+
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .btn-secondary:hover {
+      background: #bdbdbd;
+    }
+
+    .ai-suggestion {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f3e5f5;
+      border: 2px solid #9c27b0;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .ai-suggestion.active {
+      display: block;
+    }
+
+    .ai-suggestion-header {
+      font-weight: 600;
+      color: #9c27b0;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .ai-change-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: white;
+      border-radius: 4px;
+      border-left: 3px solid #9c27b0;
+    }
+
+    .ai-change-label {
+      font-weight: 600;
+      color: #666;
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+
+    .ai-change-text {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .ai-change-text.before {
+      color: #d32f2f;
+      text-decoration: line-through;
+    }
+
+    .ai-change-text.after {
+      color: #2e7d32;
+      font-weight: 500;
+    }
+
+    .api-key-section {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #fff3e0;
+      border: 1px solid #ff9800;
+      border-radius: 6px;
+    }
+
+    .api-key-section input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+
+    .api-status {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .api-status.success {
+      color: #2e7d32;
+    }
+
+    .api-status.error {
+      color: #d32f2f;
+    }
+
+    .ai-loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: #9c27b0;
+    }
+
+    .ai-loading.active {
+      display: block;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #323232;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <h1>COMS → Lean3 ページ別変更点分析</h1>
+        <p>COMSマニュアル全86ページをページ単位で分類・管理</p>
+      </div>
+      <div class="header-actions">
+        <button class="header-button save" onclick="saveData()">💾 保存</button>
+        <button class="header-button export" onclick="exportCSV()">📊 CSVエクスポート</button>
+        <button class="header-button export" onclick="exportJSON()">📥 JSONエクスポート</button>
+        <button class="header-button export" onclick="exportHTML()">📄 HTMLエクスポート</button>
+      </div>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color add"></div>
+        <span>追加（新規作成）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color modify"></div>
+        <span>書き換え（要修正）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color delete"></div>
+        <span>削除（不要）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color reuse"></div>
+        <span>流用（そのまま使用）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color verify"></div>
+        <span>要確認（判断保留）</span>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="キーワード検索（例: バッテリー、充電、操作）" oninput="handleSearch()">
+        <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+      </div>
+      <button class="toolbar-button" onclick="resetFilters()">全て表示</button>
+      <div class="filter-group">
+        <button class="filter-button active" data-filter="all" onclick="filterPages('all')">全て</button>
+        <button class="filter-button" data-filter="add" onclick="filterPages('add')">追加</button>
+        <button class="filter-button" data-filter="modify" onclick="filterPages('modify')">書き換え</button>
+        <button class="filter-button" data-filter="delete" onclick="filterPages('delete')">削除</button>
+        <button class="filter-button" data-filter="reuse" onclick="filterPages('reuse')">流用</button>
+        <button class="filter-button" data-filter="verify" onclick="filterPages('verify')">要確認</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-grid" id="pageGrid"></div>
+    </div>
+  </div>
+
+  <!-- 編集モーダル -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-right">
+        <div class="pdf-container">
+          <div class="pdf-toolbar">
+            <span class="pdf-page-info" id="pdfPageInfo">PDF: ページ 1</span>
+            <a id="pdfDownloadLink" href="#" target="_blank" style="color: white; text-decoration: none;">📄 別タブで開く</a>
+          </div>
+          <iframe class="pdf-viewer" id="pdfViewer" src=""></iframe>
+        </div>
+      </div>
+
+      <div class="modal-left">
+        <div class="modal-header">
+          <span id="modalTitle">ページ編集</span>
+          <button class="close-button" onclick="closeModal()">×</button>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">ページ番号</label>
+          <input type="number" class="form-input" id="pageNumber" readonly>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ページタイトル</label>
+          <input type="text" class="form-input" id="pageTitle" placeholder="例: 充電について">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">分類</label>
+          <select class="form-select" id="pageType">
+            <option value="add">追加（新規作成）</option>
+            <option value="modify">書き換え（要修正）</option>
+            <option value="delete">削除（不要）</option>
+            <option value="reuse">流用（そのまま使用）</option>
+            <option value="verify">要確認（判断保留）</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">内容・備考</label>
+          <textarea class="form-textarea" id="pageContent" placeholder="このページの内容や変更理由を入力..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">確認ステータス</label>
+          <select class="form-select" id="pageStatus">
+            <option value="unconfirmed">未確認</option>
+            <option value="confirmed">確認済み</option>
+            <option value="customer">顧客確認</option>
+            <option value="pending">保留</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">AI編集プロンプト（任意）</label>
+          <textarea class="form-textarea" id="aiPromptInput" placeholder="AIへの追加指示を入力してください。例: 具体的な数値を含めて、より詳しく説明してください" style="min-height: 80px;"></textarea>
+          <div style="font-size: 12px; color: #666; margin-top: 5px;">
+            ※ 空欄の場合は、ページ情報に基づいた標準的な提案が生成されます
+          </div>
+        </div>
+
+        <!-- AI提案表示エリア -->
+        <div class="ai-loading" id="aiLoading">
+          <div>🤖 AIが提案を生成中...</div>
+          <div style="font-size: 12px; margin-top: 5px;">数秒お待ちください</div>
+        </div>
+
+        <div class="ai-suggestion" id="aiSuggestion">
+          <div class="ai-suggestion-header">🤖 AI編集提案</div>
+          <div id="aiSuggestionContent"></div>
+          <div style="margin-top: 15px; text-align: right;">
+            <button class="btn btn-primary" onclick="applyAISuggestion()" id="applyAIBtn" disabled>HTMLに反映</button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button class="btn btn-ai" onclick="generateAISuggestion()">🤖 AI編集</button>
+          <button class="btn btn-danger" onclick="deletePage()">削除</button>
+          <button class="btn btn-primary" onclick="savePage()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- トースト通知 -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // データ構造: COMSマニュアル全86ページの分類
+    let currentSearchKeyword = '';
+    
+    let pages = [
+      // 表紙・目次
+      { page: 1, title: '表紙', type: 'modify', content: 'トヨタ車体 コムス → Lean Mobility Lean3 に変更', status: 'unconfirmed' },
+      { page: 2, title: '目次', type: 'modify', content: '目次項目の変更: COMS仕様別装備を削除、Active Lean Technology関連を追加', status: 'unconfirmed' },
+      { page: 3, title: 'イラスト目次（横・正面）', type: 'modify', content: '前2輪・後1輪の三輪配置に変更、各部品名称と参照ページを更新、Active Lean Technologyの傾斜機構図を追加', status: 'unconfirmed' },
+      { page: 4, title: 'イラスト目次（背面）', type: 'modify', content: 'トランクボックス/デリバリーボックス関連を削除、Lean3の収納を追加', status: 'unconfirmed' },
+      { page: 5, title: '運転者付近配置図・スピードメーター周辺の表示', type: 'modify', content: 'タッチスクリーンディスプレイ配置、操作ボタン配置をLean3用に変更', status: 'unconfirmed' },
+      
+      // 知っておいていただきたいこと
+      { page: 6, title: '知っておいていただきたいこと', type: 'modify', content: '本書の内容について、安全に関する表示（Lean3用に修正）', status: 'unconfirmed' },
+      { page: 7, title: '安全に関する表示', type: 'reuse', content: '警告・注意・お知らせの定義は流用可能', status: 'unconfirmed' },
+      
+      // 1. 必ず読みましょう
+      { page: 8, title: '1. 必ず読みましょう - 確認しましたか？', type: 'reuse', content: '日常点検の実施、タイヤ空気圧の点検、ペダルの位置と操作、シフトレバーの確認、ブレーキの効きを確認などは流用可能（タイヤサイズ・空気圧数値はLean3仕様に変更）', status: 'unconfirmed' },
+      { page: 9, title: '1. 確認しましたか？（続き）', type: 'reuse', content: 'インストルメントパネルに物を置かない、フロントガラスに吸盤をつけない、危険物の持ち込み禁止などは流用可能', status: 'unconfirmed' },
+      { page: 10, title: '1. 危険です！', type: 'modify', content: '2人以上乗車禁止、高電圧部(DC72V→LFPバッテリー8.1kWh AC充電に変更)、薬を飲んだとき、運転席足元に物を置かない、駐車時の注意などは流用可能だが傾斜システムの警告を追加', status: 'unconfirmed' },
+      { page: 11, title: '1. 危険です！（続き）', type: 'reuse', content: '衣服は体にフィットした物、高温部への接触禁止、荷物は収納、積載オーバーしないなどは流用可能', status: 'unconfirmed' },
+      { page: 12, title: '1. 走行するときは！', type: 'modify', content: '道路交通法を守って(四輪→三輪に変更)、シートベルト着用、雨天時は速度を落とす、転倒の危険に注意(三輪車両特有の転倒リスクを強調)、横風が強いときの注意は流用可能だがActive Lean Technologyの傾斜挙動を追記', status: 'unconfirmed' },
+      { page: 13, title: '1. 走行するときは！（続き）', type: 'reuse', content: '充電コードは外す、後退するとき、滑りやすい路面は慎重に、走行中タイヤに異常、手足を車外へ出さないなどは流用可能', status: 'unconfirmed' },
+      { page: 14, title: '1. 走行するときは！（続き2）', type: 'reuse', content: 'オフロードでの運転は避ける、縁石・段差のある場所は避ける、走行中に異常があったら、下り坂では回生ブレーキを併用、ブレーキの効きが悪くなったらは流用可能', status: 'unconfirmed' },
+      { page: 15, title: '1. 走行するときは！（続き3）', type: 'reuse', content: 'クリープ現象に注意、上り坂では後退に注意、急な坂道での発進、スタック時の注意、走行中に警告機能が働いたときは流用可能(警告表示はディスプレイに変更)', status: 'unconfirmed' },
+      { page: 16, title: '1. 点検を受けてください！', type: 'modify', content: 'ハンドル操作時に異音、下回りを路面等に当てたとき、事故により強い衝撃、側溝などに脱輪したときは流用可能だがActive Lean Technologyの点検項目を追加', status: 'unconfirmed' },
+      { page: 17, title: '1. 長くお使いいただくためには！', type: 'modify', content: '定期的な点検と整備、違法改造はしない、タイヤは指定の物を、保管についてなどは流用可能だが、過充電・過放電の基準をLFPバッテリー用(SOC 20-80%推奨)に変更', status: 'unconfirmed' },
+      
+      // 2. 警告ラベル
+      { page: 18, title: '2. 警告・使用方法ラベルの種類と貼付け位置', type: 'modify', content: 'COMS固有ラベル削除、Active Lean Technology・タッチスクリーン関連ラベル追加', status: 'unconfirmed' },
+      { page: 19, title: '2. 警告ラベル（続き）', type: 'verify', content: 'Lean3の実際のラベル画像と貼付位置図が必要', status: 'unconfirmed' },
+      
+      // 3. 充電について
+      { page: 20, title: '3. 充電について - (1)充電に関する装備(2)充電表示灯について', type: 'modify', content: 'LFPバッテリー8.1kWh、AC100V/AC200V充電対応に変更、物理LEDからタッチスクリーンディスプレイ表示に変更', status: 'unconfirmed' },
+      { page: 21, title: '3. (3)充電時の注意事項', type: 'modify', content: 'リチウムイオン電池の注意事項に変更、温度管理（0℃以下・35℃以上）を追加', status: 'unconfirmed' },
+      { page: 22, title: '3. (3)充電時の注意事項（続き）', type: 'reuse', content: '100Vアース付きコンセント使用、屋内充電などは流用可能', status: 'unconfirmed' },
+      { page: 23, title: '3. (3)充電時の注意事項（続き2）', type: 'reuse', content: '充電コードの取り扱い注意は流用可能', status: 'unconfirmed' },
+      { page: 24, title: '3. (3)充電時の注意事項（続き3）', type: 'reuse', content: '充電中の車両の取り扱い注意事項は流用可能', status: 'unconfirmed' },
+      { page: 25, title: '3. (4)バッテリーを長持ちさせるための充電方法', type: 'delete', content: '鉛バッテリー特有の「押し込み充電」は削除、LFP管理方法（SOC 20-80%推奨、満充電放置を避ける）に置き換え', status: 'unconfirmed' },
+      { page: 26, title: '3. (5)充電の方法', type: 'modify', content: '充電手順の基本は同じだが、物理表示灯→ディスプレイ表示に変更', status: 'unconfirmed' },
+      { page: 27, title: '3. (6)バッテリーについて', type: 'modify', content: 'LFPバッテリーの特性、管理方法、廃棄方法に全面変更（長寿命、温度特性、リサイクル方法）', status: 'unconfirmed' },
+      
+      // 4. シートベルト
+      { page: 28, title: '4. 安全装置（シートベルト）- 正しい着用', type: 'reuse', content: '3点式シートベルトの基本的な着用方法は流用可能', status: 'unconfirmed' },
+      { page: 29, title: '4. 3点式シートベルト', type: 'modify', content: '台湾仕様は2人乗り（助手席シートベルト・ISOFIXチャイルドシート）の説明を追加', status: 'unconfirmed' },
+      { page: 30, title: '4. 妊娠中・疾患のある方', type: 'reuse', content: 'シートベルト着用時の注意事項は流用可能', status: 'unconfirmed' },
+      
+      // 5. 操作装置
+      { page: 31, title: '5. 操作装置 - (1)メーターの見方', type: 'delete', content: 'アナログメーター（針式スピードメーター、8目盛バッテリー残量計）を削除、タッチスクリーンディスプレイに置き換え', status: 'unconfirmed' },
+      { page: 32, title: '5. (2)表示灯・警告灯の見方', type: 'modify', content: '物理ランプからディスプレイ内アイコン表示に変更、Active Lean Technology警告アイコンを追加', status: 'unconfirmed' },
+      { page: 33, title: '5. (3)視界の確保 - 前照灯', type: 'reuse', content: '前照灯の基本操作は流用可能（LED化により電球交換不要）', status: 'unconfirmed' },
+      { page: 34, title: '5. 視界の確保 - ワイパー・ウォッシャー・方向指示器', type: 'verify', content: 'Lean3のワイパー・ウォッシャー・方向指示器の操作方法（レバー式かボタン式か）の詳細確認が必要', status: 'unconfirmed' },
+      { page: 35, title: '5. (4)運転装置 - ホーン・キースイッチ・シフトレバー', type: 'modify', content: 'キースイッチ→プッシュスタートボタンに変更、シフトレバー操作（物理レバーorボタン式）の確認が必要', status: 'unconfirmed' },
+      { page: 36, title: '5. 運転装置 - パーキングブレーキ・ブレーキ', type: 'modify', content: '前後ディスクブレーキに変更、回生ブレーキの説明更新、パーキングブレーキ（電動式か機械式か要確認）', status: 'unconfirmed' },
+      { page: 37, title: '5. 運転装置 - シート・ミラー', type: 'verify', content: 'Lean3のシート調整機構（前後スライド・リクライニング）、ミラー仕様（手動or電動）の確認が必要', status: 'unconfirmed' },
+      { page: 38, title: '5. 運転装置（続き）', type: 'add', content: 'エアコン操作方法を新規追加（冷暖房、温度・風量調整、デフロスター、航続距離への影響）', status: 'unconfirmed' },
+      
+      // 6. 快適装備
+      { page: 39, title: '6. 快適装備 - (1)収納装備', type: 'verify', content: 'Lean3の収納装備（グローブボックス、ドアポケット、カップホルダー、USB充電ポート）の詳細確認が必要', status: 'unconfirmed' },
+      { page: 40, title: '6. (2)その他の装備 - 外気導入ダクト・リヤデッキ', type: 'delete', content: 'エアコン搭載により外気導入ダクトは不要、B-COMベーシック仕様のリヤデッキは削除', status: 'unconfirmed' },
+      { page: 41, title: '6. (3)車両仕様別装備 - トランクボックス', type: 'delete', content: 'P-COM仕様のトランクボックスは削除（Lean3には該当装備なし）', status: 'unconfirmed' },
+      { page: 42, title: '6.滑り止めマット', type: 'delete', content: 'トランクボックス用の滑り止めマットは削除', status: 'unconfirmed' },
+      { page: 43, title: '6. デリバリーボックス', type: 'delete', content: 'B-COMデリバリー仕様のデリバリーボックスは削除（Lean3には該当装備なし）', status: 'unconfirmed' },
+      { page: 44, title: '6. 滑り止めマット', type: 'delete', content: 'デリバリーボックス用の滑り止めマットは削除', status: 'unconfirmed' },
+      { page: 45, title: '6. デッキ', type: 'delete', content: 'B-COMデッキ仕様のデッキは削除（Lean3には該当装備なし）', status: 'unconfirmed' },
+      { page: 46, title: '6. (4)オプション部品 - アルミホイール・アクセサリー電源', type: 'modify', content: 'アルミホイールオプションの有無確認、アクセサリー電源ソケット→USB Type-C充電ポートに変更', status: 'unconfirmed' },
+      { page: 47, title: '6. オプション - キャンバスドア・サンバイザー等', type: 'delete', content: 'COMS専用オプション（キャンバスドア、リヤキャンバス、サンバイザー）は削除', status: 'unconfirmed' },
+      { page: 48, title: '6. お手入れの仕方', type: 'reuse', content: 'ボディー・内装の清掃方法は流用可能（Lean3用ボディーカバーの有無確認が必要）', status: 'unconfirmed' },
+      { page: 49, title: 'キャンバスドアの取り外し', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 50, title: 'キャンバスドアの取り付け', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 51, title: 'キャンバスドアの取り付け（続き）', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 52, title: 'キャンバスドアの取り付け（続き2）', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 53, title: 'キャンバスドアの保管方法', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 54, title: 'リヤキャンバスの取り外し', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 55, title: 'リヤキャンバスの取り付け', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 56, title: 'リヤキャンバスの保管方法', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 57, title: 'ボディーカバー', type: 'delete', content: 'COMS専用オプションのため削除（Lean3用ボディーカバーがあれば別途追加）', status: 'unconfirmed' },
+      { page: 58, title: 'ボディーカバーの使用方法', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 59, title: 'ボディーカバーの使用方法（続き）', type: 'delete', content: 'COMS専用オプションのため削除', status: 'unconfirmed' },
+      { page: 60, title: '6. オプション（続き）', type: 'add', content: 'ISOFIXチャイルドシート（台湾仕様のみ）の説明を新規追加: 固定点位置、対応チャイルドシート、取り付け方法', status: 'unconfirmed' },
+      
+      // 7. 運転操作
+      { page: 61, title: '7. 運転操作 - (1)走行する前に', type: 'modify', content: 'Active Lean Technologyの運転前確認を追加、キースイッチ→スタートボタンに変更、タッチスクリーンの初期確認', status: 'unconfirmed' },
+      { page: 62, title: '7. 走行する前に（続き）', type: 'reuse', content: 'シート調整、ミラー調整、足元確認、周囲の安全確認などは流用可能', status: 'unconfirmed' },
+      { page: 63, title: '7. (2)走行', type: 'add', content: 'Active Lean Technologyの運転方法（最重要）を新規作成: 傾斜原理、体の姿勢、半回転ハンドル操作、速度と傾斜角の関係（最大28度）', status: 'unconfirmed' },
+      { page: 64, title: '7. 走行（続き）', type: 'modify', content: 'バッテリー残量警告を8目盛→%表示+推定航続距離（km）に変更', status: 'unconfirmed' },
+      { page: 65, title: '7. (3)停車', type: 'reuse', content: 'ブレーキで停車、シフトレバーN、パーキングブレーキの基本操作は流用可能', status: 'unconfirmed' },
+      { page: 66, title: '7. (4)駐車', type: 'reuse', content: 'パーキングブレーキ、シフトP、電源OFF、ハンドルロックの基本は流用可能', status: 'unconfirmed' },
+      
+      // 8. 寒冷時
+      { page: 67, title: '8. 寒冷時の取扱い', type: 'modify', content: 'LFPバッテリーの低温特性を追加（0℃以下での出力低下・航続距離減少、-10℃以下での充電制限）', status: 'unconfirmed' },
+      { page: 68, title: '8. 寒冷時（続き）', type: 'modify', content: 'ヒーター使用時の航続距離への影響、タイヤチェーン装着位置（前輪2輪推奨?）、バッテリーウォーマー機能の有無', status: 'unconfirmed' },
+      
+      // 9. メンテナンス
+      { page: 69, title: '9. メンテナンス - (1)日常点検', type: 'modify', content: 'Active Lean Technologyの点検項目を追加、タイヤサイズ変更（前90/90 R14、後150/70 R14）', status: 'unconfirmed' },
+      { page: 70, title: '9. 日常点検（続き）', type: 'delete', content: 'バッテリー液量点検など鉛バッテリー特有の項目を削除（LFPは密閉型のためメンテナンス不要）', status: 'unconfirmed' },
+      { page: 71, title: '9. 日常点検（続き2）', type: 'modify', content: 'タイヤ空気圧、ワイパー、ブレーキの点検は流用可能（空気圧数値はLean3仕様に変更）', status: 'unconfirmed' },
+      { page: 72, title: '9. (2)お手入れ', type: 'reuse', content: 'ボディー・内装の清掃方法、ワックスがけ、タッチスクリーン清掃方法は流用可能', status: 'unconfirmed' },
+      { page: 73, title: '9. (3)電球交換', type: 'modify', content: 'LED化により電球交換説明を大幅簡略化（基本的にユーザー交換不可、販売店対応）', status: 'unconfirmed' },
+      { page: 74, title: '9. 電球交換 - 前照灯', type: 'delete', content: 'LED交換手順は削除（ユーザー交換不可、販売店対応）', status: 'unconfirmed' },
+      { page: 75, title: '9. 電球交換 - フロント方向指示灯等', type: 'delete', content: 'LED交換手順は削除（ユーザー交換不可、販売店対応）', status: 'unconfirmed' },
+      { page: 76, title: '9. 電球交換 - リヤランプ類', type: 'delete', content: 'LED交換手順は削除（ユーザー交換不可、販売店対応）', status: 'unconfirmed' },
+      { page: 77, title: '9. 電球交換 - 後退灯・番号灯等', type: 'delete', content: 'LED交換手順は削除（ユーザー交換不可、販売店対応）', status: 'unconfirmed' },
+      { page: 78, title: '9. (4)その他の点検整備', type: 'modify', content: 'タイヤ位置交換（前後サイズ異なるため前は前、後は後で左右交換のみ）、定期点検間隔の確認', status: 'unconfirmed' },
+      { page: 79, title: '9. (5)メンテナンスデータ', type: 'verify', content: '車両重量・総重量、タイヤ空気圧（前後）、ブレーキフルード種類、ウォッシャー液容量などLean3の実データが必要', status: 'unconfirmed' },
+      { page: 80, title: '9. メンテナンスデータ（続き）', type: 'verify', content: '消耗品交換時期一覧（ブレーキパッド、タイヤ、ワイパー等）、定期点検項目などLean3のデータが必要', status: 'unconfirmed' },
+      
+      // 10. 万一の場合
+      { page: 81, title: '10. 万一の場合 - (1)警告機能', type: 'add', content: 'Active Lean Technology異常時の対処方法を新規追加: 警告表示、セーフモード、緊急停止処理', status: 'unconfirmed' },
+      { page: 82, title: '10. 警告機能（続き）', type: 'modify', content: '物理警告灯→ディスプレイ内警告アイコン・メッセージ表示に変更、各種警告の意味と対処方法', status: 'unconfirmed' },
+      { page: 83, title: '10. 警告機能（続き2）', type: 'reuse', content: 'バッテリー残量警告、警告音の種類と意味の基本は流用可能', status: 'unconfirmed' },
+      { page: 84, title: '10. 警告機能（続き3）', type: 'reuse', content: 'その他の警告・注意表示（温度異常、システム異常等）の基本は流用可能', status: 'unconfirmed' },
+      { page: 85, title: '10. (2)けん引', type: 'modify', content: '三輪車両（前2輪・後1輪）のけん引方法、けん引フック位置、傾斜機構のロック方法、けん引時の注意事項', status: 'unconfirmed' },
+      { page: 86, title: '10. (3)固縛ポイント、(4)ジャッキアップ', type: 'verify', content: '三輪車両のジャッキアップポイント図解、前2輪を同時に上げる際の注意、スタンド支持ポイントの確認が必要', status: 'unconfirmed' },
+      
+      // 11. 廃棄
+      { page: 87, title: '11. 廃棄するとき', type: 'modify', content: '製造・販売会社をトヨタ車体→Lean Mobility株式会社に変更、LFPバッテリーの適切な廃棄・リサイクル方法を追加', status: 'unconfirmed' },
+      
+      // 裏表紙等
+      { page: 88, title: '連絡先', type: 'modify', content: 'トヨタ車体の連絡先（0120-100-804）→Lean Mobility株式会社の連絡先に変更（電話番号・住所要確認）', status: 'unconfirmed' },
+      { page: 89, title: '裏表紙', type: 'modify', content: '会社ロゴ・社名をLean Mobilityに変更', status: 'unconfirmed' }
+    ];
+
+    let currentFilter = 'all';
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 保存されたデータを読み込む
+      loadData();
+      renderAll();
+    });
+
+    // データ読み込み
+    function loadData() {
+      const saved = localStorage.getItem('lean3PagesData');
+      if (saved) {
+        try {
+          const savedData = JSON.parse(saved);
+          if (savedData.length >= pages.length * 0.8) {
+            pages = savedData;
+          }
+        } catch (e) {
+          console.error('データ読み込みエラー:', e);
+        }
+      }
+    }
+
+    // データ保存
+    function saveData() {
+      localStorage.setItem('lean3PagesData', JSON.stringify(pages));
+      showToast('データを保存しました');
+    }
+
+    // 全体再描画
+    function renderAll() {
+      renderSummary();
+      renderPages();
+    }
+
+    // サマリー描画
+    function renderSummary() {
+      const stats = calculateStats();
+      const summary = document.getElementById('summary');
+      
+      summary.innerHTML = `
+        <div class="summary-card add">
+          <div class="summary-number">${stats.add}</div>
+          <div class="summary-label">追加ページ</div>
+        </div>
+        <div class="summary-card modify">
+          <div class="summary-number">${stats.modify}</div>
+          <div class="summary-label">書き換えページ</div>
+        </div>
+        <div class="summary-card delete">
+          <div class="summary-number">${stats.delete}</div>
+          <div class="summary-label">削除ページ</div>
+        </div>
+        <div class="summary-card reuse">
+          <div class="summary-number">${stats.reuse}</div>
+          <div class="summary-label">流用ページ</div>
+        </div>
+        <div class="summary-card verify">
+          <div class="summary-number">${stats.verify}</div>
+          <div class="summary-label">要確認ページ</div>
+        </div>
+      `;
+    }
+
+    // 統計計算
+    function calculateStats() {
+      const stats = { add: 0, modify: 0, delete: 0, reuse: 0, verify: 0 };
+      pages.forEach(page => stats[page.type]++);
+      return stats;
+    }
+
+    // ページ描画
+    function renderPages() {
+      const grid = document.getElementById('pageGrid');
+      let filtered = pages;
+      
+      // フィルター適用
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(p => p.type === currentFilter);
+      }
+      
+      // キーワード検索適用
+      if (currentSearchKeyword) {
+        const keyword = currentSearchKeyword.toLowerCase();
+        filtered = filtered.filter(p => 
+          p.title.toLowerCase().includes(keyword) || 
+          p.content.toLowerCase().includes(keyword)
+        );
+      }
+      
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">該当するページが見つかりませんでした</div>';
+        return;
+      }
+      
+      grid.innerHTML = filtered.map(page => {
+        // ハイライト表示用の処理
+        let highlightedTitle = page.title;
+        let highlightedContent = page.content;
+        
+        if (currentSearchKeyword) {
+          const regex = new RegExp(`(${currentSearchKeyword})`, 'gi');
+          highlightedTitle = page.title.replace(regex, '<mark style="background: #ffeb3b; padding: 2px 4px; border-radius: 2px;">$1</mark>');
+          highlightedContent = page.content.replace(regex, '<mark style="background: #ffeb3b; padding: 2px 4px; border-radius: 2px;">$1</mark>');
+        }
+        
+        return `
+          <div class="page-card ${page.type}" onclick="editPage(${page.page})">
+            <div class="page-status status-${page.status}">
+              ${page.status === 'unconfirmed' ? '未確認' : page.status === 'confirmed' ? '確認済' : page.status === 'customer' ? '顧客確認' : '保留'}
+            </div>
+            <div class="page-header">
+              <div class="page-number">P.${page.page}</div>
+              <div class="page-type type-${page.type}">
+                ${page.type === 'add' ? '追加' : page.type === 'modify' ? '書き換え' : page.type === 'delete' ? '削除' : page.type === 'reuse' ? '流用' : '要確認'}
+              </div>
+            </div>
+            <div class="page-title">${highlightedTitle}</div>
+            <div class="page-content">${highlightedContent}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // フィルター
+    function filterPages(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+      });
+      renderPages();
+    }
+
+    // ページ編集
+    function editPage(pageNum) {
+      const page = pages.find(p => p.page === pageNum);
+      
+      document.getElementById('pageNumber').value = page.page;
+      document.getElementById('pageTitle').value = page.title;
+      document.getElementById('pageType').value = page.type;
+      document.getElementById('pageContent').value = page.content;
+      document.getElementById('pageStatus').value = page.status;
+      
+      document.getElementById('modalTitle').textContent = `P.${page.page} - ${page.title}`;
+      
+      // PDFビューアの表示/非表示制御
+      const pdfContainer = document.querySelector('.modal-right');
+      
+      // 追加(add)タイプの場合はPDFビューアを非表示
+      if (page.type === 'add') {
+        pdfContainer.style.display = 'none';
+      } else {
+        pdfContainer.style.display = 'flex';
+        
+        // PDF表示
+        const pdfPath = 'coms_manual.pdf'; // PDFファイルのパス（必要に応じて変更）
+        
+        // PDFページ番号のマッピング（カードページ → PDFページ）
+        const pdfPageMap = {
+          1: 1,   // 表紙
+          2: 3,   // 目次
+          3: 4,   // イラスト目次（横・正面）
+          4: 5,   // イラスト目次（背面）
+          5: 6,   // 運転者付近配置図・スピードメーター周辺の表示
+          6: 7,   // 知っておいていただきたいこと
+          7: 8,   // 安全に関する表示
+          8: 9,   // 1. 必ず読みましょう - 確認しましたか？
+          9: 10,  // 1. 必ず読みましょう - 確認しましたか？（続き）
+          10: 11, // 1. 危険です！
+          11: 12, // 1. 危険です！（続き）
+          12: 13, // 1. 走行するときは！
+          13: 14, // 1. 走行するときは！（続き）
+          14: 15, // 1. 走行するときは！（続き2）
+          15: 16, // 1. 走行するときは！（続き3）
+          16: 17, // 1. 点検を受けてください！
+          17: 18, // 1. 長くお使いいただくためには！
+          18: 19, // 2. 警告・使用方法ラベルの種類と貼付け位置
+          19: 20, // 2. 警告ラベル（続き）
+          20: 21, // 3. 充電について - (1)充電に関する装備(2)充電表示灯について
+          21: 22, // 3. (3)充電時の注意事項
+          22: 23, // 3. (3)充電時の注意事項（続き）
+          23: 24, // 3. (3)充電時の注意事項（続き2）
+          24: 25, // 3. (3)充電時の注意事項（続き3）
+          25: 26, // 3. (4)バッテリーを長持ちさせるための充電方法
+          26: 27, // 3. (5)充電の方法
+          27: 28, // 3. (6)バッテリーについて
+          28: 29, // 4. 安全装置（シートベルト）- 正しい着用
+          29: 30, // 4. 3点式シートベルト
+          30: 31, // 4. 妊娠中・疾患のある方
+          31: 32, // 5. 操作装置 - (1)メーターの見方
+          32: 33, // 5. (2)表示灯・警告灯の見方
+          33: 34, // 5. (3)視界の確保 - 前照灯
+          34: 35, // 5. 視界の確保 - ワイパー・ウォッシャー・方向指示器
+          35: 36, // 5. (4)運転装置 - ホーン・キースイッチ・シフトレバー
+          36: 37, // 5. 運転装置 - パーキングブレーキ・ブレーキ
+          37: 38, // 5. 運転装置 - シート・ミラー
+          // P38は追加ページ（エアコン操作方法）
+          39: 39, // 6. 快適装備 - (1)収納装備
+          40: 40, // 6. (2)その他の装備 - 外気導入ダクト・リヤデッキ
+          41: 41, // 6. (3)車両仕様別装備 - トランクボックス
+          42: 42, // 6.滑り止めマット
+          43: 43, // 6. デリバリーボックス
+          44: 44, // 6. 滑り止めマット
+          45: 45, // 6. デッキ
+          46: 46, // 6. (4)オプション部品 - アルミホイール・アクセサリー電源
+          47: 47, // 6. オプション - キャンバスドア・サンバイザー等
+          48: 48, // 6. お手入れの仕方
+          49: 49, // キャンバスドアの取り外し
+          50: 50, // キャンバスドアの取り付け
+          51: 51, // キャンバスドアの取り付け（続き）
+          52: 52, // キャンバスドアの取り付け（続き2）
+          53: 53, // キャンバスドアの保管方法
+          54: 54, // リヤキャンバスの取り外し
+          55: 55, // リヤキャンバスの取り付け
+          56: 56, // リヤキャンバスの保管方法
+          57: 57, // ボディーカバー
+          58: 58, // ボディーカバーの使用方法
+          59: 59, // ボディーカバーの使用方法（続き）
+          // P60は追加ページ（ISOFIXチャイルドシート）
+          61: 60, // 7. 運転操作 - (1)走行する前に
+          62: 61, // 7. 走行する前に（続き）
+          // P63は追加ページ（Active Lean Technologyの運転方法）
+          64: 61, // 7. 走行（続き）
+          65: 62, // 7. (3)停車
+          66: 63, // 7. (4)駐車
+          67: 64, // 8. 寒冷時の取扱い
+          68: 65, // 8. 寒冷時（続き）
+          69: 66, // 9. メンテナンス - (1)日常点検
+          70: 67, // 9. 日常点検（続き）
+          71: 68, // 9. 日常点検（続き2）
+          72: 69, // 9. (2)お手入れ
+          73: 70, // 9. (3)電球交換
+          74: 71, // 9. 電球交換 - 前照灯
+          75: 72, // 9. 電球交換 - フロント方向指示灯等
+          76: 73, // 9. 電球交換 - リヤランプ類
+          77: 74, // 9. 電球交換 - 後退灯・番号灯等
+          78: 75, // 9. (4)その他の点検整備
+          79: 76, // 9. (5)メンテナンスデータ
+          80: 77, // 9. メンテナンスデータ（続き）
+          // P81は追加ページ（Active Lean Technology異常時）
+          82: 78, // 10. 警告機能（続き）
+          83: 79, // 10. 警告機能（続き2）
+          84: 80, // 10. 警告機能（続き3）
+          85: 81, // 10. (2)けん引
+          86: 82, // 10. (3)固縛ポイント、(4)ジャッキアップ
+          87: 83, // 11. 廃棄するとき
+          88: 84, // 連絡先
+          89: 86  // 裏表紙
+        };
+        
+        // デフォルト計算（マッピングになければ+2）
+        let pdfPage = pdfPageMap[page.page] || (page.page + 2);
+        
+        const pdfUrl = `${pdfPath}#page=${pdfPage}`;
+        
+        document.getElementById('pdfViewer').src = pdfUrl;
+        document.getElementById('pdfPageInfo').textContent = `PDF: ページ ${pdfPage} (カード: P.${page.page})`;
+        document.getElementById('pdfDownloadLink').href = pdfUrl;
+      }
+      
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    // ページ保存
+    function savePage() {
+      const pageNum = parseInt(document.getElementById('pageNumber').value);
+      const page = pages.find(p => p.page === pageNum);
+      
+      page.title = document.getElementById('pageTitle').value;
+      page.type = document.getElementById('pageType').value;
+      page.content = document.getElementById('pageContent').value;
+      page.status = document.getElementById('pageStatus').value;
+      
+      closeModal();
+      renderAll();
+      saveData();
+      showToast('ページを更新しました');
+    }
+
+    // ページ削除
+    function deletePage() {
+      const pageNum = parseInt(document.getElementById('pageNumber').value);
+      const page = pages.find(p => p.page === pageNum);
+      
+      if (confirm(`P.${pageNum} "${page.title}" を削除してもよろしいですか？\n\n注意: 削除後、以降のページ番号は自動的に-1されます。`)) {
+        // ページを削除
+        const pageIndex = pages.findIndex(p => p.page === pageNum);
+        pages.splice(pageIndex, 1);
+        
+        // 削除したページより後のページ番号を-1
+        pages.forEach(p => {
+          if (p.page > pageNum) {
+            p.page--;
+          }
+        });
+        
+        closeModal();
+        renderAll();
+        saveData();
+        showToast(`P.${pageNum}を削除しました`);
+      }
+    }
+
+    // モーダル操作
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('active');
+      // PDFビューアをクリア
+      document.getElementById('pdfViewer').src = '';
+    }
+
+    // CSVエクスポート
+    function exportCSV() {
+      // PDFページ番号のマッピング
+      const pdfPageMap = {
+        1: 1, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 11,
+        11: 12, 12: 13, 13: 14, 14: 15, 15: 16, 16: 17, 17: 18, 18: 19, 19: 20, 20: 21,
+        21: 22, 22: 23, 23: 24, 24: 25, 25: 26, 26: 27, 27: 28, 28: 29, 29: 30, 30: 31,
+        31: 32, 32: 33, 33: 34, 34: 35, 35: 36, 36: 37, 37: 38,
+        39: 39, 40: 40, 41: 41, 42: 42, 43: 43, 44: 44, 45: 45, 46: 46, 47: 47, 48: 48,
+        49: 49, 50: 50, 51: 51, 52: 52, 53: 53, 54: 54, 55: 55, 56: 56, 57: 57, 58: 58, 59: 59,
+        61: 60, 62: 61, 64: 61, 65: 62, 66: 63, 67: 64, 68: 65, 69: 66, 70: 67, 71: 68,
+        72: 69, 73: 70, 74: 71, 75: 72, 76: 73, 77: 74, 78: 75, 79: 76, 80: 77,
+        82: 78, 83: 79, 84: 80, 85: 81, 86: 82, 87: 83, 88: 84, 89: 86
+      };
+
+      // 分類・ステータスのラベル
+      const typeLabels = {
+        add: '追加（新規作成）',
+        modify: '書き換え（要修正）',
+        delete: '削除（不要）',
+        reuse: '流用（そのまま使用）',
+        verify: '要確認（判断保留）'
+      };
+      
+      const statusLabels = {
+        unconfirmed: '未確認',
+        confirmed: '確認済み',
+        customer: '顧客確認',
+        pending: '保留'
+      };
+
+      // CSVヘッダー
+      let csv = '\uFEFF'; // BOM for Excel UTF-8
+      csv += 'ページ番号,ページタイトル,COMS PDF該当ページ,分類,内容・備考,確認ステータス\n';
+
+      // データ行
+      pages.forEach(page => {
+        const pdfPage = pdfPageMap[page.page] || '該当なし（新規追加）';
+        const typeLabel = typeLabels[page.type] || page.type;
+        const statusLabel = statusLabels[page.status] || page.status;
+        
+        // CSVエスケープ処理（カンマ・改行・ダブルクォートを含む場合）
+        const escapeCSV = (str) => {
+          if (!str) return '""';
+          str = String(str);
+          if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+            return '"' + str.replace(/"/g, '""') + '"';
+          }
+          return str;
+        };
+
+        csv += `${page.page},`;
+        csv += `${escapeCSV(page.title)},`;
+        csv += `${pdfPage},`;
+        csv += `${escapeCSV(typeLabel)},`;
+        csv += `${escapeCSV(page.content)},`;
+        csv += `${escapeCSV(statusLabel)}\n`;
+      });
+
+      // ダウンロード
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lean3-pages-list-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSVファイルをエクスポートしました（Excelで開けます）');
+    }
+
+    // JSONエクスポート
+    function exportJSON() {
+      const json = JSON.stringify(pages, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lean3-pages-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('JSONファイルをエクスポートしました');
+    }
+
+    // HTMLエクスポート
+    function exportHTML() {
+      showToast('HTML生成中...');
+      setTimeout(() => {
+        const html = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>COMS → Lean3 ページ別変更点分析</title>
+  <style>body{font-family:sans-serif;padding:20px;max-width:1200px;margin:0 auto}h1{color:#2d2d2d}.page{border:2px solid;padding:15px;margin:10px 0;border-radius:8px}.add{background:#e8f5e9;border-color:#4caf50}.modify{background:#fffde7;border-color:#ffeb3b}.delete{background:#ffebee;border-color:#f44336}.reuse{background:#f3e5f5;border-color:#9c27b0}.verify{background:#e1f5fe;border-color:#03a9f4}.page-header{font-weight:bold;margin-bottom:8px}</style>
+</head>
+<body>
+  <h1>COMS → Lean3 ページ別変更点分析</h1>
+  <p>生成日時: ${new Date().toLocaleString('ja-JP')}</p>
+  ${pages.map(p => `
+    <div class="page ${p.type}">
+      <div class="page-header">P.${p.page} - ${p.title} [${p.type === 'add' ? '追加' : p.type === 'modify' ? '書き換え' : p.type === 'delete' ? '削除' : p.type === 'reuse' ? '流用' : '要確認'}]</div>
+      <div>${p.content}</div>
+    </div>
+  `).join('')}
+</body>
+</html>`;
+        
+        const blob = new Blob([html], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lean3-pages-${new Date().toISOString().split('T')[0]}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('HTMLファイルをエクスポートしました');
+      }, 500);
+    }
+
+    // トースト表示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('active');
+      setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    // 検索処理
+    function handleSearch() {
+      const input = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('searchClear');
+      
+      currentSearchKeyword = input.value.trim();
+      
+      // クリアボタンの表示/非表示
+      if (currentSearchKeyword) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+      
+      renderPages();
+    }
+
+    // 検索クリア
+    function clearSearch() {
+      document.getElementById('searchInput').value = '';
+      currentSearchKeyword = '';
+      document.getElementById('searchClear').classList.remove('visible');
+      renderPages();
+    }
+
+    // フィルターリセット
+    function resetFilters() {
+      currentFilter = 'all';
+      currentSearchKeyword = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchClear').classList.remove('visible');
+      
+      document.querySelectorAll('.filter-button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === 'all');
+      });
+      
+      renderPages();
+    }
+
+    // モーダル外クリック
+    document.getElementById('editModal').addEventListener('click', (e) => {
+      if (e.target.id === 'editModal') closeModal();
+    });
+
+    // AI編集提案生成
+    let currentAISuggestion = null;
+
+    async function generateAISuggestion() {
+      const pageNum = parseInt(document.getElementById('pageNumber').value);
+      const page = pages.find(p => p.page === pageNum);
+      
+      if (!page || !page.content || page.content.trim() === '') {
+        showToast('内容・備考が入力されていません');
+        return;
+      }
+
+      // ローディング表示
+      document.getElementById('aiLoading').classList.add('active');
+      document.getElementById('aiSuggestion').classList.remove('active');
+
+      try {
+        // プロンプトを生成
+        const prompt = callClaudeAPI(null, page);
+        console.log('Generated prompt:', prompt);
+        console.log('Prompt type:', typeof prompt);
+        
+        // プロキシサーバー経由でClaude APIを呼び出し（APIキーはサーバー側で管理）
+        const response = await fetch('http://localhost:3000/api/anthropic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messages: [{
+              role: 'user',
+              content: [
+                {
+                  type: 'text',
+                  text: prompt
+                }
+              ]
+            }]
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || 'API呼び出しに失敗しました');
+        }
+
+        const data = await response.json();
+        const content = data.content[0].text;
+      
+      // JSONを抽出（```json ... ```で囲まれている場合に対応）
+      let jsonText = content;
+      const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        jsonText = jsonMatch[1];
+      }
+      
+      const result = JSON.parse(jsonText);
+      
+      currentAISuggestion = {
+        pageNum: page.page,
+        title: page.title,
+        changes: result.changes
+      };
+      
+      displayAISuggestion(currentAISuggestion);
+      
+    } catch (error) {
+      console.error('API Error:', error);
+      showToast('AI提案の生成に失敗しました: ' + error.message);
+      
+      // エラー時はフォールバック
+      currentAISuggestion = generateSuggestionFromContent(page);
+      displayAISuggestion(currentAISuggestion);
+    } finally {
+      document.getElementById('aiLoading').classList.remove('active');
+    }
+  }
+
+  function callClaudeAPI(apiKey, page) {
+    // ユーザーのカスタムプロンプトを取得
+    const customPrompt = document.getElementById('aiPromptInput')?.value.trim() || '';
+    
+    // ページの種類に応じたプロンプトを生成
+    let specificInstruction = '';
+    
+    if (page.title.includes('点検を受けてください')) {
+      specificInstruction = `
+
+【特別指示】
+このページは「点検を受けてください」のセクションです。
+Active Lean Technology（三輪傾斜式システム）搭載により、従来の四輪車にはない以下のような点検推奨シーンを追加提案してください：
+
+1. 傾斜機構関連の点検が必要なシーン
+   - 例：カーブで異音がする、傾斜動作に違和感がある、傾斜角度センサー警告が出た
+2. 三輪特有の走行状態での点検推奨シーン
+   - 例：高速コーナリング後、急旋回を繰り返した後、段差を超えた際に異常な振動
+3. 前2輪・後1輪構成による点検推奨シーン
+   - 例：前輪タイヤの異常摩耗、前輪サスペンション周りの異音、後輪の異常な負荷
+
+各シーンについて、具体的な状況説明と点検を推奨する理由を記載してください。`;
+    } else if (page.title.includes('走行するときは') || page.title.includes('走行')) {
+      specificInstruction = `
+
+【特別指示】
+このページは走行に関するセクションです。
+Active Lean Technology特有の運転方法や注意事項を具体的に提案してください。`;
+    }
+    
+    // ユーザーのカスタムプロンプトを追加
+    if (customPrompt) {
+      specificInstruction += `
+
+【ユーザーからの追加指示】
+${customPrompt}`;
+    }
+    
+    const prompt = `あなたはマニュアル編集のアシスタントです。
+
+以下の情報をもとに、COMSマニュアルからLean3マニュアルへの変更内容を提案してください。
+
+【ページ情報】
+- ページ番号: P.${page.page}
+- ページタイトル: ${page.title}
+- 分類: ${page.type}
+- 内容・備考: ${page.content}
+
+【車両の主な違い】
+- COMS: 四輪電気自動車
+- Lean3: 三輪傾斜式電気自動車（前2輪・後1輪）、Active Lean Technology搭載${specificInstruction}
+
+【出力形式】
+JSONフォーマットで、以下の構造で出力してください：
+{
+  "changes": [
+    {
+      "location": "変更箇所の説明",
+      "before": "変更前のテキスト（COMSマニュアルの該当箇所）",
+      "after": "変更後のテキスト（Lean3マニュアルで追加・修正すべき内容）"
+    }
+  ]
+}
+
+【注意事項】
+- 具体的で実用的な変更内容を提案してください
+- 変更前と変更後のテキストは、実際のマニュアルで使用される文章にしてください
+- 複数の変更箇所がある場合は、配列で返してください
+- JSONのみを出力し、説明文は含めないでください`;
+
+    return prompt;
+  }
+
+    function generateSuggestionFromContent(page) {
+      const changes = [];
+      
+      // P.16専用: 点検を受けてください
+      if (page.page === 16 || page.title.includes('点検を受けてください')) {
+        changes.push({
+          location: '◇カーブ走行時に異音がするとき',
+          before: '（新規追加項目）',
+          after: 'カーブや旋回時に「キー」「ゴト」などの異音がする場合は、Active Lean Technologyの傾斜機構に異常がある可能性があります。\n傾斜アクチュエーターやセンサー類の点検が必要ですので、速やかにLean Mobility販売店で点検を受けてください。'
+        });
+        
+        changes.push({
+          location: '◇傾斜動作に違和感があるとき',
+          before: '（新規追加項目）',
+          after: 'カーブで車体が適切に傾かない、傾きすぎる、左右で傾斜角度が異なるなどの違和感がある場合は、傾斜制御システムに異常がある可能性があります。\nそのまま走行すると転倒の危険がありますので、ただちに安全な場所に停車し、Lean Mobility販売店に連絡してください。'
+        });
+        
+        changes.push({
+          location: '◇高速コーナリング後の異常',
+          before: '（新規追加項目）',
+          after: '高速でのコーナリングや連続的な急旋回を行った後、異音、振動、ハンドルの違和感などがある場合は、前輪サスペンションや傾斜機構に負荷がかかっている可能性があります。\n安全のため、Lean Mobility販売店で点検を受けてください。'
+        });
+        
+        changes.push({
+          location: '◇前輪タイヤの異常摩耗',
+          before: '（新規追加項目）',
+          after: '前2輪は車両の傾斜と操舵を担うため、四輪車より摩耗が早い場合があります。\n左右のタイヤで摩耗の差が大きい、内側または外側だけが異常に摩耗している場合は、傾斜機構の調整不良やサスペンションの異常が考えられます。\nLean Mobility販売店で点検を受けてください。'
+        });
+        
+        changes.push({
+          location: '◇段差通過時の異常な振動',
+          before: '（新規追加項目）',
+          after: '段差や凹凸を通過した際に、通常と異なる大きな振動や異音がある場合は、前輪サスペンション、傾斜機構のマウント部、または後輪サスペンションに異常がある可能性があります。\nLean Mobility販売店で点検を受けてください。'
+        });
+        
+        changes.push({
+          location: '◇傾斜角度センサー警告が表示されたとき',
+          before: '（新規追加項目）',
+          after: 'タッチスクリーンディスプレイに傾斜角度センサーの警告が表示された場合は、傾斜制御システムに異常が発生しています。\nセーフモード（傾斜制限モード）で低速走行し、速やかにLean Mobility販売店で点検を受けてください。'
+        });
+        
+        return {
+          pageNum: page.page,
+          title: page.title,
+          changes: changes
+        };
+      }
+      
+      // 分類に応じた提案を生成
+      if (page.type === 'modify') {
+        // 書き換えの場合
+        if (page.content.includes('トヨタ車体') || page.content.includes('コムス') || page.content.includes('COMS')) {
+          changes.push({
+            location: 'ヘッダー部分',
+            before: 'トヨタ車体 コムス 取扱説明書',
+            after: 'Lean Mobility Lean3 取扱説明書'
+          });
+        }
+        
+        if (page.content.includes('LFP') || page.content.includes('バッテリー')) {
+          changes.push({
+            location: 'バッテリー仕様',
+            before: '鉛バッテリー 6個',
+            after: 'リン酸鉄リチウムイオン電池（LFP）8.1kWh'
+          });
+        }
+        
+        if (page.content.includes('Active Lean Technology')) {
+          changes.push({
+            location: '車両特性',
+            before: '四輪電気自動車',
+            after: '三輪傾斜式電気自動車（Active Lean Technology搭載）'
+          });
+        }
+        
+        if (page.content.includes('タイヤ')) {
+          changes.push({
+            location: 'タイヤサイズ',
+            before: '前後同一サイズ',
+            after: '前輪: 90/90 R14、後輪: 150/70 R14'
+          });
+        }
+
+        if (page.content.includes('タッチスクリーン') || page.content.includes('ディスプレイ')) {
+          changes.push({
+            location: 'メーター表示',
+            before: 'アナログメーター（針式スピードメーター、8目盛バッテリー残量計）',
+            after: 'タッチスクリーンディスプレイ（デジタル速度表示、バッテリー残量%表示、航続距離表示）'
+          });
+        }
+      } else if (page.type === 'add') {
+        // 追加の場合
+        changes.push({
+          location: `P.${page.page} - ${page.title}`,
+          before: '（新規ページ）',
+          after: `新規追加: ${page.content.substring(0, 100)}...`
+        });
+      } else if (page.type === 'delete') {
+        // 削除の場合
+        changes.push({
+          location: `P.${page.page} - ${page.title}`,
+          before: '（既存ページ全体）',
+          after: '削除'
+        });
+      }
+
+      // 変更がない場合はデフォルトを返す
+      if (changes.length === 0) {
+        changes.push({
+          location: `P.${page.page} - ${page.title}`,
+          before: '変更内容の自動検出ができませんでした',
+          after: page.content
+        });
+      }
+
+      return {
+        pageNum: page.page,
+        title: page.title,
+        changes: changes
+      };
+    }
+
+    function displayAISuggestion(suggestion) {
+      const container = document.getElementById('aiSuggestionContent');
+      const aiSection = document.getElementById('aiSuggestion');
+      const applyBtn = document.getElementById('applyAIBtn');
+      
+      let html = '';
+      suggestion.changes.forEach(change => {
+        html += `
+          <div class="ai-change-item">
+            <div class="ai-change-label">📍 変更箇所: ${change.location}</div>
+            <div class="ai-change-label">変更前:</div>
+            <div class="ai-change-text before">${escapeHtml(change.before)}</div>
+            <div class="ai-change-label">変更後:</div>
+            <div class="ai-change-text after">${escapeHtml(change.after)}</div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+      aiSection.classList.add('active');
+      applyBtn.disabled = false;
+      
+      showToast('AI提案を生成しました');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    // HTMLに反映
+    function applyAISuggestion() {
+      if (!currentAISuggestion) {
+        showToast('適用する提案がありません', 'error');
+        return;
+      }
+
+      // manual.htmlのパスを確認
+      const manualPath = prompt('manual.htmlのパスを入力してください（例: manual.html）:', 'manual.html');
+      
+      if (!manualPath) {
+        showToast('キャンセルしました');
+        return;
+      }
+
+      // 実際のファイル操作はブラウザ単体ではできないため、
+      // ここでは変更内容をクリップボードにコピー
+      let changeText = `=== P.${currentAISuggestion.pageNum} ${currentAISuggestion.title} の変更内容 ===\n\n`;
+      
+      currentAISuggestion.changes.forEach((change, index) => {
+        changeText += `【変更 ${index + 1}】 ${change.location}\n`;
+        changeText += `変更前: ${change.before}\n`;
+        changeText += `変更後: ${change.after}\n\n`;
+      });
+      
+      changeText += `\n※ この内容を手動で ${manualPath} に反映してください。`;
+
+      // クリップボードにコピー
+      navigator.clipboard.writeText(changeText).then(() => {
+        showToast(`変更内容をクリップボードにコピーしました。${manualPath} を手動で編集してください。`);
+        
+        // ステータスを「確認済み」に更新
+        const pageNum = currentAISuggestion.pageNum;
+        const page = pages.find(p => p.page === pageNum);
+        if (page) {
+          page.status = 'confirmed';
+          document.getElementById('pageStatus').value = 'confirmed';
+          saveData();
+          showToast('ステータスを「確認済み」に更新しました');
+        }
+      }).catch(err => {
+        showToast('クリップボードへのコピーに失敗しました', 'error');
+        alert(changeText);
+      });
+    }
+
+    // モーダル外クリック
+    document.getElementById('editModal').addEventListener('click', (e) => {
+      if (e.target.id === 'editModal') closeModal();
+    });
+  </script>
+</body>
+</html>
+

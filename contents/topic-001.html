@@ -1,0 +1,353 @@
+<!doctype html>
+  <html lang="ja">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>
+        はじめに
+      </title>
+      <link rel="stylesheet" href="../styles.css" />
+    </head>
+    <body class="topic-body">
+      <article class="topic-page" id="a_1_hajimeni">
+        <h1>
+          はじめに
+        </h1>
+        <figure id="fig_6e1180c7_1279_41bf_b12d_a16cb657fd53">
+          <img id="image_380fd332_cd48_4461_8862_dcdaaa0030b4" src="../assets/images/SI_0.png" alt="image" />
+        </figure>
+        <aside id="note_771d2b50_ff56_46ac_9512_876e2187899c" class="note note-caution">
+          <p class="note-title">
+            注意
+          </p>
+          <p id="p_5d0f3b7f_fe7f_45da_a515_da000807a4c4">
+            このサービスマニュアルは、整備に関する全てのことがらを記載しているわけではありません。基本的な整備上の技能、知識などを有する人を対象に作成しておりますので、これらの技能、知識の無い人は、このマニュアルだけで整備を行わないでください。技能不足、知識不足などが整備上のトラブル、部品破損などの原因になる場合があります。
+          </p>
+        </aside>
+        <aside id="note_86d809d6_ba5d_4bb4_85bb_5a8d23689423" class="note note-important">
+          <p class="note-title">
+            重要
+          </p>
+          <p id="p_0170d1cd_e43f_428e_9226_f5349a2f7069">
+            このサービスマニュアルに記載している説明用のイラスト類は、動作原理や作業要領などを示したもので、実際の形状と異なる場合があります。
+          </p>
+        </aside>
+        <div id="div_1e0a8b63_b974_4289_85a9_9a5b6d87dda8">
+          <p id="p_b6afcfbb_4c01_43a1_9b05_5be65a3d4df2">
+            <strong id="b_8293d9e3_3707_42be_92f5_be6e832e96fb">本書の表記について</strong>
+          </p>
+          <p>
+            本サービスマニュアルで使用している表記の意味について説明します。
+          </p>
+          <table id="table_e7379e95_aa60_43f3_b60b_07dff439809a">
+            <tbody>
+              <tbody>
+                <tr>
+                  <td id="entry_7c363c9b_7355_4dbe_9e87_5520925a9ee5">
+                    <aside id="note_420d8ead_d9a5_41d3_b599_a2bc40e40b1a" class="note note-warning">
+                      <p class="note-title">
+                        警告
+                      </p>
+                    </aside>
+                  </td>
+                  <td id="entry_673778f0_5cdd_458b_b8e4_7eb80febdc27">
+                    <p>
+                      本書の指示に従わない場合、死亡または重傷を招くおそれがある事項を示します。
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_5b6639a8_0bea_49a2_a176_e396b3256c47">
+                    <aside id="note_3304adf5_14c3_454f_85d8_982b98e28ee1" class="note note-caution">
+                      <p class="note-title">
+                        注意
+                      </p>
+                    </aside>
+                  </td>
+                  <td id="entry_d284866c_fd31_4416_b20b_65f678ef99b2">
+                    <p>
+                      本書の指示に従わない場合、軽傷または中程度の傷害を招くおそれがある事項を示します。
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_0bf6830d_2332_4642_9c35_1079a498425b">
+                    <aside id="note_934484ec_50a8_4389_9ef7_81086115f9bb" class="note note-important">
+                      <p class="note-title">
+                        重要
+                      </p>
+                    </aside>
+                  </td>
+                  <td id="entry_e8edb520_a66d_4f9d_a700_27de96f16d2f">
+                    <p>
+                      本書の指示に従わない場合、車両または部品の損傷を招くおそれがある事項を示します。
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td id="entry_69ba9420_f642_46d8_b1bb_a3b1c07a5f8c">
+                    <aside id="note_5a3ca858_153f_4250_ac1d_850061c559a9" class="note note-tip">
+                      <p class="note-title">
+                        参考
+                      </p>
+                    </aside>
+                  </td>
+                  <td id="entry_679cc8eb_00b1_40af_b53c_c5a99ab67add">
+                    <p>
+                      作業を行ううえで参考となる情報や補足事項を示します。
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </tbody>
+          </table>
+        </div>
+      </article>
+      <script>
+        function applySvgShadowUnderlay(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const shadowNodes = svgRoot.querySelectorAll('[shadow="true"]');
+          shadowNodes.forEach(function (node) {
+            if (!node || !node.parentNode) {
+              return;
+            }
+            if (node.getAttribute("data-shadow-applied") === "true") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke");
+            if (!strokeColor || strokeColor === "none") {
+              return;
+            }
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const underlay = node.cloneNode(false);
+            underlay.removeAttribute("id");
+            underlay.removeAttribute("shadow");
+            underlay.removeAttribute("arrowtype");
+            underlay.removeAttribute("cursor");
+            underlay.removeAttribute("marker-start");
+            underlay.removeAttribute("marker-mid");
+            underlay.removeAttribute("marker-end");
+            underlay.setAttribute("data-shadow-underlay", "true");
+            underlay.setAttribute("stroke", "#ffffff");
+            underlay.setAttribute("fill", "none");
+            underlay.setAttribute("stroke-width", String(strokeWidth + 2));
+            underlay.setAttribute("pointer-events", "none");
+            node.parentNode.insertBefore(underlay, node);
+            node.setAttribute("data-shadow-applied", "true");
+          });
+        }
+        function ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth) {
+          const svgNs = "http://www.w3.org/2000/svg";
+          let defs = svgRoot.querySelector('defs[data-dita-arrow-defs="true"]');
+          if (!defs) {
+            defs = document.createElementNS(svgNs, "defs");
+            defs.setAttribute("data-dita-arrow-defs", "true");
+            svgRoot.insertBefore(defs, svgRoot.firstChild);
+          }
+          const colorKey = String(strokeColor || "#000000").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "000000";
+          const widthKey = String(Math.max(1, Math.round((strokeWidth || 1) * 10)));
+          const markerId = `dita-arrow-${colorKey}-${widthKey}`;
+          let marker = defs.querySelector(`#${markerId}`);
+          if (!marker) {
+            marker = document.createElementNS(svgNs, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "9");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "6");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto-start-reverse");
+            const markerPath = document.createElementNS(svgNs, "path");
+            markerPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            markerPath.setAttribute("fill", strokeColor || "#000000");
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+          }
+          return markerId;
+        }
+        function applySvgArrowMarkers(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const arrowNodes = svgRoot.querySelectorAll("[arrowtype]");
+          arrowNodes.forEach(function (node) {
+            const tagName = (node.tagName || "").toLowerCase();
+            if (!tagName || !["line", "polyline", "path", "polygon"].includes(tagName)) {
+              return;
+            }
+            const arrowType = String(node.getAttribute("arrowtype") || "").trim().toLowerCase();
+            if (!arrowType || arrowType === "0" || arrowType === "none") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke") || "#000000";
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const markerId = ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth);
+            node.removeAttribute("marker-start");
+            node.removeAttribute("marker-end");
+            if (arrowType === "10" || arrowType === "start") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              return;
+            }
+            if (arrowType === "2" || arrowType === "both") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              node.setAttribute("marker-end", `url(#${markerId})`);
+              return;
+            }
+            node.setAttribute("marker-end", `url(#${markerId})`);
+          });
+        }
+        document.querySelectorAll(".svg-container svg").forEach(function (svgRoot) {
+          applySvgArrowMarkers(svgRoot);
+          applySvgShadowUnderlay(svgRoot);
+        });
+        function clearTopicSearchHighlights() {
+          document.querySelectorAll("mark.topic-search-hit").forEach(function (markNode) {
+            const parent = markNode.parentNode;
+            if (!parent) {
+              return;
+            }
+            parent.replaceChild(document.createTextNode(markNode.textContent || ""), markNode);
+            parent.normalize();
+          });
+        }
+        function highlightTextNode(textNode, keyword) {
+          const value = textNode.nodeValue || "";
+          const lowerValue = value.toLowerCase();
+          let cursor = 0;
+          let hit = lowerValue.indexOf(keyword, cursor);
+          if (hit === -1) {
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          while (hit !== -1) {
+            if (hit > cursor) {
+              fragment.appendChild(document.createTextNode(value.slice(cursor, hit)));
+            }
+            const mark = document.createElement("mark");
+            mark.className = "topic-search-hit";
+            mark.textContent = value.slice(hit, hit + keyword.length);
+            fragment.appendChild(mark);
+            cursor = hit + keyword.length;
+            hit = lowerValue.indexOf(keyword, cursor);
+          }
+          if (cursor
+        < value.length) {
+          fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      }
+
+      function applyTopicSearchHighlights(term) {
+        clearTopicSearchHighlights();
+        const keyword = String(term || "").trim().toLowerCase();
+        if (!keyword) {
+          return;
+        }
+
+        const root = document.querySelector(".topic-page");
+        if (!root) {
+          return;
+        }
+
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function (node) {
+              const value = node.nodeValue || "";
+              if (!value.trim()) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              const parent = node.parentElement;
+              if (!parent) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (parent.closest("script, style, textarea, noscript, svg, mark")) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (value.toLowerCase().indexOf(keyword) === -1) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+
+        const targets = [];
+        while (walker.nextNode()) {
+          targets.push(walker.currentNode);
+        }
+        targets.forEach(function (node) {
+          highlightTextNode(node, keyword);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        const payload = event.data;
+        if (!payload || payload.type !== "dita-search-highlight") {
+          return;
+        }
+        applyTopicSearchHighlights(payload.term || "");
+      });
+
+      document.addEventListener("click", function (event) {
+        const image = event.target.closest("img");
+        if (image) {
+          event.preventDefault();
+          window.parent.postMessage(
+            {
+              type: "dita-image-preview",
+              kind: "img",
+              src: image.currentSrc || image.src || "",
+              alt: image.alt || ""
+            },
+            "*"
+          );
+          return;
+        }
+
+        const svg = event.target.closest(".svg-container svg");
+        if (!svg) {
+          return;
+        }
+
+        event.preventDefault();
+        const clonedSvg = svg.cloneNode(true);
+        applySvgArrowMarkers(clonedSvg);
+        applySvgShadowUnderlay(clonedSvg);
+        const imageNodes = clonedSvg.querySelectorAll("image");
+        imageNodes.forEach(function (node) {
+          const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+          if (!href || href.startsWith("data:") || href.startsWith("http://") || href.startsWith("https://")) {
+            return;
+          }
+          try {
+            const abs = new URL(href, window.location.href).href;
+            node.setAttribute("href", abs);
+            node.setAttribute("xlink:href", abs);
+          } catch (_error) {
+            // keep original href when URL normalization fails
+          }
+        });
+
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(clonedSvg);
+        window.parent.postMessage(
+          {
+            type: "dita-image-preview",
+            kind: "svg",
+            svg: svgText,
+            baseUri: window.location.href,
+            alt: "SVG preview"
+          },
+          "*"
+        );
+      });
+    </script>
+        </body>
+      </html>

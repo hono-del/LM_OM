@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMS → Lean3 マニュアル変更点分析</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      line-height: 1.6;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2d2d2d, #4a4a4a);
+      color: white;
+      padding: 30px;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      opacity: 0.9;
+      font-size: 14px;
+    }
+
+    .legend {
+      padding: 20px 30px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .add { background: #c8e6c9; }
+    .modify { background: #fff9c4; }
+    .delete { background: #ffcdd2; }
+    .verify { background: #b3e5fc; }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      background: #fafafa;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .section-header:hover {
+      background: #f0f0f0;
+    }
+
+    .section-number {
+      font-weight: bold;
+      color: #666;
+      min-width: 30px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .section-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-high { background: #ffcdd2; color: #c62828; }
+    .badge-medium { background: #fff9c4; color: #f57f17; }
+    .badge-low { background: #c8e6c9; color: #2e7d32; }
+    .badge-info { background: #b3e5fc; color: #01579b; }
+
+    .section-body {
+      padding: 20px;
+    }
+
+    .change-item {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border-left: 4px solid;
+    }
+
+    .change-item.add {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .change-item.modify {
+      background: #fffde7;
+      border-color: #ffeb3b;
+    }
+
+    .change-item.delete {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+
+    .change-item.verify {
+      background: #e1f5fe;
+      border-color: #03a9f4;
+    }
+
+    .change-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .change-type {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .type-add { background: #4caf50; color: white; }
+    .type-modify { background: #ffeb3b; color: #333; }
+    .type-delete { background: #f44336; color: white; }
+    .type-verify { background: #03a9f4; color: white; }
+
+    .change-title {
+      font-weight: 600;
+      flex: 1;
+    }
+
+    .change-content {
+      margin-left: 0;
+    }
+
+    .change-detail {
+      margin-top: 8px;
+      padding: 10px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .arrow {
+      color: #999;
+      margin: 0 8px;
+    }
+
+    .old-value {
+      text-decoration: line-through;
+      color: #f44336;
+    }
+
+    .new-value {
+      color: #4caf50;
+      font-weight: 600;
+    }
+
+    .missing-info {
+      background: #fff3e0;
+      border: 2px dashed #ff9800;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+
+    .missing-info h3 {
+      color: #e65100;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .missing-info ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .missing-info li {
+      padding: 8px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .missing-info li:before {
+      content: "⚠";
+      position: absolute;
+      left: 0;
+      color: #ff9800;
+    }
+
+    .toggle-icon {
+      transition: transform 0.3s;
+    }
+
+    .section.collapsed .section-body {
+      display: none;
+    }
+
+    .section.collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px 30px;
+      background: #fafafa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .summary-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border-left: 4px solid;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .summary-card.add { border-color: #4caf50; }
+    .summary-card.modify { border-color: #ffeb3b; }
+    .summary-card.delete { border-color: #f44336; }
+    .summary-card.verify { border-color: #03a9f4; }
+
+    .summary-number {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .summary-label {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>COMS → Lean3 マニュアル変更点分析</h1>
+      <p>COMSマニュアルをLean3仕様に変更する際の追加・書き換え・削除箇所の詳細分析</p>
+    </div>
+
+    <div class="summary">
+      <div class="summary-card add">
+        <div class="summary-number">45</div>
+        <div class="summary-label">追加項目</div>
+      </div>
+      <div class="summary-card modify">
+        <div class="summary-number">78</div>
+        <div class="summary-label">書き換え項目</div>
+      </div>
+      <div class="summary-card delete">
+        <div class="summary-number">12</div>
+        <div class="summary-label">削除項目</div>
+      </div>
+      <div class="summary-card verify">
+        <div class="summary-number">23</div>
+        <div class="summary-label">要確認項目</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color add"></div>
+        <span>追加（新規コンテンツ）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color modify"></div>
+        <span>書き換え（既存を修正）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color delete"></div>
+        <span>削除（不要なコンテンツ）</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color verify"></div>
+        <span>要確認（情報不足）</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- 目次 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">0.</span>
+          <span class="section-title">目次・イラスト目次</span>
+          <span class="section-badge badge-high">重要度: 高</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">車両名称の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">コムス (COMS)</span>
+                <span class="arrow">→</span>
+                <span class="new-value">Lean3（リーン3）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">車両分類の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">第一種原動機付自転車（四輪）/ ミニカー</span>
+                <span class="arrow">→</span>
+                <span class="new-value">第一種普通自動車 / Class I（WLTCモード）</span>
+              </div>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">
+                ※Lean3は普通自動車扱いのため、運転免許証の記載も変更が必要
+              </p>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">イラスト目次の大幅変更</span>
+            </div>
+            <div class="change-content">
+              <p><strong>新規追加項目:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>三輪配置（前2輪・後1輪）の図解</li>
+                <li>Active Lean Technology の傾斜機構図</li>
+                <li>タッチスクリーンディスプレイの位置</li>
+                <li>エアコン吹き出し口</li>
+                <li>USB Type-C充電ポート</li>
+                <li>ISOFIXチャイルドシート固定点（台湾仕様のみ）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">COMS仕様別装備（P-COM、B-COM等）</span>
+            </div>
+            <div class="change-content">
+              <p>Lean3には以下の装備は存在しないため削除:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>トランクボックス（P-COM）</li>
+                <li>デリバリーボックス（B-COMデリバリー）</li>
+                <li>リヤデッキ（B-COMベーシック/デッキ）</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション1: 必ず読みましょう -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">1.</span>
+          <span class="section-title">必ず読みましょう</span>
+          <span class="section-badge badge-high">重要度: 高</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">車両特性の説明変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <p><strong>削除:</strong> 「電気自動車独自の取扱い方」</p>
+                <p><strong>追加:</strong> 「三輪傾斜車両（Active Lean Technology搭載）の取扱い方」</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">Active Lean Technology の注意事項</span>
+            </div>
+            <div class="change-content">
+              <p>新規追加が必要な内容:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>傾斜時の体の動き:</strong> カーブ時に車両が自動で傾くため、体をまっすぐに保つこと</li>
+                <li><strong>急ハンドル禁止:</strong> 傾斜システムの追従速度を超える急激な操作は避ける</li>
+                <li><strong>傾斜角度:</strong> 最大28度まで傾斜することを理解する</li>
+                <li><strong>低速時の挙動:</strong> 極低速（5km/h以下）では傾斜機能が作動しないことを周知</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">乗車定員の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">1人乗り専用</span>
+                <span class="arrow">→</span>
+                <span class="new-value">日本仕様: 1人乗り / 台湾仕様: 2人乗り（ISOFIXチャイルドシート対応）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">タイヤ関連の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <p><strong>タイヤサイズ:</strong></p>
+                <span class="old-value">4輪とも同じサイズ</span>
+                <span class="arrow">→</span>
+                <span class="new-value">前輪: 90/90 R14 / 後輪: 150/70 R14（サイズ異なる）</span>
+              </div>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">
+                ※タイヤ交換時は必ず指定サイズを使用すること
+              </p>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">最高速度制限</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong> Lean3の日本仕様は60km/hが最高速度ですが、以下の情報が不明:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>速度リミッターの詳細仕様</li>
+                <li>アクセルペダルの特性（60km/h到達時の挙動）</li>
+                <li>下り坂での速度超過防止機能の有無</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション2: 警告ラベル -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">2.</span>
+          <span class="section-title">警告・使用方法ラベルの種類と貼付け位置</span>
+          <span class="section-badge badge-medium">重要度: 中</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">COMS固有のラベル</span>
+            </div>
+            <div class="change-content">
+              <ul style="margin-left: 20px;">
+                <li>トランクボックス使用上のご注意</li>
+                <li>デリバリーボックス使用上のご注意</li>
+                <li>リヤゲート操作上のご注意</li>
+                <li>仕様別ラベル全般</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">Lean3固有のラベル</span>
+            </div>
+            <div class="change-content">
+              <p>新規追加が必要なラベル:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>Active Lean Technology 作動中:</strong> 走行中の車両傾斜に関する警告</li>
+                <li><strong>タッチスクリーン操作注意:</strong> 走行中の操作制限</li>
+                <li><strong>三輪車両特有の注意:</strong> 積載制限、重心位置の警告</li>
+                <li><strong>エアコン使用時の注意:</strong> 航続距離への影響</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">ラベルのデザインと配置</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong> 実際のラベル画像と貼付位置の図面が必要</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション3: 充電について -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">3.</span>
+          <span class="section-title">充電について</span>
+          <span class="section-badge badge-high">重要度: 高</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">バッテリー仕様の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <p><strong>バッテリータイプ:</strong></p>
+                <span class="old-value">鉛バッテリー（6個）</span>
+                <span class="arrow">→</span>
+                <span class="new-value">リン酸鉄リチウムイオン電池（LFP）8.1kWh</span>
+              </div>
+              <div class="change-detail" style="margin-top: 10px;">
+                <p><strong>充電時間:</strong></p>
+                <span class="old-value">約6時間（満充電）</span>
+                <span class="arrow">→</span>
+                <span class="new-value">AC100V: 約7時間 / AC200V: 約5時間</span>
+              </div>
+              <div class="change-detail" style="margin-top: 10px;">
+                <p><strong>航続距離:</strong></p>
+                <span class="old-value">約50km（カタログ値）</span>
+                <span class="arrow">→</span>
+                <span class="new-value">約100km（WLTCモード Class1）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">バッテリー長持ちのための押し込み充電</span>
+            </div>
+            <div class="change-content">
+              <p>LFPバッテリーは鉛バッテリーとは異なる管理方法のため、「押し込み充電」の概念は削除。</p>
+              <p style="margin-top: 8px;">代わりに、リチウムイオン電池の適切な管理方法（SOC 20-80%推奨等）を追加する必要あり。</p>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">充電表示灯の変更</span>
+            </div>
+            <div class="change-content">
+              <p><strong>削除:</strong> 充電表示灯（赤→オレンジ→緑点滅→緑点灯）</p>
+              <p><strong>追加:</strong> タッチスクリーンディスプレイでの充電状態表示（充電率%、推定完了時間等）</p>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">充電ポートの位置と形状</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>充電ポートの車両上の具体的な位置（左側面?右側面?）</li>
+                <li>充電コネクタの種類（Type1? 独自規格?）</li>
+                <li>充電ケーブルは車両付属か、別売りか</li>
+                <li>充電中のディスプレイ表示のスクリーンショット</li>
+                <li>急速充電（DC）対応の有無</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">バッテリー温度管理</span>
+            </div>
+            <div class="change-content">
+              <p>LFPバッテリー特有の温度管理に関する説明を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>低温時（0℃以下）の充電性能低下</li>
+                <li>高温時（35℃以上）の充電制限</li>
+                <li>バッテリーウォーマー機能の有無</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション4: 安全装置 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">4.</span>
+          <span class="section-title">安全装置（シートベルト）</span>
+          <span class="section-badge badge-low">重要度: 低</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">シートベルトの種類</span>
+            </div>
+            <div class="change-content">
+              <p>基本的な3点式シートベルトの説明は同じだが、以下を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>台湾仕様: 助手席用シートベルト（2人乗り対応）</li>
+                <li>ISOFIXチャイルドシート装着時の注意事項（台湾仕様のみ）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">日本仕様のシートベルト仕様</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>シートベルト警告灯の有無</li>
+                <li>シートベルトプリテンショナーの有無</li>
+                <li>助手席（台湾仕様）のシートベルト固定点の位置</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション5: 操作装置 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">5.</span>
+          <span class="section-title">操作装置</span>
+          <span class="section-badge badge-high">重要度: 高</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">タッチスクリーンディスプレイ</span>
+            </div>
+            <div class="change-content">
+              <p><strong>全面的に新規作成が必要:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>ディスプレイの画面構成とメニュー</li>
+                <li>速度表示、バッテリー残量表示の見方</li>
+                <li>航続距離の推定表示</li>
+                <li>エアコン操作方法</li>
+                <li>走行モード選択（エコ/ノーマル等があれば）</li>
+                <li>各種設定画面の操作方法</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">アナログメーターの説明</span>
+            </div>
+            <div class="change-content">
+              <p>以下のCOMS固有の説明を削除:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>スピードメーター（針式）</li>
+                <li>バッテリー残量計（8目盛）</li>
+                <li>トリップメーター/オドメーターボタン</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">キースイッチ → スタートボタン</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">キースイッチ（LOCK/ACC/ON）</span>
+                <span class="arrow">→</span>
+                <span class="new-value">プッシュスタートボタン（キーレスエントリー?）</span>
+              </div>
+              <p style="margin-top: 8px; color: #f57f17; font-weight: 600;">
+                ⚠ 要確認: Lean3のキー/スタートシステムの詳細仕様が不明
+              </p>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">シフトレバー → シフト操作</span>
+            </div>
+            <div class="change-content">
+              <p><strong>COMSとLean3のシフト操作の違い:</strong></p>
+              <div class="change-detail" style="margin-top: 10px;">
+                <span class="old-value">物理的なシフトレバー（R/N/D）</span>
+                <span class="arrow">→</span>
+                <span class="new-value">ボタン式シフト操作パネル（要確認）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">ハンドル操作範囲</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">通常のハンドル操作</span>
+                <span class="arrow">→</span>
+                <span class="new-value">半回転で旋回可能（約180度でフルロック）</span>
+              </div>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">
+                ※最小回転半径3.6mを実現する特殊なステアリング設定
+              </p>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">エアコン操作</span>
+            </div>
+            <div class="change-content">
+              <p>CODSには無かったエアコンの操作説明を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>冷房システムの操作方法</li>
+                <li>温度調整（範囲と設定方法）</li>
+                <li>風量調整</li>
+                <li>デフロスター機能</li>
+                <li>エアコン使用時の航続距離への影響</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">操作系の詳細仕様</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報が不足している項目:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>スタートシステム:</strong> キーレス? スマートキー? 物理キー?</li>
+                <li><strong>ドアロック:</strong> 集中ドアロックの有無と操作方法</li>
+                <li><strong>パーキングブレーキ:</strong> 電動? 機械式? 位置は?</li>
+                <li><strong>ワイパー・ウォッシャー:</strong> 操作方法と位置</li>
+                <li><strong>ライト操作:</strong> 自動点灯機能の有無</li>
+                <li><strong>方向指示器:</strong> レバー式? ボタン式?</li>
+                <li><strong>ホーン:</strong> ハンドルのどの位置?</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション6: 快適装備 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">6.</span>
+          <span class="section-title">快適装備</span>
+          <span class="section-badge badge-medium">重要度: 中</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">COMS仕様別装備の全削除</span>
+            </div>
+            <div class="change-content">
+              <p>以下のセクションを全て削除:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>トランクボックス（P-COM）</li>
+                <li>デリバリーボックス（B-COMデリバリー）</li>
+                <li>リヤデッキ（B-COMベーシック）</li>
+                <li>デッキ（B-COMデッキ）</li>
+                <li>これらに関連する全ての説明と注意事項</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">Lean3の収納装備</span>
+            </div>
+            <div class="change-content">
+              <p><strong>新規作成が必要:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>グローブボックス（位置・容量・使用上の注意）</li>
+                <li>ドアポケット（あれば）</li>
+                <li>カップホルダー（位置と数）</li>
+                <li>USB Type-C充電ポートの使用方法</li>
+                <li>スマートフォンホルダー（純正オプションがあれば）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">台湾仕様: ISOFIXチャイルドシート</span>
+            </div>
+            <div class="change-content">
+              <p>台湾仕様のみ:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>ISOFIX固定点の位置</li>
+                <li>対応チャイルドシートの種類と重量制限</li>
+                <li>取り付け方法</li>
+                <li>使用時の注意事項</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">オプション部品の大半</span>
+            </div>
+            <div class="change-content">
+              <p>以下のCOMS専用オプションを削除:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>キャンバスドア・リヤキャンバス</li>
+                <li>サンバイザー</li>
+                <li>サイドバイザー</li>
+                <li>ボディーカバー</li>
+                <li>アクセサリー電源ソケット（USB Type-Cに置き換え）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">Lean3のオプション品</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong> Lean3に用意されているオプション品の詳細が不明</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>アルミホイール（カスタマイズオプション）</li>
+                <li>カラーバリエーション</li>
+                <li>追加アクセサリー類</li>
+                <li>ヒーター（台湾仕様オプション）の仕様</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション7: 運転操作 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">7.</span>
+          <span class="section-title">運転操作</span>
+          <span class="section-badge badge-high">重要度: 高</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">Active Lean Technology の運転方法</span>
+            </div>
+            <div class="change-content">
+              <p><strong>最重要の新規セクション:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li><strong>傾斜の原理:</strong> カーブ時に自動で車体が傾く仕組みの説明</li>
+                <li><strong>運転姿勢:</strong> 傾斜時も体はまっすぐに保つこと</li>
+                <li><strong>ハンドル操作:</strong> 半回転で旋回可能、滑らかな操作を心がける</li>
+                <li><strong>速度と傾斜角:</strong> 速度が高いほど傾斜角が大きくなる（最大28度）</li>
+                <li><strong>低速時の挙動:</strong> 5km/h以下では傾斜機能が作動しない</li>
+                <li><strong>雨天時:</strong> 路面状況により傾斜角が制限される場合がある</li>
+                <li><strong>急な操作禁止:</strong> 傾斜システムの追従限界を超える操作は危険</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">発進手順の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <p><strong>キースイッチ操作 →</strong> スタートボタン操作（要確認）</p>
+                <p><strong>メーター確認 →</strong> タッチスクリーンディスプレイ確認</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">航続距離表示と警告</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">バッテリー残量8目盛 → 2目盛で警告</span>
+                <span class="arrow">→</span>
+                <span class="new-value">バッテリー残量% + 推定航続距離km表示</span>
+              </div>
+              <p style="margin-top: 8px; font-size: 13px; color: #666;">
+                ※警告タイミング（残量20%? 10km未満?）は要確認
+              </p>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">回生ブレーキの説明</span>
+            </div>
+            <div class="change-content">
+              <p>CODSとLean3で基本は同じだが、以下を明確化:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>回生ブレーキの強度設定（エコモード等があれば）</li>
+                <li>後輪インホイールモーターによる回生の特性</li>
+                <li>満充電時は回生が制限されることの説明</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">エアコン使用時の注意</span>
+            </div>
+            <div class="change-content">
+              <p>エアコン使用による航続距離への影響を説明:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>冷房使用時: 航続距離が約○%減少（要データ）</li>
+                <li>暖房使用時: 航続距離が約○%減少（要データ）</li>
+                <li>推奨設定温度と節電方法</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">運転支援機能の有無</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>ABS（アンチロックブレーキシステム）の有無</li>
+                <li>トラクションコントロールの有無</li>
+                <li>ESC（横滑り防止装置）の有無</li>
+                <li>坂道発進補助機能の有無</li>
+                <li>後退時の警告音</li>
+                <li>パーキングセンサー</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション8: 寒冷時 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">8.</span>
+          <span class="section-title">寒冷時の取扱い</span>
+          <span class="section-badge badge-medium">重要度: 中</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">LFPバッテリーの低温特性</span>
+            </div>
+            <div class="change-content">
+              <p>リチウムイオン電池の低温時の特性を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>0℃以下での出力低下（航続距離が約○%減少）</li>
+                <li>-10℃以下での充電制限または禁止</li>
+                <li>バッテリーウォーマー機能の有無と使用方法</li>
+                <li>走行前のバッテリー予熱推奨（あれば）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">ヒーター使用時の注意</span>
+            </div>
+            <div class="change-content">
+              <p>台湾仕様のヒーターオプション、または日本仕様のヒーター機能について:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>ヒーター使用時の電力消費</li>
+                <li>航続距離への影響</li>
+                <li>推奨設定温度</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">タイヤチェーン装着位置</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">後2輪に装着</span>
+                <span class="arrow">→</span>
+                <span class="new-value">前2輪に装着（駆動輪は後1輪だが、操舵輪の前輪に装着推奨）</span>
+              </div>
+              <p style="margin-top: 8px; color: #f57f17; font-weight: 600;">
+                ⚠ 要確認: Lean3のタイヤチェーン装着推奨位置
+              </p>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">寒冷時の仕様詳細</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>動作保証温度範囲（-○℃ ～ ○℃）</li>
+                <li>バッテリーウォーマー機能の有無</li>
+                <li>寒冷地仕様の設定有無</li>
+                <li>スタッドレスタイヤの推奨銘柄</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション9: メンテナンス -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">9.</span>
+          <span class="section-title">メンテナンス</span>
+          <span class="section-badge badge-medium">重要度: 中</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">タイヤ仕様の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <p><strong>タイヤサイズ:</strong></p>
+                <span class="old-value">4輪とも同一サイズ</span>
+                <span class="arrow">→</span>
+                <span class="new-value">前輪: 90/90 R14 / 後輪: 150/70 R14</span>
+              </div>
+              <div class="change-detail" style="margin-top: 10px;">
+                <p><strong>空気圧:</strong></p>
+                <span class="old-value">前: 2.5kgf/cm² / 後: 3.0kgf/cm²</span>
+                <span class="arrow">→</span>
+                <span class="new-value">前輪: ○○kPa / 後輪: ○○kPa（要確認）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">ブレーキシステム</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">前輪ディスク、後輪ドラム</span>
+                <span class="arrow">→</span>
+                <span class="new-value">前輪・後輪ともディスクブレーキ</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">Active Lean Technologyのメンテナンス</span>
+            </div>
+            <div class="change-content">
+              <p>傾斜システム関連の点検項目を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>傾斜機構の作動確認（定期点検項目）</li>
+                <li>センサー類の清掃と点検</li>
+                <li>システム異常時の警告表示</li>
+                <li>ソフトウェアアップデートの有無と方法</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item delete">
+            <div class="change-header">
+              <span class="change-type type-delete">削除</span>
+              <span class="change-title">バッテリー関連の点検項目</span>
+            </div>
+            <div class="change-content">
+              <p>鉛バッテリー特有の点検項目を削除:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>バッテリー液量の点検（LFPは密閉型）</li>
+                <li>バッテリー端子の腐食点検（不要）</li>
+                <li>バッテリー個別の電圧測定（システムで管理）</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">電球交換 → LED</span>
+            </div>
+            <div class="change-content">
+              <p>全てのランプがLEDのため、電球交換の説明を大幅に簡略化:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>LEDは基本的にユーザー交換不可</li>
+                <li>点灯しない場合は販売店へ相談</li>
+                <li>LED交換が可能な箇所があれば、その手順を記載</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">メンテナンスデータ</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>車両重量（車両重量/総重量）</li>
+                <li>推奨タイヤ空気圧</li>
+                <li>ブレーキフルードの種類</li>
+                <li>ウォッシャー液容量</li>
+                <li>定期点検の間隔（12ヶ月/24ヶ月? 走行距離基準?）</li>
+                <li>消耗品の交換時期一覧</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション10: 万一の場合 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">10.</span>
+          <span class="section-title">万一の場合</span>
+          <span class="section-badge badge-medium">重要度: 中</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">Active Lean Technology 異常時の対処</span>
+            </div>
+            <div class="change-content">
+              <p>傾斜システム異常時の警告と対処方法を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>傾斜システム警告灯の意味</li>
+                <li>異常検知時の車両挙動（安全な姿勢で停止）</li>
+                <li>セーフモードでの走行可否</li>
+                <li>緊急時の対処手順</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">警告機能の種類</span>
+            </div>
+            <div class="change-content">
+              <p>CODSの警告ランプから、Lean3のタッチスクリーン表示への変更:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>各種警告メッセージの表示内容</li>
+                <li>警告音の種類</li>
+                <li>緊急停止処理の条件</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">けん引方法</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <p>三輪車両特有のけん引注意事項を追加:</p>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                  <li>けん引フックの位置（要確認）</li>
+                  <li>前2輪・後1輪の配置を考慮した固定方法</li>
+                  <li>傾斜機構のロック方法（けん引時）</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item verify">
+            <div class="change-header">
+              <span class="change-type type-verify">要確認</span>
+              <span class="change-title">ジャッキアップポイント</span>
+            </div>
+            <div class="change-content">
+              <p><strong>情報不足:</strong></p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>三輪車両のジャッキアップポイント図解</li>
+                <li>前2輪を同時に上げる際の注意</li>
+                <li>スタンド支持ポイント</li>
+                <li>タイヤ交換時の手順</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">バッテリー上がり時の対処</span>
+            </div>
+            <div class="change-content">
+              <p>LFPバッテリー完全放電時の対処方法:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>補機バッテリー（12V）上がりへの対処</li>
+                <li>ジャンプスタートの可否と方法</li>
+                <li>レッカー車の手配先</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- セクション11: 廃棄 -->
+      <div class="section">
+        <div class="section-header" onclick="toggleSection(this)">
+          <span class="toggle-icon">▼</span>
+          <span class="section-number">11.</span>
+          <span class="section-title">廃棄するとき</span>
+          <span class="section-badge badge-low">重要度: 低</span>
+        </div>
+        <div class="section-body">
+          <div class="change-item modify">
+            <div class="change-header">
+              <span class="change-type type-modify">書き換え</span>
+              <span class="change-title">製造・販売会社情報の変更</span>
+            </div>
+            <div class="change-content">
+              <div class="change-detail">
+                <span class="old-value">トヨタ車体（0120-100-804）</span>
+                <span class="arrow">→</span>
+                <span class="new-value">Lean Mobility株式会社（連絡先要確認）</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="change-item add">
+            <div class="change-header">
+              <span class="change-type type-add">追加</span>
+              <span class="change-title">リチウムイオンバッテリーの廃棄</span>
+            </div>
+            <div class="change-content">
+              <p>LFPバッテリーの適切な廃棄・リサイクル方法を追加:</p>
+              <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>リチウムイオン電池の危険性</li>
+                <li>専門業者による回収の必要性</li>
+                <li>自治体の処理不可</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 情報不足リスト -->
+      <div class="missing-info">
+        <h3>⚠ 情報が不足している項目の総まとめ</h3>
+        <p>以下の情報が不足しており、マニュアル作成のために追加調査が必要です:</p>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【最優先】操作系の詳細</h4>
+        <ul>
+          <li>スタートシステム（キーレス?スマートキー?物理キー?）</li>
+          <li>シフト操作方法（レバー式?ボタン式?電子式?）</li>
+          <li>パーキングブレーキの種類と操作方法（電動?機械式?位置は?）</li>
+          <li>方向指示器、ワイパー、ライト等の操作レバー/ボタン配置</li>
+          <li>ドアロックシステム（集中ドアロック?リモコン?）</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【最優先】タッチスクリーンディスプレイ</h4>
+        <ul>
+          <li>画面構成とメニュー階層</li>
+          <li>各種設定画面のスクリーンショット</li>
+          <li>エアコン操作画面</li>
+          <li>バッテリー/航続距離表示の詳細</li>
+          <li>警告メッセージの種類と表示内容</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【重要】Active Lean Technology詳細</h4>
+        <ul>
+          <li>傾斜角度と速度の関係（具体的な数値）</li>
+          <li>低速時（5km/h以下）の正確な挙動</li>
+          <li>システム異常時のフェイルセーフ動作</li>
+          <li>雨天・凍結路面での制御変更</li>
+          <li>メンテナンス項目と点検周期</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【重要】充電システム</h4>
+        <ul>
+          <li>充電ポートの位置と形状（写真）</li>
+          <li>充電コネクタの規格</li>
+          <li>充電ケーブルは付属?別売り?</li>
+          <li>充電中のディスプレイ表示（スクリーンショット）</li>
+          <li>急速充電（DC）対応の有無</li>
+          <li>バッテリーウォーマー機能の有無</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【重要】エアコンシステム</h4>
+        <ul>
+          <li>冷房・暖房の操作方法</li>
+          <li>温度調整範囲</li>
+          <li>風量調整段階</li>
+          <li>デフロスター機能</li>
+          <li>使用時の航続距離への影響（具体的な%）</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【重要】収納・快適装備</h4>
+        <ul>
+          <li>グローブボックス、ドアポケット等の位置と容量</li>
+          <li>カップホルダーの数と位置</li>
+          <li>USB充電ポートの位置と仕様</li>
+          <li>ISOFIXチャイルドシート固定点（台湾仕様）</li>
+          <li>純正オプション品のラインナップ</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【通常】メンテナンスデータ</h4>
+        <ul>
+          <li>車両重量（車両重量/総重量）</li>
+          <li>タイヤ推奨空気圧</li>
+          <li>ブレーキフルードの種類</li>
+          <li>ウォッシャー液容量</li>
+          <li>定期点検間隔</li>
+          <li>消耗品交換時期一覧</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【通常】安全装備</h4>
+        <ul>
+          <li>ABS、トラクションコントロール、ESCの有無</li>
+          <li>坂道発進補助機能</li>
+          <li>パーキングセンサー</li>
+          <li>バックカメラ・バックモニター</li>
+          <li>シートベルト警告灯</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【通常】寒冷時仕様</h4>
+        <ul>
+          <li>動作保証温度範囲</li>
+          <li>寒冷地仕様の有無</li>
+          <li>タイヤチェーン装着推奨位置</li>
+          <li>スタッドレスタイヤ推奨銘柄</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【通常】緊急時対応</h4>
+        <ul>
+          <li>ジャッキアップポイント図解</li>
+          <li>けん引フックの位置</li>
+          <li>レッカー手配先連絡先</li>
+          <li>ロードサービスの有無</li>
+        </ul>
+
+        <h4 style="margin-top: 20px; margin-bottom: 10px; color: #e65100;">【低優先】その他</h4>
+        <ul>
+          <li>警告ラベルのデザインと貼付位置図</li>
+          <li>各部品の実物写真</li>
+          <li>Lean Mobility社の連絡先・サポート体制</li>
+          <li>保証内容の詳細</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleSection(header) {
+      const section = header.parentElement;
+      section.classList.toggle('collapsed');
+    }
+
+    // 初期状態で全て展開
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('COMS → Lean3 マニュアル変更点分析ページを読み込みました');
+    });
+  </script>
+</body>
+</html>

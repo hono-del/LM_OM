@@ -1,0 +1,33 @@
+# 環境設定ファイル
+.env
+*.env
+
+# 大きなPDFファイル（100MB以上）
+book.pdf
+eVITARA_OM.pdf
+coms_manual.pdf
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 一時ファイル
+temp_*.json
+*.tmp
+
+# OS固有ファイル
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# エディタ固有
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ログファイル
+*.log

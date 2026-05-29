@@ -1,0 +1,713 @@
+<!doctype html>
+  <html lang="ja">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>
+        11-3 インバーター
+      </title>
+      <link rel="stylesheet" href="../styles.css" />
+    </head>
+    <body class="topic-body">
+      <article class="topic-page" id="a_3-1-1_maintenance-general-description">
+        <h1>
+          11-3 インバーター
+        </h1>
+        <section id="section_2e7e854f_c8e5_4f54_8b91_5fcbb8a2e37e">
+          <h2>
+            構成図
+          </h2>
+          <figure id="fig_ab08535c_ad64_4b1b_bd91_a5b85d253ab8">
+            <div class="svg-container">
+              <svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1038px" height="669px" viewbox="0 0 1038 669" xmlns="http://www.w3.org/2000/svg">
+                <image x="0" y="0" width="1038px" height="669px" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../assets/images/inv_0.png" dlg="no" href="../assets/images/inv_0.png">
+                </image>
+                <polyline id="svg_85ab3108_b24a_4b11_9f32_9a2dd73c24a4" points="227.5 218.75 300.618 244.714 302.948 43.4261 860.711 156.961" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_ccbdcd57_f3cc_4b5c_890d_197759c45e47" points="85 212.5 193.824 245.16 194.366 44.6887 753.211 175.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_ba0d90ea_54fc_4ef8_99b2_06093cb841a4" points="53.75 343.75 159.082 380.511 162.762 173.461 755.711 306.961" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_ced39612_85a3_4b94_83eb_e739e533fd58" points="240 300.2 389.068 367.221 395.847 156.414 531.961 202.7" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_0897e064_3e66_4ef8_bb3f_e0f5965e305a" points="275 305 434.095 370.94 440.267 163.157 570.711 201.961" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_0f122bb9_239d_4851_a96d_d1635c807016" points="597.5 203.75 476.77 166.108 473.613 360.912 306.961 305.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" stroke-dasharray="5.333344 5.333344">
+                </polyline>
+                <polyline id="svg_49b231d9_ae52_4dff_9f2d_bbc393222e9e" points="276.25 350.2 477.385 539.724 476.431 564.692 508.211 572.7" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <polyline id="svg_36df154a_a542_441b_bf94_fa1e1e61b2ae" points="296.25 350.2 492.932 543.348 492.026 557.486 521.961 570.2" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" stroke-dasharray="5.333344 5.333344" shadow="true">
+                </polyline>
+                <text id="svg_11c8c403_4e14_4873_8bde_e8a84697581c" transform="matrix(1,0,0,1,207.5,412.5)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        1
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <polyline id="svg_47cdf27d_685d_48ee_a8a8_5f160e34a97f" points="211.25 406.45 211.961 386.45" fill="none" stroke="#000000" stroke-width="1" cursor="pointer">
+                </polyline>
+                <polyline id="svg_407974df_ffd1_4622_9fe3_8d14a9e3eb32" points="126.25 127.7 177.652 128.165 220.711 215.2" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" arrowtype="1">
+                </polyline>
+                <polyline id="svg_b19b2c05_cda8_4a42_a7f5_50540120163f" points="176.25 131.25 76.961 205.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <polyline id="svg_7bd1d426_dd6e_4552_9681_8ec66cfd35a1" points="177.5 131.25 50.711 339.461" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="1">
+                </polyline>
+                <text id="svg_650ef0e3_17a3_4406_826a_a9e6c9313b1a" transform="matrix(1,0,0,1,43.75,118.75)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 6 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_b2500329_2ad3_44c4_a60b_34d0e82651ba" x="38.75" y="115" height="23.75" width="83.75" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <text id="svg_79aab8f7_9789_46eb_9abd_120a17be89d4" transform="matrix(1,0,0,1,654.25,399.5)" font-family="Arial" font-size="14" style="fill:black;stroke:none;">
+                  <tspan>
+                    <tspan x="4" y="12">
+                      <tspan x="4" y="12">
+                        T = 6 N・m
+                      </tspan>
+                    </tspan>
+                  </tspan>
+                </text>
+                <rect id="svg_db300c92_95ea_4f91_8c07_fda817e5588f" x="642.5" y="388.75" height="32.5" width="101.25" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" dlg="no">
+                </rect>
+                <polyline id="svg_5925275d_ac67_4421_843f_6ba90320fe39" points="552.5 211.25 607.469 404.748 639.461 405.711" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10" shadow="true">
+                </polyline>
+                <polyline id="svg_78a5139d_ee54_42d7_824c_5651ee5ebd84" points="577.5 210.2 609.15 403.95" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10" shadow="true">
+                </polyline>
+                <polyline id="svg_edf897d3_732b_4868_bfbd_46f730d3e801" points="610 213.95 609.461 403.95" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" arrowtype="10" shadow="true">
+                </polyline>
+                <polyline id="svg_4026016a_abf5_41f1_9ae3_cfb145fa6f0c" points="533.75 567.7 607.9 405.2" fill="none" stroke="#000000" stroke-width="1" cursor="pointer" shadow="true" arrowtype="10">
+                </polyline>
+              </svg>
+            </div>
+          </figure>
+        </section>
+        <table id="table_907b37c3_1d35_4a63_9593_349b36350f09">
+          <tbody>
+            <tbody>
+              <tr>
+                <td id="entry_2df254ec_a61b_45f6_bd45_8d46891ad5fd">
+                  <p style="text-align:center;">
+                    1
+                  </p>
+                </td>
+                <td id="entry_f87696fe_51bc_4260_814d_57b15a0b9af9">
+                  <p>
+                    INVERTER ASSY, ELECTRIC VEHICLE TRACTION (A4110-B1000)
+                  </p>
+                </td>
+                <td id="entry_e8135667_e790_4ee7_ba17_b58323db800c">
+                  <p style="text-align:center;">
+                    -
+                  </p>
+                </td>
+                <td id="entry_4b3a9754_4d75_4ba1_ad4d_78593096074a">
+                  <p>
+                    -
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </tbody>
+        </table>
+        <section id="section_1f494d4f_aacb_45d3_a21c_f26517ad95e7">
+          <h2>
+            取り外し前作業
+          </h2>
+          <ol id="ol_d0f72789_5ce8_4581_a0e3_88c82a19c4de">
+            <li id="li_9f896b18_52c8_45b8_bd7a_e2abf07ae872">
+              <p id="p_aa854b65_173c_42cb_bf1f_cf3b16a08d00">
+                タイヤカバーを取り外す。<a id="xref_f43ecf9b_9e12_4b5d_aa3a_ace75c4cbc44" class="xref" href="../contents/topic-011.html#section_2e7e854f_c8e5_4f54_8b91_5fcbb8a2e37e">4-1-2外装(リヤ)</a>
+              </p>
+            </li>
+          </ol>
+        </section>
+        <section id="section_eabd0544_9048_4376_bade_48f1dde3ae63">
+          <h2>
+            取り外し手順
+          </h2>
+        </section>
+        <aside id="note_833b4e7f_a238_4035_a634_fb59ae4bdea0" class="note note-caution">
+          <p class="note-title">
+            注意
+          </p>
+          <p id="p_08c679a6_415a_41b0_b368_494eba47f442">
+            高電圧系統の点検・整備を行う場合は、車両電源をオフにし、絶縁手袋の着用など感電防止措置を確実に実施する。
+          </p>
+        </aside>
+        <div id="bodydiv_ae12a2ce_fe62_413c_b417_d20cf344c4cd" class="two-column">
+          <div id="div_5deeaa46_4687_43cc_8713_7c8aff6441fc">
+            <figure id="fig_a6f04928_c9ec_470c_8adf_9d2deb79481d">
+              <img id="image_d1a315a5_a315_40db_8be8_f40cecc56f4a" src="../assets/images/reartire1.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_7f83f63e_6d69_4896_84a6_a491f383bca7">
+            <p id="p_1c9913f8_6804_4a3e_be3b_3e67d01ecfa9">
+              <strong id="b_37a07809_f618_47b8_86cd_9953e6db4afe"><span class="two-column-step-number">1.</span><span class="two-column-step-text">車両メインスイッチのオフ</span></strong>
+            </p>
+            <aside id="note_612965d0_6312_4ff2_8aec_5e4f6a2a93ad" class="note note-warning">
+              <p class="note-title">
+                警告
+              </p>
+              <p id="p_bd1b6ccc_e68d_4357_ae93_ccf7cb89bc49">
+                車両の電源を確実にオフし絶縁対策を実施し、作業を開始する。
+              </p>
+            </aside>
+          </div>
+        </div>
+        <div id="bodydiv_c055z70" class="two-column">
+          <div id="div_c055z71">
+            <figure id="fig_c055z72">
+              <img id="image_c055z73" src="../assets/images/reartire7.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_c055z74">
+            <p id="p_c055z75">
+              <strong id="b_fd5fd942_84ed_4925_83c9_e7b62062323a"><span class="two-column-step-number">2.</span><span class="two-column-step-text">INVERTER ASSY, ELECTRIC VEHICLE TRACTION取り外し</span></strong>
+            </p>
+            <ol id="ul_d09f9f24_1f8a_4160_97c4_c6ff7934e6c9" type="a" start="1">
+              <li id="li_b4181e42_1785_4b45_8ebb_add42e89e335">
+                <p id="p_c008ea44_723e_4c22_a7a7_56d8082edd51">
+                  高圧電源ケーブルのクランプ2か所を外し、インバーターのナット3個を外す。
+                </p>
+              </li>
+              <li id="li_458b28aa_14db_4eb3_a3a0_983230665e5e">
+                <p id="p_225bfeb5_eb33_4ee2_a98f_9fab4654b7af">
+                  インバーターを引き出す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_iw15u70" class="two-column">
+          <div id="div_iw15u71">
+            <figure id="fig_iw15u72">
+              <img id="image_iw15u73" src="../assets/images/reartire8.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_iw15u74">
+            <ol id="ul_a19c5cb1_19d6_4d27_9e89_6dcb2856e164" type="a" start="3">
+              <li id="li_9b78a032_31dd_4195_b989_1de285d070ad">
+                <p id="p_07fc4f3c_58ce_4916_adae_d48af9437e91">
+                  インバーターにはメインバッテリーに繋がる赤端子/黒端子、ホイールに繋がる青端子/緑端子/黄端子がある。
+                </p>
+                <aside id="note_d1ad4c3a_b6ba_4ce7_93bc_c82abdc0a7f0" class="note note-warning">
+                  <p class="note-title">
+                    警告
+                  </p>
+                  <p id="p_27ac6cac_f048_4d6b_a4a3_71d5e25de1a6">
+                    各端子を外す前に赤端子⊕/黒端子⊖にテスターを当て電圧が0Vであることを確認！
+                  </p>
+                </aside>
+              </li>
+              <li id="li_e67ed22d_d8ec_4212_a13e_c9f0ddc7d48f">
+                <p id="p_b3eae851_c7d4_494b_aaf5_773644fc5c87">
+                  青端子/緑端子/黄端子、および赤端子/黒端子を取り外し車体と分離する。
+                </p>
+                <div id="div_5603753f_d3aa_46df_98e3_0d4759b808a6">
+                  <p id="p_13300edd_f66a_438f_99b6_1d18c44254e8">
+                    ※メインスイッチオフ後10秒で電圧は0Vに設計上なっている。
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_3fqvea0" class="two-column">
+          <div id="div_3fqvea1">
+            <figure id="fig_3fqvea2">
+              <img id="image_3fqvea3" src="../assets/images/inv_2.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_3fqvea4">
+            <ol id="ul_824de9f9_3d7b_408a_8d9f_b41f24f634d9" type="a" start="5">
+              <li id="li_f1e1a099_b2a1_4c59_bc90_108c3e27217d">
+                <p id="p_55133ff2_007e_4c54_a136_e56a29ed1987">
+                  インバータに接続されているコネクターを切り離す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_ai48pw0" class="two-column">
+          <div id="div_ai48pw1">
+            <figure id="fig_ai48pw2">
+              <img id="image_ai48pw3" src="../assets/images/inv_3.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_ai48pw4">
+            <ol id="ul_ai48pw5" type="a" start="6">
+              <li id="li_ai48pw6">
+                <p id="p_ai48pw7">
+                  コネクターを切り離す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_f9htim0" class="two-column">
+          <div id="div_f9htim1">
+            <figure id="fig_f9htim2">
+              <img id="image_f9htim3" src="../assets/images/inv_1.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_f9htim4">
+            <ol id="ul_f9htim5" type="a" start="7">
+              <li id="li_f9htim8">
+                <p id="p_f9htim9">
+                  ハーネスを引き出し、インバータを取り外す。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <section id="section_aiojri0">
+          <h2>
+            取り付け手順
+          </h2>
+        </section>
+        <div id="bodydiv_gglvv30" class="two-column">
+          <div id="div_gglvv31">
+            <figure id="fig_gglvv32">
+              <img id="image_gglvv33" src="../assets/images/inv_1.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_gglvv34">
+            <p id="p_gglvv35">
+              <strong id="b_gglvv36"><span class="two-column-step-number">1.</span><span class="two-column-step-text">INVERTER ASSY, ELECTRIC VEHICLE TRACTION取り付け</span></strong>
+            </p>
+            <ol id="ul_34e36cbb_b63e_45ed_8d9f_45b74dee0be7" type="a" start="1">
+              <li id="li_7c3737e6_d292_4121_ae0e_dcb97c1c0200">
+                <p id="p_b36f5dbb_3add_43a5_a300_7f4a8184e67c">
+                  ハーネスがエアコンコンプレッサーの裏側をとおるようにして、インバータを仮置きする。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_ba0t80" class="two-column">
+          <div id="div_ba0t81">
+            <figure id="fig_ba0t82">
+              <img id="image_ba0t83" src="../assets/images/inv_3.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_ba0t84">
+            <ol id="ul_ba0t87" type="a" start="2">
+              <li id="li_ba0t88">
+                <p id="p_ba0t89">
+                  コネクターを接続する。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_hmbpj80" class="two-column">
+          <div id="div_hmbpj81">
+            <figure id="fig_hmbpj82">
+              <img id="image_hmbpj83" src="../assets/images/inv_2.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_hmbpj84">
+            <ol id="ul_d3543e4d_60f4_4584_950f_3e3cf310ef85" type="a" start="3">
+              <li id="li_4616a74b_5d86_4a25_be0b_4f1db33026ce">
+                <p id="p_147ef888_2d6f_4def_b4dd_ada381f8a896">
+                  インバータに接続されているコネクターを接続する。
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_a28waw0" class="two-column">
+          <div id="div_a28waw1">
+            <figure id="fig_a28waw2">
+              <img id="image_a28waw3" src="../assets/images/inv_8.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_a28waw4">
+            <ol id="ul_a28waw5" type="a" start="4">
+              <li id="li_a28waw6">
+                <p id="p_a28waw7">
+                  赤端子/黒端子を接続する。
+                </p>
+              </li>
+              <li id="li_ee3e178e_2d23_47b0_a81e_553c219b70a9">
+                <p id="p_9236c491_4be3_4f3d_b591_8e37728ed9fb">
+                  ナット2個を締め付ける。
+                </p>
+                <aside id="note_a3b8b009_ba42_4604_ba5f_18ee996a739c" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_6895a478_8e3a_44d6_a4ad_42fcc4885619">
+                    T ＝ 6 N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_gyq3na0" class="two-column">
+          <div id="div_gyq3na1">
+            <figure id="fig_gyq3na2">
+              <img id="image_gyq3na3" src="../assets/images/inv_4.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_gyq3na4">
+            <ol id="ul_gyq3na5" type="a" start="6">
+              <li id="li_gyq3na6">
+                <p id="p_gyq3na7">
+                  青端子/緑端子/黄端子を接続する。
+                </p>
+                <aside id="note_gyq3na8" class="note note-caution">
+                  <p class="note-title">
+                    注意
+                  </p>
+                  <ul id="ul_gyq3na9">
+                    <li id="li_gyq3na10">
+                      <p id="p_gyq3na11">
+                        車体後方から「青➡緑➡黄」の順
+                      </p>
+                    </li>
+                    <li id="li_gyq3na12">
+                      <p id="p_gyq3na13">
+                        配線の色の間違いに注意する。
+                      </p>
+                    </li>
+                  </ul>
+                </aside>
+              </li>
+              <li id="li_gyq3na14">
+                <p id="p_gyq3na15">
+                  ナット3個を締め付ける。
+                </p>
+                <aside id="note_gyq3na16" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_gyq3na17">
+                    T ＝6 N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_j7o29f0" class="two-column">
+          <div id="div_j7o29f1">
+            <figure id="fig_j7o29f2">
+              <img id="image_j7o29f3" src="../assets/images/inv_6.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_j7o29f4">
+            <ol id="ul_efa249a7_7b4d_4597_96bf_7b5650ef2225" type="a" start="8">
+              <li id="li_f7620f66_aac9_43ab_bb9b_3e72df651424">
+                <p id="p_43bbd0ba_0100_41ed_b757_e416b615ec2e">
+                  インバータ接続端子が図のように取り付けられていることを確認する。
+                </p>
+              </li>
+            </ol>
+            <div id="div_f3cb49e3_bb2a_449b_87cf_f0bc402ec39b">
+              <p id="p_c6540533_bdb9_4e01_a1f7_008fb28d4bb8">
+                ←形状ちがうようです。
+              </p>
+            </div>
+          </div>
+        </div>
+        <div id="bodydiv_8fnv2m0" class="two-column">
+          <div id="div_8fnv2m1">
+            <figure id="fig_8fnv2m2">
+              <img id="image_8fnv2m3" src="../assets/images/reartire7.png" alt="image" />
+            </figure>
+          </div>
+          <div id="div_8fnv2m4">
+            <ol id="ul_8fnv2m7" type="a" start="9">
+              <li id="li_8fnv2m8">
+                <p id="p_8fnv2m9">
+                  高圧電源ケーブルのクランプ2か所を接続する。
+                </p>
+              </li>
+              <li id="li_8fnv2m10">
+                <p id="p_8fnv2m11">
+                  インバータを車両に取り付け、ナット3個を締め付ける。締め付ける。
+                </p>
+                <aside id="note_18c39cb1_6069_4f6a_84c5_6740766e6c08" class="note note-important">
+                  <p class="note-title">
+                    重要
+                  </p>
+                  <p id="p_f77688c9_e10c_4f08_b274_a87525400b7e">
+                    T = XXX N・m
+                  </p>
+                </aside>
+              </li>
+            </ol>
+          </div>
+        </div>
+        <div id="bodydiv_g9kftv0" class="two-column">
+          <div id="div_g9kftv1">
+            <div id="div_g9kftv2">
+            </div>
+          </div>
+          <div id="div_g9kftv4">
+            <div id="div_g9kftv5">
+              <p id="p_g9kftv6">
+                <strong id="b_g9kftv7"><span class="two-column-step-number">2.</span><span class="two-column-step-text">タイヤカバーを取り付け</span></strong><a id="xref_48165304_9781_4575_9a65_1d5742999d93" class="xref" href="../contents/topic-011.html">4-1-2 外装(リヤ)</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+      <script>
+        function applySvgShadowUnderlay(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const shadowNodes = svgRoot.querySelectorAll('[shadow="true"]');
+          shadowNodes.forEach(function (node) {
+            if (!node || !node.parentNode) {
+              return;
+            }
+            if (node.getAttribute("data-shadow-applied") === "true") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke");
+            if (!strokeColor || strokeColor === "none") {
+              return;
+            }
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const underlay = node.cloneNode(false);
+            underlay.removeAttribute("id");
+            underlay.removeAttribute("shadow");
+            underlay.removeAttribute("arrowtype");
+            underlay.removeAttribute("cursor");
+            underlay.removeAttribute("marker-start");
+            underlay.removeAttribute("marker-mid");
+            underlay.removeAttribute("marker-end");
+            underlay.setAttribute("data-shadow-underlay", "true");
+            underlay.setAttribute("stroke", "#ffffff");
+            underlay.setAttribute("fill", "none");
+            underlay.setAttribute("stroke-width", String(strokeWidth + 2));
+            underlay.setAttribute("pointer-events", "none");
+            node.parentNode.insertBefore(underlay, node);
+            node.setAttribute("data-shadow-applied", "true");
+          });
+        }
+        function ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth) {
+          const svgNs = "http://www.w3.org/2000/svg";
+          let defs = svgRoot.querySelector('defs[data-dita-arrow-defs="true"]');
+          if (!defs) {
+            defs = document.createElementNS(svgNs, "defs");
+            defs.setAttribute("data-dita-arrow-defs", "true");
+            svgRoot.insertBefore(defs, svgRoot.firstChild);
+          }
+          const colorKey = String(strokeColor || "#000000").replace(/[^a-zA-Z0-9]/g, "").toLowerCase() || "000000";
+          const widthKey = String(Math.max(1, Math.round((strokeWidth || 1) * 10)));
+          const markerId = `dita-arrow-${colorKey}-${widthKey}`;
+          let marker = defs.querySelector(`#${markerId}`);
+          if (!marker) {
+            marker = document.createElementNS(svgNs, "marker");
+            marker.setAttribute("id", markerId);
+            marker.setAttribute("viewBox", "0 0 10 10");
+            marker.setAttribute("refX", "9");
+            marker.setAttribute("refY", "5");
+            marker.setAttribute("markerUnits", "strokeWidth");
+            marker.setAttribute("markerWidth", "6");
+            marker.setAttribute("markerHeight", "6");
+            marker.setAttribute("orient", "auto-start-reverse");
+            const markerPath = document.createElementNS(svgNs, "path");
+            markerPath.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+            markerPath.setAttribute("fill", strokeColor || "#000000");
+            marker.appendChild(markerPath);
+            defs.appendChild(marker);
+          }
+          return markerId;
+        }
+        function applySvgArrowMarkers(svgRoot) {
+          if (!svgRoot) {
+            return;
+          }
+          const arrowNodes = svgRoot.querySelectorAll("[arrowtype]");
+          arrowNodes.forEach(function (node) {
+            const tagName = (node.tagName || "").toLowerCase();
+            if (!tagName || !["line", "polyline", "path", "polygon"].includes(tagName)) {
+              return;
+            }
+            const arrowType = String(node.getAttribute("arrowtype") || "").trim().toLowerCase();
+            if (!arrowType || arrowType === "0" || arrowType === "none") {
+              return;
+            }
+            const strokeColor = node.getAttribute("stroke") || "#000000";
+            const widthValue = parseFloat(node.getAttribute("stroke-width") || "1");
+            const strokeWidth = Number.isFinite(widthValue) ? widthValue : 1;
+            const markerId = ensureSvgArrowMarker(svgRoot, strokeColor, strokeWidth);
+            node.removeAttribute("marker-start");
+            node.removeAttribute("marker-end");
+            if (arrowType === "10" || arrowType === "start") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              return;
+            }
+            if (arrowType === "2" || arrowType === "both") {
+              node.setAttribute("marker-start", `url(#${markerId})`);
+              node.setAttribute("marker-end", `url(#${markerId})`);
+              return;
+            }
+            node.setAttribute("marker-end", `url(#${markerId})`);
+          });
+        }
+        document.querySelectorAll(".svg-container svg").forEach(function (svgRoot) {
+          applySvgArrowMarkers(svgRoot);
+          applySvgShadowUnderlay(svgRoot);
+        });
+        function clearTopicSearchHighlights() {
+          document.querySelectorAll("mark.topic-search-hit").forEach(function (markNode) {
+            const parent = markNode.parentNode;
+            if (!parent) {
+              return;
+            }
+            parent.replaceChild(document.createTextNode(markNode.textContent || ""), markNode);
+            parent.normalize();
+          });
+        }
+        function highlightTextNode(textNode, keyword) {
+          const value = textNode.nodeValue || "";
+          const lowerValue = value.toLowerCase();
+          let cursor = 0;
+          let hit = lowerValue.indexOf(keyword, cursor);
+          if (hit === -1) {
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          while (hit !== -1) {
+            if (hit > cursor) {
+              fragment.appendChild(document.createTextNode(value.slice(cursor, hit)));
+            }
+            const mark = document.createElement("mark");
+            mark.className = "topic-search-hit";
+            mark.textContent = value.slice(hit, hit + keyword.length);
+            fragment.appendChild(mark);
+            cursor = hit + keyword.length;
+            hit = lowerValue.indexOf(keyword, cursor);
+          }
+          if (cursor
+        < value.length) {
+          fragment.appendChild(document.createTextNode(value.slice(cursor)));
+        }
+        textNode.parentNode.replaceChild(fragment, textNode);
+      }
+
+      function applyTopicSearchHighlights(term) {
+        clearTopicSearchHighlights();
+        const keyword = String(term || "").trim().toLowerCase();
+        if (!keyword) {
+          return;
+        }
+
+        const root = document.querySelector(".topic-page");
+        if (!root) {
+          return;
+        }
+
+        const walker = document.createTreeWalker(
+          root,
+          NodeFilter.SHOW_TEXT,
+          {
+            acceptNode: function (node) {
+              const value = node.nodeValue || "";
+              if (!value.trim()) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              const parent = node.parentElement;
+              if (!parent) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (parent.closest("script, style, textarea, noscript, svg, mark")) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              if (value.toLowerCase().indexOf(keyword) === -1) {
+                return NodeFilter.FILTER_REJECT;
+              }
+              return NodeFilter.FILTER_ACCEPT;
+            }
+          }
+        );
+
+        const targets = [];
+        while (walker.nextNode()) {
+          targets.push(walker.currentNode);
+        }
+        targets.forEach(function (node) {
+          highlightTextNode(node, keyword);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        const payload = event.data;
+        if (!payload || payload.type !== "dita-search-highlight") {
+          return;
+        }
+        applyTopicSearchHighlights(payload.term || "");
+      });
+
+      document.addEventListener("click", function (event) {
+        const image = event.target.closest("img");
+        if (image) {
+          event.preventDefault();
+          window.parent.postMessage(
+            {
+              type: "dita-image-preview",
+              kind: "img",
+              src: image.currentSrc || image.src || "",
+              alt: image.alt || ""
+            },
+            "*"
+          );
+          return;
+        }
+
+        const svg = event.target.closest(".svg-container svg");
+        if (!svg) {
+          return;
+        }
+
+        event.preventDefault();
+        const clonedSvg = svg.cloneNode(true);
+        applySvgArrowMarkers(clonedSvg);
+        applySvgShadowUnderlay(clonedSvg);
+        const imageNodes = clonedSvg.querySelectorAll("image");
+        imageNodes.forEach(function (node) {
+          const href = node.getAttribute("href") || node.getAttribute("xlink:href");
+          if (!href || href.startsWith("data:") || href.startsWith("http://") || href.startsWith("https://")) {
+            return;
+          }
+          try {
+            const abs = new URL(href, window.location.href).href;
+            node.setAttribute("href", abs);
+            node.setAttribute("xlink:href", abs);
+          } catch (_error) {
+            // keep original href when URL normalization fails
+          }
+        });
+
+        const serializer = new XMLSerializer();
+        const svgText = serializer.serializeToString(clonedSvg);
+        window.parent.postMessage(
+          {
+            type: "dita-image-preview",
+            kind: "svg",
+            svg: svgText,
+            baseUri: window.location.href,
+            alt: "SVG preview"
+          },
+          "*"
+        );
+      });
+    </script>
+        </body>
+      </html>
