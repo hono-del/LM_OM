@@ -54,6 +54,7 @@
           <div class="content-actions">
             <button id="open-topic" class="action-button" type="button">別タブで開く</button>
             <button id="print-topic" class="action-button" type="button">印刷用に開く</button>
+            <button id="download-pdf" class="action-button action-button-primary" type="button">PDFダウンロード</button>
           </div>
         </div>
         <iframe id="topic-frame" class="topic-frame" title="Topic content"></iframe>
@@ -64,6 +65,7 @@
       <img id="image-modal-preview" class="image-modal-preview" alt="" />
       <div id="image-modal-svg-host" class="image-modal-svg-host" hidden></div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="data/manual-data.js"></script>
     <script src="manual-app.js"></script>
   </body>

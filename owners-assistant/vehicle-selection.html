@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>車両選択 - Lean3 OWNER'S ASSISTANT</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .header {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .header h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .vehicle-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 2px solid transparent;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-color: #6b7280;
+    }
+
+    .vehicle-card.selected {
+      border-color: #6b7280;
+      background: linear-gradient(135deg, rgba(107, 114, 128, 0.05) 0%, rgba(75, 85, 99, 0.05) 100%);
+    }
+
+    .vehicle-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .vehicle-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-right: 15px;
+    }
+
+    .vehicle-info h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .vehicle-info p {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .year-selector {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .year-btn {
+      padding: 8px 16px;
+      border: 2px solid #e0e0e0;
+      background: white;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.3s;
+    }
+
+    .year-btn:hover {
+      border-color: #6b7280;
+      color: #6b7280;
+    }
+
+    .year-btn.selected {
+      border-color: #6b7280;
+      background: #6b7280;
+      color: white;
+    }
+
+    .add-vehicle {
+      background: white;
+      border: 2px dashed #ccc;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+
+    .add-vehicle:hover {
+      border-color: #6b7280;
+      background: rgba(107, 114, 128, 0.05);
+    }
+
+    .add-vehicle-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+      color: #ccc;
+    }
+
+    .add-vehicle p {
+      color: #666;
+      font-size: 16px;
+    }
+
+    .continue-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .continue-btn.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .continue-btn.active:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(107, 114, 128, 0.3);
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 14px;
+      background: white;
+      color: #666;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+
+    .logout-btn:hover {
+      border-color: #f44336;
+      color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>車両を選択</h1>
+      <p>オーナーアシスタントで管理する車両を選択してください</p>
+    </div>
+
+    <!-- Lean3 -->
+    <div class="vehicle-card" data-vehicle="lean3" onclick="selectVehicle('lean3', this)">
+      <div class="vehicle-header">
+        <div class="vehicle-icon">🚗</div>
+        <div class="vehicle-info">
+          <h3>Lean3</h3>
+          <p>超小型電気自動車</p>
+        </div>
+      </div>
+      <div class="year-selector" id="lean3-years">
+        <button class="year-btn" onclick="selectYear(event, 'lean3', '2024')">2024</button>
+        <button class="year-btn" onclick="selectYear(event, 'lean3', '2025')">2025</button>
+        <button class="year-btn selected" onclick="selectYear(event, 'lean3', '2026')">2026</button>
+      </div>
+    </div>
+
+    <!-- 別の車両を追加 -->
+    <div class="add-vehicle" onclick="addVehicle()">
+      <div class="add-vehicle-icon">+</div>
+      <p>別の車両を追加</p>
+    </div>
+
+    <button class="continue-btn active" id="continueBtn" onclick="continueToApp()">
+      続ける
+    </button>
+
+    <button class="logout-btn" onclick="logout()">
+      ログアウト
+    </button>
+  </div>
+
+  <script src="onboarding-status.js"></script>
+  <script>
+    let selectedVehicleData = {
+      model: 'lean3',
+      year: '2026'
+    };
+
+    function selectVehicle(model, element) {
+      // 全ての車両カードから選択を解除
+      document.querySelectorAll('.vehicle-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // 選択された車両カードに選択状態を追加
+      element.classList.add('selected');
+      
+      selectedVehicleData.model = model;
+      
+      // 続けるボタンを有効化
+      document.getElementById('continueBtn').classList.add('active');
+    }
+
+    function selectYear(event, model, year) {
+      event.stopPropagation();
+      
+      // 同じ車両内の年式ボタンから選択を解除
+      const yearSelector = document.getElementById(`${model}-years`);
+      yearSelector.querySelectorAll('.year-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // 選択された年式ボタンに選択状態を追加
+      event.target.classList.add('selected');
+      
+      selectedVehicleData.year = year;
+    }
+
+    function addVehicle() {
+      alert('別の車両の追加機能は開発中です。\n現在はLean3のみ選択可能です。');
+    }
+
+    function continueToApp() {
+      // 選択された車両情報を保存
+      localStorage.setItem('selectedVehicle', JSON.stringify(selectedVehicleData));
+      
+      // 車両選択後：オンボーディング未完了ならオンボーディングへ、完了済みならホームへ
+      OnboardingStatus.navigateAfterVehicleSelection();
+    }
+
+    function logout() {
+      OnboardingStatus.resetOnboardingStatus();
+      localStorage.removeItem('lean3User');
+      localStorage.removeItem('selectedVehicle');
+      window.location.href = 'index.html';
+    }
+
+    // ページ読み込み時のチェック
+    window.addEventListener('DOMContentLoaded', function() {
+      OnboardingStatus.guardPage('vehicleSelection');
+      
+      // 以前選択した車両情報があれば復元
+      const savedVehicle = localStorage.getItem('selectedVehicle');
+      if (savedVehicle) {
+        const data = JSON.parse(savedVehicle);
+        selectedVehicleData = data;
+        
+        // UI を更新
+        const vehicleCard = document.querySelector(`[data-vehicle="${data.model}"]`);
+        if (vehicleCard) {
+          vehicleCard.classList.add('selected');
+        }
+        
+        // 年式ボタンを更新
+        const yearButtons = document.querySelectorAll(`#${data.model}-years .year-btn`);
+        yearButtons.forEach(btn => {
+          btn.classList.remove('selected');
+          if (btn.textContent === data.year) {
+            btn.classList.add('selected');
+          }
+        });
+      } else {
+        // デフォルトでLean3 2026を選択
+        document.querySelector('[data-vehicle="lean3"]').classList.add('selected');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -782,7 +782,7 @@
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="display: none;">
           <label class="form-label">AI編集プロンプト（任意）</label>
           <textarea class="form-textarea" id="aiPromptInput" placeholder="AIへの追加指示を入力してください。例: 具体的な数値を含めて、より詳しく説明してください" style="min-height: 80px;"></textarea>
           <div style="font-size: 12px; color: #666; margin-top: 5px;">
@@ -796,7 +796,7 @@
           <div style="font-size: 12px; margin-top: 5px;">数秒お待ちください</div>
         </div>
 
-        <div class="ai-suggestion" id="aiSuggestion">
+        <div class="ai-suggestion" id="aiSuggestion" style="display: none;">
           <div class="ai-suggestion-header">🤖 AI編集提案</div>
           <div id="aiSuggestionContent"></div>
           <div style="margin-top: 15px; text-align: right;">
@@ -806,7 +806,7 @@
 
         <div class="form-actions">
           <button class="btn btn-secondary" onclick="closeModal()">キャンセル</button>
-          <button class="btn btn-ai" onclick="generateAISuggestion()">🤖 AI編集</button>
+          <button class="btn btn-ai" onclick="generateAISuggestion()" style="display: none;">🤖 AI編集</button>
           <button class="btn btn-danger" onclick="deletePage()">削除</button>
           <button class="btn btn-primary" onclick="savePage()">保存</button>
         </div>

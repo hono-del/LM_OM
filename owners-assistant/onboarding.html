@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>はじめに - Lean3 OWNER'S ASSISTANT</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .onboarding-header {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+      padding: 16px 20px 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .onboarding-header h1 { font-size: 17px; font-weight: 600; margin-bottom: 2px; }
+    .onboarding-header .subtitle { font-size: 12px; opacity: 0.9; }
+
+    .progress-bar {
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      margin-top: 14px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: white;
+      border-radius: 2px;
+      transition: width 0.35s ease;
+    }
+
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .progress-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      transition: all 0.3s;
+    }
+
+    .progress-dot.active { background: white; transform: scale(1.25); }
+    .progress-dot.completed { background: rgba(255,255,255,0.75); }
+
+    .step-counter {
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 8px;
+    }
+
+    /* 縦スクロール対応のコンテンツ領域 */
+    .onboarding-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .step-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px 16px 24px;
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-hero-image {
+      width: 100%;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .step-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .step-body {
+      font-size: 15px;
+      color: #4b5563;
+      line-height: 1.75;
+      margin-bottom: 18px;
+    }
+
+    /* 汎用カード */
+    .info-card {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .info-card-icon {
+      font-size: 22px;
+      width: 36px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .info-card-text {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    /* 番号付き操作部カード（Step 2） */
+    .numbered-card {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .numbered-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .numbered-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .numbered-content h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 2px;
+    }
+
+    .numbered-content p {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .numbered-card-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      background: #f3f4f6;
+    }
+
+    .numbered-card-no-image {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    /* チェックリスト（Step 3） */
+    .checklist-item {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .checklist-item:active { background: #f9fafb; }
+
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #6b7280;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .checklist-item label {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.5;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .checklist-warning {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .checklist-warning.visible { display: block; }
+
+    /* アクションステップ（Step 4-6） */
+    .action-step-card {
+      background: white;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .action-step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .action-step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #f3f4f6;
+      color: #4b5563;
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .action-step-text {
+      font-size: 14px;
+      color: #374151;
+      font-weight: 500;
+      line-height: 1.5;
+      flex: 1;
+      padding-top: 4px;
+    }
+
+    .action-step-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      margin-top: 12px;
+      background: #f3f4f6;
+    }
+
+    .step-note {
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-top: 6px;
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.65;
+    }
+
+    .step-footnote {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    /* フッター */
+    .onboarding-footer {
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      background: white;
+      border-top: 1px solid #e5e7eb;
+      flex-shrink: 0;
+    }
+
+    .footer-buttons {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(107,114,128,0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #6b7280;
+      border: 2px solid #e5e7eb;
+    }
+
+    .btn-secondary:hover { border-color: #6b7280; }
+
+    .btn-skip {
+      background: transparent;
+      color: #9ca3af;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .btn-skip:hover { color: #6b7280; }
+  </style>
+</head>
+<body>
+  <div class="onboarding-header">
+    <h1>Lean3 OWNER'S ASSISTANT</h1>
+    <p class="subtitle">はじめてガイド</p>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-dots" id="progressDots"></div>
+    <div class="step-counter" id="stepCounter"></div>
+  </div>
+
+  <div class="onboarding-content">
+    <div class="step-container" id="stepContainer"></div>
+  </div>
+
+  <div class="onboarding-footer">
+    <div class="footer-buttons">
+      <button class="btn btn-secondary" id="backBtn" style="display:none;">戻る</button>
+      <button class="btn btn-primary" id="nextBtn">次へ</button>
+    </div>
+    <button class="btn btn-skip" onclick="skipOnboarding()">スキップ</button>
+  </div>
+
+  <script src="onboarding-status.js"></script>
+  <script src="onboarding-data.js"></script>
+  <script>
+    let currentStep = 0;
+    const checklistState = {};
+
+    // --- ステップ別レンダラー ---
+
+    function renderWelcome(step) {
+      let html = '';
+      if (step.image) {
+        html += `<img src="${step.image}" alt="Lean3" class="step-hero-image">`;
+      }
+      html += `<h2 class="step-title">${step.title}</h2>`;
+      html += `<p class="step-body">${step.body}</p>`;
+      html += step.points.map(p =>
+        `<div class="info-card">
+          <div class="info-card-icon">${p.icon}</div>
+          <div class="info-card-text">${p.text}</div>
+        </div>`
+      ).join('');
+      return html;
+    }
+
+    function renderNumberedCards(step) {
+      let html = `<h2 class="step-title">${step.title}</h2>`;
+      html += `<p class="step-body">${step.body}</p>`;
+
+      html += step.items.map(item => {
+        const imageHtml = item.image
+          ? `<img src="${item.image}" alt="${item.label}" class="numbered-card-image">`
+          : `<div class="numbered-card-no-image">画像準備中</div>`;
+
+        return `<div class="numbered-card">
+          <div class="numbered-card-header">
+            <div class="numbered-badge">${item.number}</div>
+            <div class="numbered-content">
+              <h4>${item.label}</h4>
+              <p>${item.hint}</p>
+            </div>
+          </div>
+          ${imageHtml}
+        </div>`;
+      }).join('');
+      return html;
+    }
+
+    function renderChecklist(step) {
+      let html = `<h2 class="step-title">${step.title}</h2>`;
+      html += `<p class="step-body">${step.body}</p>`;
+
+      html += step.checklistItems.map((item, i) => {
+        const checked = checklistState[i] ? 'checked' : '';
+        return `<div class="checklist-item" onclick="toggleCheck(${i}, event)">
+          <input type="checkbox" id="check-${i}" ${checked} onclick="event.stopPropagation(); toggleCheck(${i})">
+          <label for="check-${i}">${i + 1}. ${item}</label>
+        </div>`;
+      }).join('');
+
+      html += `<div class="checklist-warning" id="checklistWarning">${step.checklistWarning}</div>`;
+      return html;
+    }
+
+    // ステップデータを正規化（文字列 or { text, image } オブジェクト両対応）
+    function normalizeActionStep(step) {
+      return typeof step === 'string' ? { text: step } : step;
+    }
+
+    function renderActionSteps(step) {
+      let html = `<h2 class="step-title">${step.title}</h2>`;
+      html += `<p class="step-body">${step.body}</p>`;
+
+      html += step.steps.map((raw, i) => {
+        const item = normalizeActionStep(raw);
+        const imageHtml = item.image
+          ? `<img src="${item.image}" alt="ステップ${i + 1}" class="action-step-image">`
+          : '';
+
+        return `<div class="action-step-card">
+          <div class="action-step-header">
+            <div class="action-step-num">${i + 1}</div>
+            <div class="action-step-text">${item.text}</div>
+          </div>
+          ${imageHtml}
+        </div>`;
+      }).join('');
+
+      if (step.note) {
+        html += `<div class="step-note">${step.note}</div>`;
+      }
+      if (step.footnote) {
+        html += `<p class="step-footnote">${step.footnote}</p>`;
+      }
+      return html;
+    }
+
+    function renderHelpPoints(step) {
+      let html = `<h2 class="step-title">${step.title}</h2>`;
+      html += `<p class="step-body">${step.body}</p>`;
+      html += step.points.map(p =>
+        `<div class="info-card">
+          <div class="info-card-icon">${p.icon}</div>
+          <div class="info-card-text">${p.text}</div>
+        </div>`
+      ).join('');
+      return html;
+    }
+
+    const RENDERERS = {
+      'numbered-cards': renderNumberedCards,
+      'checklist': renderChecklist,
+      'action-steps': renderActionSteps,
+      'help-points': renderHelpPoints
+    };
+
+    function renderStep() {
+      const step = ONBOARDING_STEPS[currentStep];
+      const container = document.getElementById('stepContainer');
+
+      const renderer = RENDERERS[step.type] || renderWelcome;
+      container.innerHTML = renderer(step);
+
+      // 進捗更新
+      const total = ONBOARDING_STEPS.length;
+      document.getElementById('progressFill').style.width = ((currentStep + 1) / total * 100) + '%';
+      document.getElementById('stepCounter').textContent = `${currentStep + 1} / ${total}`;
+
+      document.getElementById('progressDots').innerHTML = ONBOARDING_STEPS.map((_, i) => {
+        let cls = 'progress-dot';
+        if (i === currentStep) cls += ' active';
+        else if (i < currentStep) cls += ' completed';
+        return `<div class="${cls}"></div>`;
+      }).join('');
+
+      document.getElementById('backBtn').style.display = currentStep > 0 ? 'block' : 'none';
+      document.getElementById('nextBtn').textContent =
+        currentStep === total - 1 ? 'はじめる' : '次へ';
+
+      // スクロール位置を先頭に戻す
+      document.querySelector('.onboarding-content').scrollTop = 0;
+    }
+
+    // --- チェックリスト操作 ---
+
+    function toggleCheck(index, event) {
+      if (event) event.preventDefault();
+      checklistState[index] = !checklistState[index];
+      const cb = document.getElementById(`check-${index}`);
+      if (cb) cb.checked = checklistState[index];
+      updateChecklistWarning();
+    }
+
+    function updateChecklistWarning() {
+      const step = ONBOARDING_STEPS[currentStep];
+      if (step.type !== 'checklist') return;
+
+      const total = step.checklistItems.length;
+      const checked = Object.values(checklistState).filter(Boolean).length;
+      const warning = document.getElementById('checklistWarning');
+      if (warning) {
+        warning.classList.toggle('visible', checked < total);
+      }
+    }
+
+    function showChecklistWarningIfNeeded() {
+      const step = ONBOARDING_STEPS[currentStep];
+      if (step.type !== 'checklist') return false;
+
+      const total = step.checklistItems.length;
+      const checked = Object.values(checklistState).filter(Boolean).length;
+      if (checked < total) {
+        const warning = document.getElementById('checklistWarning');
+        if (warning) warning.classList.add('visible');
+        return true;
+      }
+      return false;
+    }
+
+    // --- ナビゲーション ---
+
+    function goNext() {
+      // チェックリスト未完了時は注意文を表示（進行はブロックしない）
+      showChecklistWarningIfNeeded();
+
+      if (currentStep < ONBOARDING_STEPS.length - 1) {
+        currentStep++;
+        renderStep();
+        return;
+      }
+
+      OnboardingStatus.navigateToHome({ fullyCompleted: true });
+    }
+
+    function goBack() {
+      if (currentStep > 0) {
+        currentStep--;
+        renderStep();
+      }
+    }
+
+    function skipOnboarding() {
+      OnboardingStatus.navigateToHome();
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', goNext);
+    document.getElementById('backBtn').addEventListener('click', goBack);
+
+    window.addEventListener('DOMContentLoaded', function() {
+      OnboardingStatus.guardPage('onboarding');
+      renderStep();
+    });
+  </script>
+</body>
+</html>

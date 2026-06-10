@@ -305,6 +305,23 @@ body {
   border-color: var(--primary);
 }
 
+.action-button-primary {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  font-weight: 600;
+}
+
+.action-button-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 /* トピックフレーム */
 .topic-frame {
   flex: 1;
@@ -394,7 +411,7 @@ body {
     display: none;
   }
 
-  .content-actions {
+  .content-actions .action-button:not(#download-pdf) {
     display: none;
   }
 }

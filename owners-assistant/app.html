@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lean3 OWNER'S ASSISTANT</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #f5f5f5;
+      padding-bottom: 70px;
+    }
+
+    /* ヘッダー */
+    .app-header {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header-left h1 {
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+
+    .header-left p {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .header-right {
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    /* メインコンテンツ */
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* ホームタブ */
+    .search-box {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #6b7280;
+    }
+
+    /* ホーム通知カード（2×2） */
+    .home-notifications-section {
+      margin-bottom: 20px;
+    }
+
+    .home-notifications-header h3 {
+      font-size: 16px;
+      color: #1f2937;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .home-notifications-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .home-notification-card {
+      position: relative;
+      border-radius: 14px;
+      padding: 14px 12px;
+      min-height: 118px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    .home-notification-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+
+    .home-notification-card.read {
+      opacity: 0.65;
+    }
+
+    .home-card-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.4);
+    }
+
+    .home-card-icon {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .home-notification-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .home-notification-card p {
+      font-size: 11px;
+      line-height: 1.45;
+      opacity: 0.92;
+      margin-top: auto;
+    }
+
+    .home-card-welcome {
+      background: linear-gradient(145deg, #6b7280, #4b5563);
+    }
+
+    .home-card-warm {
+      background: linear-gradient(145deg, #f59e0b, #d97706);
+    }
+
+    .home-card-blue {
+      background: linear-gradient(145deg, #3b82f6, #2563eb);
+    }
+
+    .home-card-alert {
+      background: linear-gradient(145deg, #ef4444, #dc2626);
+    }
+
+    .home-notifications-more {
+      width: 100%;
+      background: white;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4b5563;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .home-notifications-more:hover {
+      border-color: #6b7280;
+      background: #f9fafb;
+    }
+
+    .vehicle-image-card {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .vehicle-image {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 8px;
+    }
+
+    .faq-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .faq-section h3 {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .faq-item {
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .faq-item:hover {
+      background: #e9ecef;
+    }
+
+    .faq-item p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* チャットタブ */
+    .chat-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .chat-toolbar-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .chat-clear-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #6b7280;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .chat-clear-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    .chat-container {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      min-height: 500px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .chat-message {
+      margin-bottom: 15px;
+      display: flex;
+      gap: 10px;
+      position: relative;
+      padding-top: 4px;
+    }
+
+    .chat-message.bot {
+      flex-direction: row;
+    }
+
+    .chat-message.user {
+      flex-direction: row-reverse;
+    }
+
+    .chat-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .chat-message.bot .chat-avatar {
+      background: #f3f4f6;
+      overflow: hidden;
+    }
+
+    .chat-message.bot .chat-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .chat-message.user .chat-avatar {
+      background: #e0e0e0;
+    }
+
+    .chat-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .chat-message.bot .chat-message-body {
+      max-width: 78%;
+      flex: 1;
+    }
+
+    .chat-message.bot .chat-bubble {
+      background: #f0f0f0;
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-answer-content {
+      line-height: 1.6;
+    }
+
+    .chat-bubble .chat-feedback {
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      margin-top: 12px;
+      padding-top: 10px;
+    }
+
+    .chat-feedback {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chat-feedback-label,
+    .chat-feedback-thanks {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-right: 2px;
+    }
+
+    .chat-feedback-thanks {
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .chat-feedback-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      border-radius: 16px;
+      padding: 5px 10px;
+      font-size: 13px;
+      line-height: 1.2;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .chat-feedback-btn-label {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .chat-feedback-btn:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .chat-feedback-btn.active-helpful {
+      background: #dcfce7;
+      border-color: #86efac;
+    }
+
+    .chat-feedback-btn.active-not-helpful {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
+
+    .chat-message.user .chat-bubble {
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-delete-btn {
+      align-self: flex-start;
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #9ca3af;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+
+    .chat-delete-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .chat-input-area {
+      position: fixed;
+      bottom: 70px;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 15px 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .chat-input-container {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input-container input {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .chat-input-container button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* マニュアルタブ */
+    .manual-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .manual-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    .manual-section h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .manual-section p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* 通知タブ */
+    .notification-item {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-left: 4px solid #6b7280;
+    }
+
+    .notification-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .notification-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .notification-content {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .notification-item.unread {
+      background: #fafafa;
+    }
+
+    .notification-item.actionable {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .notification-item.actionable:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .notification-item.read {
+      opacity: 0.75;
+    }
+
+    .notification-action-hint {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: 2px;
+      right: 8px;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    .nav-item { position: relative; }
+
+    /* ステータスタブ */
+    .status-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .status-card h3 {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-item {
+      margin-bottom: 15px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6b7280 0%, #4b5563 100%);
+      transition: width 0.3s;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .badge-item {
+      text-align: center;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .badge-item.unlocked {
+      background: linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(75, 85, 99, 0.1) 100%);
+    }
+
+    .badge-icon {
+      font-size: 32px;
+      margin-bottom: 5px;
+      opacity: 0.3;
+    }
+
+    .badge-item.unlocked .badge-icon {
+      opacity: 1;
+    }
+
+    .badge-label {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .status-hint {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
+    .status-points-line {
+      font-size: 13px;
+      color: #4b5563;
+      margin-top: 12px;
+      font-weight: 600;
+    }
+
+    .feature-track-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .feature-track-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #9ca3af;
+      padding: 8px 10px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+
+    .feature-track-item.used {
+      color: #374151;
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+
+    .feature-track-dot {
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .maintenance-form {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .maint-field {
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .maint-field input {
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .maint-save-btn {
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .status-vehicle-info {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    /* ボトムナビゲーション */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-top: 1px solid #e0e0e0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
+      color: #999;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .nav-item.active {
+      color: #6b7280;
+    }
+
+    .nav-icon {
+      font-size: 24px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* ホームコンテキストカード（通知から自然に表示） */
+    #homeContextCards { margin-bottom: 20px; }
+
+    .demo-active-card, .demo-active-section {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      margin-bottom: 12px;
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .demo-active-header {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .demo-active-header span { font-size: 32px; }
+    .demo-active-header h3 { font-size: 16px; color: #1f2937; margin-bottom: 4px; }
+    .demo-active-header p { font-size: 12px; color: #6b7280; }
+    .demo-active-lead { font-size: 14px; font-weight: 600; color: #4b5563; margin-bottom: 12px; }
+
+    .demo-ota-change {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .demo-ota-change h4 { font-size: 14px; color: #1f2937; margin-bottom: 6px; }
+    .demo-ota-change p { font-size: 13px; color: #4b5563; line-height: 1.5; margin-bottom: 4px; }
+    .demo-ota-op { font-size: 12px; color: #6b7280; }
+
+    .demo-daily-card {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+
+    .demo-daily-icon { font-size: 28px; margin-bottom: 8px; }
+    .demo-daily-card h4 { font-size: 15px; color: #1f2937; margin-bottom: 6px; }
+    .demo-daily-card p { font-size: 13px; color: #6b7280; line-height: 1.5; margin-bottom: 12px; }
+    .demo-daily-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .demo-active-btn {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .demo-active-btn-secondary {
+      background: white;
+      color: #6b7280;
+      border: 2px solid #e5e7eb;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .demo-active-section-title { font-size: 16px; color: #1f2937; margin-bottom: 14px; }
+
+    /* チャットクイック質問 */
+    .chat-quick-questions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 0 12px;
+    }
+
+    .chat-quick-chip {
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 13px;
+      color: #4b5563;
+      cursor: pointer;
+    }
+
+    .chat-quick-chip:hover { background: #e5e7eb; }
+
+    .chat-steps-list {
+      margin: 10px 0;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .chat-steps-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .chat-steps-list li:last-child { border-bottom: none; }
+
+    .chat-note-box {
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 12px;
+    }
+
+    .chat-link-btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: white;
+      color: #4b5563;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .chat-source-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .chat-source-label {
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 4px;
+    }
+
+    .chat-source-link {
+      color: #374151;
+      text-decoration: none;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .chat-source-link:hover {
+      text-decoration: underline;
+      color: #111827;
+    }
+
+    .chat-spec-table {
+      width: 100%;
+      font-size: 13px;
+      margin: 10px 0;
+      border-collapse: collapse;
+    }
+
+    .chat-spec-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+
+    .chat-spec-table td:first-child {
+      color: #6b7280;
+      width: 42%;
+    }
+
+    .chat-ai-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+
+    .chat-active-lean-tagline {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .chat-active-lean-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      color: #111827;
+    }
+
+    .chat-active-lean-spec {
+      display: inline-block;
+      background: #111827;
+      color: #fff;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    /* デモオーバーレイ */
+    #demoOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    #demoOverlay[hidden] { display: none; }
+
+    .demo-overlay-panel {
+      background: white;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      border-radius: 20px 20px 0 0;
+      overflow-y: auto;
+      padding: 24px 20px 32px;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .overlay-step h2 { font-size: 20px; color: #1f2937; margin-bottom: 12px; }
+    .overlay-body { font-size: 14px; color: #6b7280; line-height: 1.6; margin-bottom: 16px; }
+
+    .overlay-warning-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .overlay-warning-badge.amber { background: #fef3c7; color: #92400e; }
+    .overlay-warning-badge.red { background: #fee2e2; color: #991b1b; }
+
+    .overlay-info-card {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .overlay-info-card h3 { font-size: 15px; margin-bottom: 8px; color: #1f2937; }
+    .overlay-info-card p { font-size: 14px; color: #4b5563; line-height: 1.6; }
+
+    .overlay-checklist { margin-bottom: 16px; }
+
+    .overlay-check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .overlay-judgment {
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .overlay-judgment.ng { background: #fef2f2; border-left: 4px solid #ef4444; }
+    .overlay-judgment.ok { background: #f0fdf4; border-left: 4px solid #22c55e; }
+    .overlay-judgment-label { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1f2937; }
+
+    .overlay-summary-card { margin-bottom: 16px; }
+
+    .overlay-summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 13px;
+    }
+
+    .overlay-summary-label { color: #6b7280; }
+    .overlay-summary-value { color: #1f2937; font-weight: 500; text-align: right; max-width: 60%; }
+
+    .overlay-share-list { margin-bottom: 16px; }
+
+    .overlay-share-item {
+      padding: 10px 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #374151;
+    }
+
+    .overlay-slots { margin-bottom: 16px; }
+
+    .overlay-slot-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .overlay-note { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
+    .overlay-complete { text-align: center; }
+    .overlay-complete-icon { font-size: 48px; margin-bottom: 12px; }
+
+    .demo-overlay-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #9ca3af;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    /* 警告灯タブ */
+    .warnings-header {
+      background: white;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .warnings-header h2 {
+      font-size: 18px;
+      color: #1f2937;
+    }
+
+    .warnings-count {
+      background: #ef4444;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    .warning-case-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border-left: 4px solid #6b7280;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .warning-case-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .warning-case-card.red { border-left-color: #ef4444; }
+    .warning-case-card.amber { border-left-color: #f59e0b; }
+
+    .warning-case-header {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .warning-case-icon { font-size: 28px; flex-shrink: 0; }
+
+    .warning-case-header h3 {
+      font-size: 15px;
+      color: #1f2937;
+      margin-top: 4px;
+    }
+
+    .warning-case-urgency {
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .overlay-warning-badge.red { background: #fee2e2; color: #991b1b; }
+
+    .warning-case-meaning,
+    .warning-case-action {
+      font-size: 13px;
+      color: #4b5563;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .warning-case-cta {
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b5563;
+    }
+
+    .warnings-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #374151;
+      margin: 16px 0 10px;
+    }
+
+    .warnings-active-section .warnings-section-title {
+      margin-top: 0;
+    }
+
+    .warning-lamp-search {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+    }
+
+    .warning-lamp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .warning-lamp-grid-chat {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .warning-lamp-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 8px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .warning-lamp-item:hover {
+      border-color: #d1d5db;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .warning-lamp-item.red { border-color: #fecaca; background: #fffafa; }
+    .warning-lamp-item.amber { border-color: #fde68a; background: #fffef5; }
+    .warning-lamp-item.green { border-color: #bbf7d0; background: #fafffb; }
+    .warning-lamp-item.blue { border-color: #bfdbfe; background: #f8fbff; }
+
+    .warning-lamp-item.lit {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+      animation: warning-pulse 2s ease-in-out infinite;
+    }
+
+    .warning-lamp-item.lit.amber {
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+    }
+
+    @keyframes warning-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.88; }
+    }
+
+    .warning-lamp-lit-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      color: #b91c1c;
+      background: #fee2e2;
+      padding: 2px 5px;
+      border-radius: 4px;
+      line-height: 1.2;
+    }
+
+    .warning-lamp-item.amber .warning-lamp-lit-badge {
+      color: #92400e;
+      background: #fef3c7;
+    }
+
+    .warning-lamp-icon { font-size: 24px; line-height: 1; }
+    .warning-lamp-item-chat .warning-lamp-icon { font-size: 20px; }
+
+    .warning-lamp-name {
+      font-size: 11px;
+      color: #374151;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+
+    .warning-lamp-item-chat .warning-lamp-name { font-size: 10px; }
+
+    .warning-lamp-empty {
+      font-size: 13px;
+      color: #9ca3af;
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    /* 設定オーバーレイ */
+    #settingsOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1100;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    #settingsOverlay[hidden] { display: none; }
+
+    .settings-panel {
+      background: white;
+      width: 100%;
+      max-width: 600px;
+      max-height: 92vh;
+      border-radius: 20px 20px 0 0;
+      overflow-y: auto;
+      padding: 24px 20px 32px;
+      animation: slideUp 0.3s ease;
+    }
+
+    .settings-panel h2 {
+      font-size: 20px;
+      color: #1f2937;
+      margin-bottom: 20px;
+    }
+
+    .settings-section {
+      margin-bottom: 24px;
+    }
+
+    .settings-section h3 {
+      font-size: 14px;
+      color: #6b7280;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .settings-options {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .settings-chip,
+    .settings-year-chip {
+      padding: 10px 18px;
+      border: 2px solid #e5e7eb;
+      background: white;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4b5563;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .settings-chip.selected,
+    .settings-year-chip.selected {
+      border-color: #6b7280;
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+    }
+
+    .settings-vehicle-card {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      background: #fafafa;
+    }
+
+    .settings-vehicle-card.selected {
+      border-color: #6b7280;
+      background: linear-gradient(135deg, rgba(107,114,128,0.06), rgba(75,85,99,0.04));
+    }
+
+    .settings-vehicle-info {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .settings-vehicle-icon { font-size: 32px; }
+
+    .settings-vehicle-info strong {
+      display: block;
+      font-size: 16px;
+      color: #1f2937;
+      margin-bottom: 2px;
+    }
+
+    .settings-vehicle-info p {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .settings-year-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .settings-year-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .settings-year-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .settings-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+      padding-top: 16px;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .settings-action-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 2px solid #e5e7eb;
+      background: white;
+      color: #4b5563;
+      text-align: left;
+    }
+
+    .settings-action-btn:hover {
+      border-color: #6b7280;
+      background: #f9fafb;
+    }
+
+    .settings-action-btn.danger {
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .settings-action-btn.danger:hover {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+
+    .settings-action-btn.settings-action-primary {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      color: white;
+      border-color: transparent;
+      text-align: center;
+    }
+
+    .settings-action-btn.settings-action-primary:hover {
+      background: linear-gradient(135deg, #4b5563, #374151);
+    }
+
+    .settings-action-desc {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin: -4px 0 8px;
+      text-align: center;
+    }
+
+    .settings-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #9ca3af;
+      cursor: pointer;
+      z-index: 1101;
+    }
+
+    #settingsOverlay { position: fixed; padding-top: 40px; }
+    .settings-panel { position: relative; }
+  </style>
+</head>
+<body>
+  <!-- ヘッダー -->
+  <div class="app-header">
+    <div class="header-left">
+      <h1>Lean3</h1>
+      <p id="vehicleInfo">2026年モデル</p>
+    </div>
+    <div class="header-right" onclick="AppSettings.openSettings()">⚙️</div>
+  </div>
+
+  <!-- メインコンテンツ -->
+  <div class="content">
+    <!-- ホームタブ -->
+    <div class="tab-content active" id="tab-home">
+      <div class="search-box">
+        <input type="text" data-i18n="home.search" data-i18n-attr="placeholder" placeholder="🔍 車両について質問する..." onclick="switchTab('chat')">
+      </div>
+
+      <div id="homeNotificationSection" class="home-notifications-section"></div>
+
+      <div id="homeContextCards"></div>
+
+      <div class="vehicle-image-card">
+        <img src="wht12.webp" alt="Lean3" class="vehicle-image">
+      </div>
+
+      <div class="faq-section">
+        <h3 data-i18n="home.faq">よくある質問</h3>
+        <div class="faq-item" onclick="openFaq('activeLean')">
+          <p data-i18n="faq.activeLean">🔄 アクティブリーンシステムって何？</p>
+        </div>
+        <div class="faq-item" onclick="sendDemoChargingQuestion()">
+          <p data-i18n="faq.charging">🔌 充電の仕方教えて</p>
+        </div>
+        <div class="faq-item" onclick="openFaq('charge')">
+          <p data-i18n="faq.chargeTime">⏱️ 充電時間はどのくらいですか？</p>
+        </div>
+        <div class="faq-item" onclick="openFaq('range')">
+          <p data-i18n="faq.range">🚗 航続距離はどのくらいですか？</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- チャットタブ -->
+    <div class="tab-content" id="tab-chat">
+      <div class="chat-toolbar">
+        <span class="chat-toolbar-label" data-i18n="chat.history.label">会話履歴</span>
+        <button type="button" class="chat-clear-btn" data-i18n="chat.history.clear" onclick="ChatUI.clearAllHistory()">履歴を削除</button>
+      </div>
+      <div class="chat-container">
+        <div class="chat-message bot" id="welcomeBotMessage" data-message-id="__welcome__">
+          <div class="chat-avatar"><img src="wht12.webp" alt="Lean3"></div>
+          <div class="chat-message-body">
+            <div class="chat-bubble">
+              <div class="chat-answer-content">
+                <span id="chatGreetingText">こんにちは！Lean3アシスタントです。車両に関するご質問がありましたら、お気軽にお尋ねください。</span>
+              </div>
+              <div id="welcomeFeedbackHost"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-quick-questions" id="chatQuickChips">
+          <button class="chat-quick-chip" onclick="sendDemoChargingQuestion()">充電の仕方教えて</button>
+          <button class="chat-quick-chip" onclick="askChat(AppSettings.t('chat.question.range'))">航続距離は？</button>
+        </div>
+
+        <div id="chatMessages"></div>
+      </div>
+      
+      <div class="chat-input-area">
+        <div class="chat-input-container">
+          <input type="text" id="chatInput" data-i18n="chat.placeholder" data-i18n-attr="placeholder" placeholder="メッセージを入力...">
+          <button onclick="sendMessage()" data-i18n="chat.send">送信</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- マニュアルタブ -->
+    <div class="tab-content" id="tab-manual">
+      <div class="manual-section" onclick="openManual('intro')">
+        <h3>📘 はじめに</h3>
+        <p>車両の基本情報と安全に関する重要な情報</p>
+      </div>
+      
+      <div class="manual-section" onclick="openManual('operation')">
+        <h3>🚗 運転操作</h3>
+        <p>起動、運転、駐車の方法</p>
+      </div>
+      
+      <div class="manual-section" onclick="openManual('features')">
+        <h3>⚙️ 車両機能</h3>
+        <p>Active Lean Technology、エアコン、その他の機能</p>
+      </div>
+      
+      <div class="manual-section" onclick="openManual('charge')">
+        <h3>🔌 充電</h3>
+        <p>充電方法と充電時間について</p>
+      </div>
+      
+      <div class="manual-section" onclick="openManual('maintenance')">
+        <h3>🔧 メンテナンス</h3>
+        <p>日常点検と定期メンテナンス</p>
+      </div>
+      
+      <div class="manual-section" onclick="openManual('warning')">
+        <h3>⚠️ 警告灯</h3>
+        <p>各種警告灯の意味と対処方法</p>
+      </div>
+      
+      <div class="manual-section" onclick="openManual('troubleshoot')">
+        <h3>🛠️ トラブルシューティング</h3>
+        <p>よくある問題と解決方法</p>
+      </div>
+    </div>
+
+    <!-- 通知タブ -->
+    <div class="tab-content" id="tab-notifications">
+      <div id="notificationList"></div>
+    </div>
+
+    <!-- 警告灯タブ -->
+    <div class="tab-content" id="tab-warnings">
+      <div class="warnings-header">
+        <h2 data-i18n="warnings.title">⚠️ 警告灯</h2>
+        <span class="warnings-count" data-i18n="warnings.count">警告点灯2件</span>
+      </div>
+      <div id="warningCaseList"></div>
+    </div>
+
+    <!-- ステータスタブ -->
+    <div class="tab-content" id="tab-status">
+      <div id="statusTabContent"></div>
+    </div>
+  </div>
+
+  <!-- ボトムナビゲーション -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('home')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label" data-i18n="nav.home">ホーム</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('chat')">
+      <div class="nav-icon">💬</div>
+      <div class="nav-label" data-i18n="nav.chat">チャット</div>
+    </div>
+    <div class="nav-item" onclick="goToManual()">
+      <div class="nav-icon">📖</div>
+      <div class="nav-label" data-i18n="nav.manual">マニュアル</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('notifications')">
+      <div class="nav-icon">🔔</div>
+      <span id="notificationBadge" class="nav-badge" hidden>3</span>
+      <div class="nav-label" data-i18n="nav.notifications">通知</div>
+    </div>
+    <div class="nav-item" onclick="switchTab('status')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label" data-i18n="nav.status">ステータス</div>
+    </div>
+  </div>
+
+  <!-- 設定オーバーレイ -->
+  <div id="settingsOverlay" hidden>
+    <button class="settings-close" onclick="AppSettings.closeSettings()" aria-label="閉じる">&times;</button>
+    <div class="settings-panel">
+      <h2 data-i18n="settings.title">設定</h2>
+
+      <div class="settings-section">
+        <h3 data-i18n="settings.language">言語</h3>
+        <div id="languageOptions" class="settings-options"></div>
+      </div>
+
+      <div class="settings-section">
+        <h3 data-i18n="settings.vehicle">車種</h3>
+        <div id="vehicleOptions"></div>
+      </div>
+
+      <div class="settings-actions">
+        <button class="settings-action-btn settings-action-primary" data-i18n="settings.retryFirstLogin" onclick="AppSettings.retryFirstLoginFlow()">初回導線を最初から試す</button>
+        <p class="settings-action-desc" data-i18n="settings.retryFirstLogin.desc">ログイン→車両選択→はじめてガイド→ホームの流れを最初から体験します</p>
+        <button class="settings-action-btn" data-i18n="settings.onboarding" onclick="AppSettings.resetOnboarding()">はじめてガイドのみ再表示</button>
+        <button class="settings-action-btn" data-i18n="settings.resetNotifications" onclick="AppSettings.resetNotifications()">お知らせをリセット</button>
+        <button class="settings-action-btn" data-i18n="settings.clearChatHistory" onclick="AppSettings.clearChatHistory()">チャット履歴を削除</button>
+        <button class="settings-action-btn danger" data-i18n="settings.logout" onclick="AppSettings.logout()">ログアウト</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- デモフローオーバーレイ -->
+  <div id="demoOverlay" hidden>
+    <button class="demo-overlay-close" onclick="ContextExperience.closeOverlay()" aria-label="閉じる">&times;</button>
+    <div class="demo-overlay-panel" id="demoOverlayContent"></div>
+  </div>
+
+  <script src="onboarding-status.js"></script>
+  <script src="demo-data.js"></script>
+  <script src="warning-lamps.js"></script>
+  <script src="app-settings.js"></script>
+  <script src="chat-history.js"></script>
+  <script src="chat-answers.js"></script>
+  <script src="user-progress.js"></script>
+  <script src="demo-runner.js"></script>
+  <script>
+    // 取扱説明書（manual.html）のイラスト目次へ遷移
+    function goToManual() {
+      if (window.UserProgress) UserProgress.trackFeature('manual');
+      window.location.href = '../manual.html?topic=illustration-toc';
+    }
+
+    // タブ切り替え
+    function switchTab(tabName) {
+      // 全てのタブコンテンツを非表示
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // 全てのナビアイテムから active を削除
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      
+      // 選択されたタブを表示
+      document.getElementById(`tab-${tabName}`).classList.add('active');
+      
+      // 対応するナビアイテムに active を追加
+      const navItems = document.querySelectorAll('.nav-item');
+      const tabNavIndex = { home: 0, chat: 1, notifications: 3, status: 4 };
+      if (tabNavIndex[tabName] !== undefined) {
+        navItems[tabNavIndex[tabName]].classList.add('active');
+      }
+
+      if (window.UserProgress) {
+        if (['home', 'chat', 'notifications', 'status', 'warnings'].includes(tabName)) {
+          UserProgress.trackFeature(tabName);
+        }
+        if (tabName === 'status') {
+          UserProgress.renderStatusTab();
+        }
+      }
+      
+      // チャットタブの場合、入力欄にフォーカス
+      if (tabName === 'chat') {
+        setTimeout(() => {
+          document.getElementById('chatInput').focus();
+        }, 100);
+      }
+    }
+
+    function escapeHtml(text) {
+      const el = document.createElement('div');
+      el.textContent = text;
+      return el.innerHTML;
+    }
+
+    function buildDeleteButton(messageId) {
+      const label = AppSettings.t('chat.history.deleteOne');
+      return `<button type="button" class="chat-delete-btn" onclick="ChatUI.deleteMessage('${messageId}')" aria-label="${escapeHtml(label)}">×</button>`;
+    }
+
+    function buildFeedbackBar(messageId, feedback) {
+      const helpfulClass = feedback === 'helpful' ? ' active-helpful' : '';
+      const notHelpfulClass = feedback === 'not_helpful' ? ' active-not-helpful' : '';
+      const statusText = feedback === 'helpful'
+        ? AppSettings.t('chat.feedback.selectedHelpful')
+        : feedback === 'not_helpful'
+          ? AppSettings.t('chat.feedback.selectedNotHelpful')
+          : AppSettings.t('chat.feedback.prompt');
+      const labelText = feedback
+        ? `<span class="chat-feedback-thanks">${escapeHtml(statusText)}</span>`
+        : `<span class="chat-feedback-label">${escapeHtml(AppSettings.t('chat.feedback.forAnswer'))}</span>`;
+      const helpfulLabel = AppSettings.t('chat.feedback.helpful');
+      const notHelpfulLabel = AppSettings.t('chat.feedback.notHelpful');
+      return `
+        <div class="chat-feedback" data-feedback-for="${messageId}" role="group" aria-label="${escapeHtml(AppSettings.t('chat.feedback.forAnswer'))}">
+          ${labelText}
+          <button type="button" class="chat-feedback-btn${helpfulClass}"
+                  data-message-id="${messageId}" data-rating="helpful"
+                  aria-pressed="${feedback === 'helpful'}"
+                  aria-label="${escapeHtml(helpfulLabel)}">
+            👍 <span class="chat-feedback-btn-label">${escapeHtml(helpfulLabel)}</span>
+          </button>
+          <button type="button" class="chat-feedback-btn${notHelpfulClass}"
+                  data-message-id="${messageId}" data-rating="not_helpful"
+                  aria-pressed="${feedback === 'not_helpful'}"
+                  aria-label="${escapeHtml(notHelpfulLabel)}">
+            👎 <span class="chat-feedback-btn-label">${escapeHtml(notHelpfulLabel)}</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function renderWelcomeFeedback() {
+      const host = document.getElementById('welcomeFeedbackHost');
+      if (!host || !window.ChatHistory) return;
+      const welcomeId = ChatHistory.WELCOME_MSG_ID || '__welcome__';
+      host.innerHTML = buildFeedbackBar(welcomeId, ChatHistory.getWelcomeFeedback());
+    }
+
+    // チャットにユーザーメッセージを追加
+    function appendUserMessage(message, messageId) {
+      const chatMessages = document.getElementById('chatMessages');
+      const idAttr = messageId ? ` data-message-id="${messageId}"` : '';
+      const deleteBtn = messageId ? buildDeleteButton(messageId) : '';
+      chatMessages.innerHTML += `
+        <div class="chat-message user"${idAttr}>
+          ${deleteBtn}
+          <div class="chat-avatar">👤</div>
+          <div class="chat-bubble">${escapeHtml(message)}</div>
+        </div>
+      `;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // チャットにボット応答を追加
+    function appendBotMessage(html, messageId, feedback) {
+      const chatMessages = document.getElementById('chatMessages');
+      const idAttr = messageId ? ` data-message-id="${messageId}"` : '';
+      const deleteBtn = messageId ? buildDeleteButton(messageId) : '';
+      const feedbackBar = messageId ? buildFeedbackBar(messageId, feedback) : '';
+      const contentHtml = html.trim().startsWith('<')
+        ? html
+        : `<p>${escapeHtml(html)}</p>`;
+      chatMessages.innerHTML += `
+        <div class="chat-message bot"${idAttr}>
+          <div class="chat-avatar"><img src="wht12.webp" alt="Lean3"></div>
+          <div class="chat-message-body">
+            <div class="chat-bubble">
+              <div class="chat-answer-content">${contentHtml}</div>
+              ${feedbackBar}
+            </div>
+          </div>
+          ${deleteBtn}
+        </div>
+      `;
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function refreshFeedbackBar(messageId, feedback) {
+      const feedbackEl = document.querySelector(`.chat-feedback[data-feedback-for="${messageId}"]`);
+      if (feedbackEl) {
+        feedbackEl.outerHTML = buildFeedbackBar(messageId, feedback);
+      }
+    }
+
+    function buildChargingResponse() {
+      return ChatAnswers ? ChatAnswers.buildChargingAnswer() : '';
+    }
+
+    function buildRangeResponse() {
+      return ChatAnswers ? ChatAnswers.buildRangeAnswer() : '';
+    }
+
+    function buildWarningLampsResponse() {
+      return ChatAnswers ? ChatAnswers.buildWarningLampsAnswer() : '';
+    }
+
+    function buildActiveLeanResponse() {
+      return ChatAnswers ? ChatAnswers.buildActiveLeanAnswer() : '';
+    }
+
+    function isActiveLeanQuestion(message) {
+      const lower = message.toLowerCase();
+      return message === AppSettings.t('chat.question.activeLean') ||
+        message.includes('アクティブリーン') ||
+        message.includes('アクティブ・リーン') ||
+        (message.includes('リーン') && (message.includes('システム') || message.includes('とは') || message.includes('何'))) ||
+        lower.includes('active lean');
+    }
+
+    function isWarningLampQuestion(message) {
+      const lower = message.toLowerCase();
+      return message.includes('警告灯') || message.includes('警告ランプ') ||
+        message.includes('警告表示') ||
+        lower.includes('warning light') || lower.includes('warning lamp') ||
+        (message.includes('警告') && (message.includes('意味') || message.includes('点灯') || message.includes('光って')));
+    }
+
+    function isChargingHowToQuestion(message) {
+      const q = AppSettings.t('chat.question.charging');
+      return message === q ||
+        message.includes('充電の仕方') || message.includes('充電方法') ||
+        message.toLowerCase().includes('how do i charge') ||
+        (message.includes('充電') && message.includes('教えて'));
+    }
+
+    function getBotResponse(message) {
+      if (isWarningLampQuestion(message)) {
+        return buildWarningLampsResponse();
+      }
+      if (isChargingHowToQuestion(message)) {
+        return buildChargingResponse();
+      }
+      if (message === AppSettings.t('chat.question.chargeTime') ||
+          message.includes('充電時間') || message.toLowerCase().includes('charging take')) {
+        return AppSettings.t('chat.response.chargeTime');
+      }
+      if (message === AppSettings.t('chat.question.range') ||
+          message.includes('航続距離') || message.includes('走行距離') ||
+          message.toLowerCase().includes('driving range') || message.toLowerCase().includes('range')) {
+        return buildRangeResponse();
+      }
+      if (isActiveLeanQuestion(message)) {
+        return buildActiveLeanResponse();
+      }
+      return AppSettings.t('chat.response.generic', { message });
+    }
+
+    function classifyBotResponse(message) {
+      if (isWarningLampQuestion(message)) {
+        return { role: 'bot', responseKey: 'warningLamps' };
+      }
+      if (isChargingHowToQuestion(message)) {
+        return { role: 'bot', responseKey: 'charging' };
+      }
+      if (message === AppSettings.t('chat.question.chargeTime') ||
+          message.includes('充電時間') || message.toLowerCase().includes('charging take')) {
+        return { role: 'bot', responseKey: 'chargeTime' };
+      }
+      if (message === AppSettings.t('chat.question.range') ||
+          message.includes('航続距離') || message.includes('走行距離') ||
+          message.toLowerCase().includes('driving range') || message.toLowerCase().includes('range')) {
+        return { role: 'bot', responseKey: 'range' };
+      }
+      if (isActiveLeanQuestion(message)) {
+        return { role: 'bot', responseKey: 'activeLean' };
+      }
+      return { role: 'bot', responseKey: 'generic', userText: message };
+    }
+
+    function resolveBotHtml(entry) {
+      if (entry.responseKey === 'warningLamps') return buildWarningLampsResponse();
+      if (entry.responseKey === 'charging') return buildChargingResponse();
+      if (entry.responseKey === 'chargeTime') return AppSettings.t('chat.response.chargeTime');
+      if (entry.responseKey === 'range') return buildRangeResponse();
+      if (entry.responseKey === 'activeLean') return buildActiveLeanResponse();
+      return AppSettings.t('chat.response.generic', { message: entry.userText || '' });
+    }
+
+    const ChatUI = {
+      renderWelcomeFeedback,
+
+      reloadFromStorage() {
+        const chatMessages = document.getElementById('chatMessages');
+        if (!chatMessages || !window.ChatHistory) return;
+        chatMessages.innerHTML = '';
+        ChatHistory.getMessages().forEach(entry => {
+          if (entry.role === 'user') {
+            appendUserMessage(entry.text, entry.id);
+          } else if (entry.role === 'bot') {
+            appendBotMessage(resolveBotHtml(entry), entry.id, entry.feedback);
+          }
+        });
+      },
+
+      setFeedback(messageId, rating) {
+        if (!window.ChatHistory) return;
+        const entry = ChatHistory.setFeedback(messageId, rating);
+        if (!entry) return;
+        if (window.UserProgress) UserProgress.trackFeature('feedback');
+        refreshFeedbackBar(messageId, rating);
+      },
+
+      deleteMessage(messageId) {
+        if (!window.ChatHistory) return;
+        ChatHistory.removeMessage(messageId);
+        const el = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (el) el.remove();
+      },
+
+      clearAllHistory() {
+        if (!window.ChatHistory) return;
+        if (!confirm(AppSettings.t('chat.history.clearConfirm'))) return;
+        ChatHistory.clearHistory();
+        document.getElementById('chatMessages').innerHTML = '';
+      },
+
+      onVehicleChanged() {
+        renderWelcomeFeedback();
+        this.reloadFromStorage();
+      },
+
+      onLanguageChanged() {
+        renderWelcomeFeedback();
+        this.reloadFromStorage();
+      }
+    };
+
+    window.ChatUI = ChatUI;
+
+    function sendDemoChargingQuestion() {
+      switchTab('chat');
+      setTimeout(() => askChat(AppSettings.getChargingContent().question), 200);
+    }
+
+    function askChat(message) {
+      const userEntry = ChatHistory.addMessage({ role: 'user', text: message });
+      appendUserMessage(message, userEntry.id);
+      document.getElementById('chatInput').value = '';
+      if (window.UserProgress) {
+        UserProgress.trackChatMessage();
+        if (isChargingHowToQuestion(message)) UserProgress.trackFeature('charging_guide');
+        if (isWarningLampQuestion(message)) UserProgress.trackFeature('warnings');
+      }
+      setTimeout(() => {
+        const botEntry = ChatHistory.addMessage(classifyBotResponse(message));
+        appendBotMessage(resolveBotHtml(botEntry), botEntry.id);
+      }, 800);
+    }
+
+    // チャットメッセージ送信
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      if (!message) return;
+      input.value = '';
+      askChat(message);
+    }
+
+    // Enterキーでメッセージ送信 / 回答ごとの評価
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+
+      document.querySelector('.chat-container').addEventListener('click', function(e) {
+        const btn = e.target.closest('.chat-feedback-btn');
+        if (!btn) return;
+        const messageId = btn.dataset.messageId;
+        const rating = btn.dataset.rating;
+        if (messageId && rating) {
+          ChatUI.setFeedback(messageId, rating);
+        }
+      });
+
+      renderWelcomeFeedback();
+    });
+
+    // FAQ開く
+    function openFaq(topic) {
+      if (window.UserProgress) UserProgress.trackFeature('faq');
+      switchTab('chat');
+      setTimeout(() => {
+        if (topic === 'charging') {
+          sendDemoChargingQuestion();
+          return;
+        }
+        document.getElementById('chatInput').value = AppSettings.getFaqQuestion(topic) || '';
+        sendMessage();
+      }, 300);
+    }
+
+    // マニュアルセクション開く
+    function openManual(section) {
+      alert(`「${section}」セクションのマニュアルを開きます。\n\n実際のアプリでは、詳細なマニュアルページが表示されます。`);
+    }
+
+    // ページ読み込み時のチェック
+    window.addEventListener('DOMContentLoaded', function() {
+      OnboardingStatus.guardPage('home');
+      renderWelcomeFeedback();
+      ChatUI.reloadFromStorage();
+      if (window.UserProgress) UserProgress.init();
+    });
+  </script>
+</body>
+</html>

@@ -23,6 +23,7 @@
     sidebar: document.querySelector('.sidebar'),
     openTopic: document.getElementById('open-topic'),
     printTopic: document.getElementById('print-topic'),
+    downloadPdf: document.getElementById('download-pdf'),
     imageModal: document.getElementById('image-modal'),
     imageModalClose: document.getElementById('image-modal-close'),
     imageModalPreview: document.getElementById('image-modal-preview')
@@ -265,6 +266,155 @@
     }
   });
 
+  function collectTopicsInOrder(nodes, result) {
+    nodes.forEach(node => {
+      result.push({ id: node.id, label: node.label });
+      if (node.children) {
+        collectTopicsInOrder(node.children, result);
+      }
+    });
+    return result;
+  }
+
+  function escapeHtml(text) {
+    const el = document.createElement('div');
+    el.textContent = text;
+    return el.innerHTML;
+  }
+
+  function resolveManualAssetPaths(html) {
+    return html.replace(/src="([^"]+)"/g, (match, src) => {
+      if (/^(https?:|data:|blob:)/i.test(src)) {
+        return match;
+      }
+      try {
+        return `src="${new URL(src, window.location.href).href}"`;
+      } catch (e) {
+        return match;
+      }
+    });
+  }
+
+  function getPdfExportStyles() {
+    return `
+      .pdf-export-root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+        color: #0f172a;
+        line-height: 1.6;
+        background: #ffffff;
+        padding: 16px;
+      }
+      .pdf-section {
+        margin-bottom: 32px;
+      }
+      .pdf-section-title {
+        font-size: 22px;
+        margin: 0 0 16px;
+        color: #2d2d2d;
+        border-bottom: 2px solid #4a4a4a;
+        padding-bottom: 8px;
+      }
+      .pdf-page-break {
+        page-break-before: always;
+        break-before: page;
+        height: 0;
+      }
+      .topic-content {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .topic-content h1 { font-size: 28px; margin-bottom: 20px; color: #2d2d2d; border-bottom: 3px solid #4a4a4a; padding-bottom: 10px; }
+      .topic-content h2 { font-size: 22px; margin: 28px 0 14px; color: #4a4a4a; border-left: 4px solid #4a4a4a; padding-left: 10px; }
+      .topic-content h3 { font-size: 18px; margin: 20px 0 10px; color: #0f172a; }
+      .topic-content p { margin-bottom: 14px; line-height: 1.8; }
+      .topic-content ul, .topic-content ol { margin-bottom: 14px; padding-left: 24px; }
+      .topic-content li { margin-bottom: 6px; }
+      .topic-content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+      .topic-content th, .topic-content td { padding: 10px; border: 1px solid #e2e8f0; text-align: left; }
+      .topic-content th { background: #f8fafc; font-weight: 600; }
+      .topic-content img { max-width: 100%; height: auto; display: block; margin: 16px auto; }
+      .topic-content .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 14px; margin: 16px 0; }
+      .topic-content .caution { background: #fee2e2; border-left: 4px solid #ef4444; padding: 14px; margin: 16px 0; }
+      .topic-content .note { background: #dbeafe; border-left: 4px solid #3b82f6; padding: 14px; margin: 16px 0; }
+    `;
+  }
+
+  function buildFullManualHtml() {
+    const sections = collectTopicsInOrder(window.manualData.tree, []);
+    const parts = [`<style>${getPdfExportStyles()}</style>`];
+
+    sections.forEach((section, index) => {
+      const content = window.manualData.topics[section.id];
+      if (!content) return;
+      if (index > 0) {
+        parts.push('<div class="pdf-page-break"></div>');
+      }
+      parts.push(
+        `<section class="pdf-section">` +
+          `<h2 class="pdf-section-title">${escapeHtml(section.label)}</h2>` +
+          resolveManualAssetPaths(content) +
+        `</section>`
+      );
+    });
+
+    return parts.join('');
+  }
+
+  function waitForImages(container) {
+    const images = Array.from(container.querySelectorAll('img'));
+    if (images.length === 0) {
+      return Promise.resolve();
+    }
+    return Promise.all(images.map(img => new Promise(resolve => {
+      if (img.complete) {
+        resolve();
+        return;
+      }
+      img.addEventListener('load', resolve, { once: true });
+      img.addEventListener('error', resolve, { once: true });
+    })));
+  }
+
+  async function downloadManualPdf() {
+    if (!window.manualData || typeof html2pdf === 'undefined') {
+      alert('PDFの生成に必要なデータを読み込めませんでした。');
+      return;
+    }
+
+    const button = elements.downloadPdf;
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = 'PDF生成中...';
+
+    const container = document.createElement('div');
+    container.className = 'pdf-export-root';
+    container.style.cssText = 'position:fixed;left:-10000px;top:0;width:794px;background:#fff;';
+    container.innerHTML = buildFullManualHtml();
+    document.body.appendChild(container);
+
+    try {
+      await waitForImages(container);
+      await html2pdf().set({
+        margin: [12, 12, 12, 12],
+        filename: 'Lean3_取扱説明書.pdf',
+        image: { type: 'jpeg', quality: 0.92 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], before: '.pdf-page-break' }
+      }).from(container).save();
+    } catch (error) {
+      console.error(error);
+      alert('PDFの生成に失敗しました。時間をおいて再度お試しください。');
+    } finally {
+      document.body.removeChild(container);
+      button.disabled = false;
+      button.textContent = originalLabel;
+    }
+  }
+
+  elements.downloadPdf.addEventListener('click', downloadManualPdf);
+
   // 画像モーダル
   elements.imageModalClose.addEventListener('click', () => {
     elements.imageModal.hidden = true;
@@ -315,10 +465,33 @@
     }
   });
 
+  // ツリーからトピックIDでノードを検索
+  function findTopicInTree(nodes, id) {
+    for (const node of nodes) {
+      if (node.id === id) return node;
+      if (node.children) {
+        const found = findTopicInTree(node.children, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
   // 初期化
   function init() {
     if (window.manualData) {
       buildTree(window.manualData.tree, elements.treeRoot);
+
+      // URLパラメータ ?topic=xxx で指定トピックを開く
+      const topicId = new URLSearchParams(window.location.search).get('topic');
+      if (topicId) {
+        const topic = findTopicInTree(window.manualData.tree, topicId);
+        if (topic) {
+          loadTopic(topic.id, topic.label);
+          return;
+        }
+      }
+
       if (window.manualData.tree.length > 0) {
         const firstTopic = window.manualData.tree[0];
         loadTopic(firstTopic.id, firstTopic.label);
