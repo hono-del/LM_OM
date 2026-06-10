@@ -243,7 +243,8 @@
       <h4>🎯 V1 MVP版について</h4>
       <p>
         この画面は9月末納車に必須のマスト要件のみを実装したV1版です。<br>
-        ステータス機能やOTA通知など、Phase 2の機能は含まれません。
+        ステータス機能やOTA通知など、Phase 2の機能は含まれません。<br>
+        <strong>車両はLean3 2026年式に自動設定されます。</strong>
       </p>
     </div>
 
@@ -274,8 +275,15 @@
           version: 'v1'
         }));
         
-        // V1用の車両選択画面へ
-        window.location.href = 'vehicle-selection-v1.html';
+        // V1: 車両情報を自動設定（Lean3 2026固定）
+        localStorage.setItem('selectedVehicle', JSON.stringify({
+          model: 'lean3',
+          year: '2026',
+          version: 'v1'
+        }));
+        
+        // V1用のアプリへ直接遷移（車両選択スキップ）
+        window.location.href = 'app-v1.html';
       }
     });
 
@@ -287,8 +295,15 @@
         version: 'v1'
       }));
       
-      // V1用の車両選択画面へ
-      window.location.href = 'vehicle-selection-v1.html';
+      // V1: 車両情報を自動設定（Lean3 2026固定）
+      localStorage.setItem('selectedVehicle', JSON.stringify({
+        model: 'lean3',
+        year: '2026',
+        version: 'v1'
+      }));
+      
+      // V1用のアプリへ直接遷移（車両選択スキップ）
+      window.location.href = 'app-v1.html';
     }
 
     // 既にログイン済みの場合はV1アプリへリダイレクト
